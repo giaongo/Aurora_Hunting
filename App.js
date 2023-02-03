@@ -1,13 +1,35 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import Profile from './views/Profile';
+import {StatusBar} from 'expo-status-bar';
+import {StyleSheet, Text, View} from 'react-native';
+import {
+  MD3LightTheme as DefaultTheme,
+  Provider as PaperProvider,
+} from 'react-native-paper';
+
+import { Button } from 'react-native-paper';
 
 export default function App() {
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: 'tomato',
+      secondary: 'yellow',
+    },
+  };
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-      <Profile />
-    </SafeAreaView>
+    <PaperProvider theme={theme}>
+      <View style={styles.container}>
+        <Text>Open up App.js to start working on your app!</Text>
+        <StatusBar style="auto" />
+        <Button
+          icon="camera"
+          mode="contained"
+          onPress={() => console.log('Pressed')}
+        >
+          Press me
+        </Button>
+      </View>
+    </PaperProvider>
   );
 }
 
