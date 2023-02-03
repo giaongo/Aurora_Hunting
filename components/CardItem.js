@@ -5,6 +5,7 @@ import {StyleSheet} from 'react-native';
 import {View} from 'react-native';
 import CardTag from './CardTag';
 import CardIconButton from './CardIconButton';
+import {uploadsUrl} from '../utils/variables';
 const CardItem = ({data}) => {
   return (
     <Card style={styles.cardContainer} mode="contained">
@@ -12,12 +13,16 @@ const CardItem = ({data}) => {
         title="username"
         style={{color: '#f57b42'}}
         left={(props) => (
-          <Avatar.Image {...props} size={50} source={{uri: data.filename}} />
+          <Avatar.Image
+            {...props}
+            size={50}
+            source={{uri: 'http://placekitten.com/200/300'}}
+          />
         )}
       />
       <Card.Cover
         style={styles.cardImage}
-        source={{uri: data.thumbnails.w160}}
+        source={{uri: uploadsUrl + data.thumbnails.w160}}
       />
       <CardIconButton data={data} />
       <Text variant="titleLarge">{data.title}</Text>

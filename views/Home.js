@@ -2,6 +2,7 @@ import React from 'react';
 import {FlatList, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
 import CardItem from '../components/CardItem';
+import {useMedia} from '../hooks/ApiHooks';
 
 const mediaArray = [
   {
@@ -36,13 +37,15 @@ const mediaArray = [
   },
 ];
 const Home = (props) => {
+  const mediaArray = useMedia();
+  console.log(mediaArray);
   return (
     <SafeAreaView style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <Text style={styles.text}>Aurora Hunting</Text>
         <FlatList
           data={mediaArray}
-          keyExtractor={(item) => item.key}
+          keyExtractor={(item) => item.file_id}
           renderItem={({item}) => <CardItem data={item} />}
         />
       </View>
@@ -57,7 +60,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#212121',
-    alignItems: 'flex-start',
   },
   text: {
     color: '#fff',

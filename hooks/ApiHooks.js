@@ -1,0 +1,38 @@
+import {useEffect, useState} from 'react';
+import {basesUrl} from '../utils/variables';
+
+const doFetch = async (url, options = null) => {
+  const response = await fetch(url, options);
+  const json = await response.json();
+  if (!response.ok) {
+    const message = json.error
+      ? `${json.message}: ${json.error}`
+      : json.message;
+    throw new Error(message || response.statusText);
+  }
+  return json;
+};
+
+const useMedia = () => {
+  const [mediaArray, setMediaArray] = useState([]);
+  const loadMedia = async () => {
+    try {
+      const result = await doFetch(basesUrl + 'media');
+      const media = await Promise.all(
+        result.map(async (file) => {
+          return await doFetch(basesUrl + 'media/' + file.file_id);
+        })
+      );
+      setMediaArray(media);
+    } catch (error) {
+      console.error('loadMediaError', error);
+    }
+  };
+
+  useEffect(() => {
+    loadMedia();
+  }, []);
+  return mediaArray;
+};
+
+export {useMedia};

@@ -5,6 +5,8 @@ import {IconButton, Text} from 'react-native-paper';
 
 const CardIconButton = ({data}) => {
   const [clickHeart, setClickHeart] = useState(false);
+  const [clickComment, setClickComment] = useState(false);
+  const [clickStar, setClickStar] = useState(false);
   return (
     <View style={styles.cardIconStatus}>
       <IconButton
@@ -15,17 +17,17 @@ const CardIconButton = ({data}) => {
       />
       <Text>100</Text>
       <IconButton
-        icon="comment-outline"
+        icon={clickComment ? 'comment-multiple' : 'comment-multiple-outline'}
         size={30}
         iconColor="#E0E0E0"
-        onPress={() => console.log('comment button pressed')}
+        onPress={() => setClickComment(!clickComment)}
       />
       <Text>100</Text>
       <IconButton
-        icon="star-outline"
+        icon={clickStar ? 'star' : 'star-outline'}
         size={35}
         iconColor="#E0E0E0"
-        onPress={() => console.log('star button pressed')}
+        onPress={() => setClickStar(!clickStar)}
       />
       <Text>100</Text>
     </View>
