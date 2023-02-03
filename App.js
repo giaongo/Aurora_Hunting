@@ -6,6 +6,7 @@ import {
 } from 'react-native-paper';
 
 import { Button } from 'react-native-paper';
+import Profile from './views/Profile';
 
 export default function App() {
   const theme = {
@@ -19,15 +20,16 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
+        {/* <Text>Open up App.js to start working on your app!</Text> */}
         <StatusBar style="auto" />
-        <Button
+        {/* <Button
           icon="camera"
           mode="contained"
           onPress={() => console.log('Pressed')}
         >
           Press me
-        </Button>
+        </Button> */}
+        <Profile/>
       </View>
     </PaperProvider>
   );
