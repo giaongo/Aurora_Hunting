@@ -60,7 +60,21 @@ const useFavourite = () => {
     }
   };
 
-  return {loadFavouritesByFileId, addFavourite};
+  const removeFavourite = async (fileId, token) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(basesUrl + 'favourites/file/' + fileId, options);
+    } catch (error) {
+      console.error('deleteFavouriteError', error);
+    }
+  };
+
+  return {loadFavouritesByFileId, addFavourite, removeFavourite};
 };
 
 export {useMedia, useFavourite};
