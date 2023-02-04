@@ -24,7 +24,7 @@ const CardItem = ({data}) => {
         style={styles.cardImage}
         source={{uri: uploadsUrl + data.thumbnails.w160}}
       />
-      <CardIconButton data={data} />
+      <CardIconButton dataId={data.file_id} />
       <Text variant="titleLarge">{data.title}</Text>
       <Text varient="bodyMedium">{data.description}</Text>
       <View

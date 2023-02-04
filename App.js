@@ -3,6 +3,7 @@ import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
+import {MainProvider} from './contexts/MainContext';
 
 import Home from './views/Home';
 
@@ -18,8 +19,10 @@ export default function App() {
   };
   return (
     <PaperProvider theme={theme}>
-      <Home />
-      <StatusBar style="auto" />
+      <MainProvider>
+        <Home />
+        <StatusBar style="auto" />
+      </MainProvider>
     </PaperProvider>
   );
 }

@@ -35,4 +35,32 @@ const useMedia = () => {
   return mediaArray;
 };
 
-export {useMedia};
+const useFavourite = () => {
+  const loadFavouritesByFileId = async (fileId) => {
+    try {
+      return await doFetch(basesUrl + 'favourites/file/' + fileId);
+    } catch (error) {
+      console.error('getFavoriteError', error);
+    }
+  };
+
+  const addFavourite = async (fileId, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({file_id: fileId}),
+    };
+    try {
+      return await doFetch(basesUrl + 'favourites', options);
+    } catch (error) {
+      console.error('addFavouriteError', error);
+    }
+  };
+
+  return {loadFavouritesByFileId, addFavourite};
+};
+
+export {useMedia, useFavourite};
