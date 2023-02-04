@@ -77,4 +77,26 @@ const useFavourite = () => {
   return {loadFavouritesByFileId, addFavourite, removeFavourite};
 };
 
-export {useMedia, useFavourite};
+const useComment = () => {
+  const loadCommentsByFileId = async (fileId) => {
+    try {
+      return await doFetch(basesUrl + 'comments/file/' + fileId);
+    } catch (error) {
+      console.error('getCommentError', error);
+    }
+  };
+  return {loadCommentsByFileId};
+};
+
+const useRating = () => {
+  const loadRatingsByFileId = async (fileId) => {
+    try {
+      return await doFetch(basesUrl + 'ratings/file/' + fileId);
+    } catch (error) {
+      console.error('getRatingError', error);
+    }
+  };
+  return {loadRatingsByFileId};
+};
+
+export {useMedia, useFavourite, useComment, useRating};

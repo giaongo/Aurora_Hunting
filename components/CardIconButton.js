@@ -2,16 +2,22 @@ import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet} from 'react-native';
 import {IconButton, Text} from 'react-native-paper';
-import {useFavourite} from '../hooks/ApiHooks';
+import {useComment, useFavourite, useRating} from '../hooks/ApiHooks';
 
 const CardIconButton = ({dataId}) => {
   const [favouriteArray, setFavouriteArray] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
+
+  const [commentArray, setCommentArray] = useState([]);
   const [clickComment, setClickComment] = useState(false);
+
+  const [averageRating, setAverageRating] = useState([]);
   const [clickStar, setClickStar] = useState(false);
   const [update, setUpdate] = useState(false);
   const {loadFavouritesByFileId, addFavourite, removeFavourite} =
     useFavourite();
+  const {loadCommentsByFileId} = useComment();
+  const {loadRatingsByFileId} = useRating();
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNjg5LCJ1c2VybmFtZSI6ImdpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAxLTEyVDA4OjI0OjEyLjAwMFoiLCJpYXQiOjE2NzU1MDUwODAsImV4cCI6MTY3NTU5MTQ4MH0.q6-GWf5pB6n81eloChOxB1kLLXD-Tv8IhAh_2ZsH7Mo';
 
@@ -25,6 +31,24 @@ const CardIconButton = ({dataId}) => {
       setIsFavourite(checkFavourite);
     });
   }, [update]);
+
+  useEffect(() => {
+    loadCommentsByFileId(dataId).then((comments) => {
+      setCommentArray(comments);
+    });
+  }, []);
+
+  useEffect(() => {
+    loadRatingsByFileId(dataId).then((ratings) => {
+      const ratingOnlyArray = ratings.map((element) => element.rating);
+
+      setAverageRating(
+        ratingOnlyArray.length &&
+          ratingOnlyArray.reduce((prev, cur) => prev + cur, 0) /
+            ratingOnlyArray.length
+      );
+    });
+  }, []);
 
   return (
     <View style={styles.cardIconStatus}>
@@ -47,14 +71,14 @@ const CardIconButton = ({dataId}) => {
         iconColor="#E0E0E0"
         onPress={() => setClickComment(!clickComment)}
       />
-      <Text>100</Text>
+      <Text>{commentArray.length || 0}</Text>
       <IconButton
         icon={clickStar ? 'star' : 'star-outline'}
         size={35}
         iconColor="#E0E0E0"
         onPress={() => setClickStar(!clickStar)}
       />
-      <Text>100</Text>
+      <Text>{averageRating}</Text>
     </View>
   );
 };
