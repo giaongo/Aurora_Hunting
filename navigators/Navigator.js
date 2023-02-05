@@ -49,14 +49,14 @@ const TabScreen = () => {
             <Avatar.Image
               style={{
                 position: 'relative',
-                bottom: 20,
+                bottom: 25,
                 borderRadius: 68,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
               source={require('../assets/aurora_bottom.png')}
               backgroundColor="transparent"
-              size={90}
+              size={100}
             />
           ),
         }}
