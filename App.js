@@ -5,8 +5,6 @@ import {
   Provider as PaperProvider,
 } from 'react-native-paper';
 
-import { Button } from 'react-native-paper';
-import Grid from './components/Grid';
 import Profile from './views/Profile';
 
 export default function App() {
@@ -31,7 +29,6 @@ export default function App() {
           Press me
         </Button> */}
         <Profile/>
-        {/* <Grid /> */}
       </View>
     </PaperProvider>
   );

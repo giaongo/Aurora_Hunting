@@ -1,5 +1,4 @@
-import { FlatList, Image, StyleSheet, View, Text } from "react-native";
-import { Divider } from "react-native-paper";
+import { FlatList, Image, StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 
 
@@ -21,26 +20,33 @@ const northernLights = [
 
 const Grid = () => {
   return (
-    <View style={styles.background}>
+    <View style={styles.container}>
+      <FlatList
+        data={northernLights}
+        renderItem={({item}) =>
+          <TouchableOpacity style={styles.button}>
+            <Image source={{uri: item.image}} style={styles.image} />
+          </TouchableOpacity>
 
-    <FlatList
-      data={northernLights}
-      renderItem={({item}) => <Image source={{uri: item.image}} style={styles.image} />}
-      numColumns={3}
-    />
+      }
+        numColumns={3}
+      />
   </View>
 );
 };
 
 const styles = StyleSheet.create({
-  background: {
+  container: {
     flex: 3,
-    top:'30%'
+    top:'30%',
+  },
+  button:{
+    width:'33.3%',
+    backgroundColor:'blue',
   },
   image:{
     height:100,
-    width:'33.3%',
-    borderWidth:0.5
+    borderWidth:0.5,
   }
 })
 
