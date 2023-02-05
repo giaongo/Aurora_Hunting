@@ -4,12 +4,11 @@ import {Text} from 'react-native-paper';
 import CardItem from '../components/CardItem';
 import {useMedia} from '../hooks/ApiHooks';
 
-const Home = (props) => {
+const Home = () => {
   const mediaArray = useMedia();
   return (
     <SafeAreaView style={styles.AndroidSafeArea}>
       <View style={styles.container}>
-        <Text style={styles.text}>Aurora Hunting</Text>
         <FlatList
           data={mediaArray}
           keyExtractor={(item) => item.file_id}

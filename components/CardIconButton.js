@@ -18,10 +18,12 @@ const CardIconButton = ({dataId}) => {
     useFavourite();
   const {loadCommentsByFileId} = useComment();
   const {loadRatingsByFileId} = useRating();
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNjg5LCJ1c2VybmFtZSI6ImdpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAxLTEyVDA4OjI0OjEyLjAwMFoiLCJpYXQiOjE2NzU1MDUwODAsImV4cCI6MTY3NTU5MTQ4MH0.q6-GWf5pB6n81eloChOxB1kLLXD-Tv8IhAh_2ZsH7Mo';
 
-  const userId = 2689;
+  // Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyODYzLCJ1c2VybmFtZSI6InBodW9uZ2dpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAyLTA0VDE4OjM0OjExLjAwMFoiLCJpYXQiOjE2NzU2MDgwMDcsImV4cCI6MTY3NTY5NDQwN30.sousYuHuTFLpQ4oJ082GKpf-eS9LGZkRc-_vQCxt2Bw';
+
+  const userId = 2863;
   useEffect(() => {
     loadFavouritesByFileId(dataId).then((favourites) => {
       setFavouriteArray(favourites);
