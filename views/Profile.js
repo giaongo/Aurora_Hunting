@@ -1,5 +1,6 @@
 import { FlatList, ImageBackground, SafeAreaView, StyleSheet, View } from "react-native";
 import { Avatar, Divider, IconButton, List, MD3Colors, Text } from "react-native-paper";
+import Grid from "../components/Grid";
 
 const DATA = [
   {
@@ -46,29 +47,27 @@ const Profile = () => {
           <IconButton
             icon={'google'}
             iconColor={MD3Colors.error100}
-            size={50}
-            backgroundColor={'black'}
-            onPress={() => console.log(pressed)}
+            size={40}
+            onPress={() => console.log('pressed')}
             style={styles.icon}
           />
           <IconButton
             icon={'facebook'}
             iconColor={MD3Colors.error100}
-            size={50}
-            backgroundColor={'black'}
-            onPress={() => console.log(pressed)}
+            size={40}
+            onPress={() => console.log('pressed')}
             style={styles.icon}
           />
           <IconButton
             icon={'twitter'}
             iconColor={MD3Colors.error100}
-            size={50}
-            backgroundColor={'black'}
-            onPress={() => console.log(pressed)}
+            size={40}
+            onPress={() => console.log('pressed')}
             style={styles.icon}
           />
         </View>
       </View>
+      <Grid />
     </SafeAreaView>
   );
 }
@@ -77,14 +76,13 @@ const styles = StyleSheet.create({
   container:{
     flex:1,
     alignItems:'center',
-    justifyContent:'flex-start',
-    width:'100%'
+    width:'100%',
   },
   backgroundImg: {
-    flex:0.5,
-    height:'100%',
+    flex:1,
     width:'100%',
-    opacity:'0.5'
+    height:425,
+    opacity:'0.5',
   },
   avatar: {
     position:'absolute',
@@ -97,16 +95,15 @@ const styles = StyleSheet.create({
     top:'30%',
   },
   statisticsContainer:{
+    width:"100%",
     position:'absolute',
-    width:'100%',
     flexDirection:'row',
-    justifyContent:"center",
+    justifyContent:"space-evenly",
     top:'40%',
   },
   statisticsColumn:{
-    width:'30%',
     flexDirection:'column',
-    alignItems:'center',
+    alignItems:'center'
   },
   statisticsNumber:{
     fontSize:25,
@@ -119,15 +116,16 @@ const styles = StyleSheet.create({
   },
   iconContainer:{
     position:'absolute',
-    display:'flex'
+    width:'100%',
+    top:'50%',
   },
   iconRow:{
-    width:'100%',
     flexDirection:"row",
     justifyContent:'space-around',
-    top:'95%'
-  }
-
+  },
+  icon:{
+    backgroundColor:'#18f297'
+  },
 })
 export default Profile;
 
