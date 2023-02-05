@@ -19,6 +19,9 @@ const TabScreen = () => {
         },
         tabBarActiveTintColor: '#b3d56c',
         headerShown: false,
+        tabBarLabelStyle: {
+          marginBottom: 3,
+        },
       }}
     >
       <Tab.Screen
@@ -27,7 +30,7 @@ const TabScreen = () => {
         options={{
           tabBarIcon: ({color}) => (
             <Avatar.Icon
-              size={40}
+              size={35}
               icon="home"
               color={color}
               backgroundColor="transparent"
@@ -39,6 +42,9 @@ const TabScreen = () => {
         name="Upload"
         component={Upload}
         options={{
+          tabBarLabelStyle: {
+            display: 'none',
+          },
           tabBarIcon: () => (
             <Avatar.Image
               style={{
@@ -62,7 +68,7 @@ const TabScreen = () => {
         options={{
           tabBarIcon: ({color}) => (
             <Avatar.Icon
-              size={40}
+              size={35}
               icon="account"
               color={color}
               backgroundColor="transparent"
@@ -78,8 +84,7 @@ const StackScreen = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerTintColor: 'white',
-        headerStyle: {backgroundColor: 'tomato'},
+        headerShown: false,
       }}
     >
       <Stack.Screen name="Aurora Hunting" component={TabScreen} />

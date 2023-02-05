@@ -1,6 +1,5 @@
 import React from 'react';
 import {FlatList, Platform, SafeAreaView, StyleSheet, View} from 'react-native';
-import {Text} from 'react-native-paper';
 import CardItem from '../components/CardItem';
 import {useMedia} from '../hooks/ApiHooks';
 

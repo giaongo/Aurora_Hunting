@@ -17,7 +17,7 @@ export default function App() {
   return (
     <PaperProvider theme={theme}>
       <Navigator></Navigator>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
     </PaperProvider>
   );
 }
