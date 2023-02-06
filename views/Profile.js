@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Image, ImageBackground, StyleSheet, View, Text } from "react-native";
 import WallPaper from "../components/WallPaper";
 
@@ -52,3 +53,27 @@ const styles = StyleSheet.create({
 })
 
 export default Profile;
+=======
+import React from 'react';
+import {Text} from 'react-native-paper';
+import {StyleSheet, SafeAreaView} from 'react-native';
+const Profile = () => {
+  return (
+    <SafeAreaView style={styles.container}>
+      <Text>Profile</Text>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
+  },
+});
+
+export default Profile;
+>>>>>>> b40e499b2645f06046ecfbf5a392797fbeeb05a2

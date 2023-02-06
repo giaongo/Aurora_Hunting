@@ -1,21 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import Profile from './views/Profile';
-
+import {SafeAreaView, StatusBar} from 'react-native';
+import {
+  MD3LightTheme as DefaultTheme,
+  Provider as PaperProvider,
+} from 'react-native-paper';
+import Navigator from './navigators/Navigator';
+import {StyleSheet, Platform} from 'react-native';
 export default function App() {
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      secondary: 'yellow',
+      onSurface: '#BDBDBD',
+    },
+  };
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-      <Profile />
-    </SafeAreaView>
+    <PaperProvider theme={theme}>
+      <StatusBar />
+      <SafeAreaView style={styles.AndroidSafeArea}>
+        <Navigator></Navigator>
+      </SafeAreaView>
+    </PaperProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  AndroidSafeArea: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? 30 : 0,
+    backgroundColor: '#212121',
   },
 });
