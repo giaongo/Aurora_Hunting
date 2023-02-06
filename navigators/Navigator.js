@@ -6,6 +6,9 @@ import {Avatar} from 'react-native-paper';
 import Home from '../views/Home';
 import Upload from '../views/Upload';
 import Profile from '../views/Profile';
+import Single from '../views/Single';
+import Comment from '../views/Comment';
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 const TabScreen = () => {
@@ -82,12 +85,10 @@ const TabScreen = () => {
 
 const StackScreen = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="Aurora Hunting" component={TabScreen} />
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={TabScreen} />
+      <Stack.Screen name="Comment" component={Comment} />
+      <Stack.Screen name="Single" component={Single} />
     </Stack.Navigator>
   );
 };

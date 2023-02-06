@@ -2,15 +2,17 @@ import React from 'react';
 import {FlatList, StyleSheet, View} from 'react-native';
 import CardItem from '../components/CardItem';
 import {useMedia} from '../hooks/ApiHooks';
-
-const Home = () => {
+import PropTypes from 'prop-types';
+const Home = ({navigation}) => {
   const mediaArray = useMedia();
   return (
     <View style={styles.container}>
       <FlatList
         data={mediaArray}
         keyExtractor={(item) => item.file_id}
-        renderItem={({item}) => <CardItem data={item} />}
+        renderItem={({item}) => (
+          <CardItem data={item} navigation={navigation} />
+        )}
       />
     </View>
   );
@@ -21,5 +23,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#212121',
   },
 });
+
+Home.propTypes = {
+  navigation: PropTypes.object,
+};
 
 export default Home;

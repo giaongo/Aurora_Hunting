@@ -4,12 +4,11 @@ import {View, StyleSheet} from 'react-native';
 import {IconButton, Text} from 'react-native-paper';
 import {useComment, useFavourite, useRating} from '../hooks/ApiHooks';
 
-const CardIconButton = ({dataId}) => {
+const CardIconButton = ({dataId, navigation}) => {
   const [favouriteArray, setFavouriteArray] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
 
   const [commentArray, setCommentArray] = useState([]);
-  const [clickComment, setClickComment] = useState(false);
 
   const [averageRating, setAverageRating] = useState([]);
   const [clickStar, setClickStar] = useState(false);
@@ -78,10 +77,12 @@ const CardIconButton = ({dataId}) => {
       />
       <Text>{favouriteArray.length || 0}</Text>
       <IconButton
-        icon={clickComment ? 'comment-multiple' : 'comment-multiple-outline'}
+        icon="comment-multiple-outline"
         size={30}
         iconColor="#E0E0E0"
-        onPress={() => setClickComment(!clickComment)}
+        onPress={() => {
+          navigation.navigate('Comment');
+        }}
       />
       <Text>{commentArray.length || 0}</Text>
       <IconButton
@@ -104,6 +105,7 @@ const styles = StyleSheet.create({
 });
 CardIconButton.propTypes = {
   dataId: PropTypes.number,
+  navigation: PropTypes.object,
 };
 
 export default CardIconButton;

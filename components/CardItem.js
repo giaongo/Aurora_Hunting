@@ -12,7 +12,7 @@ import {useTag, useUser} from '../hooks/ApiHooks';
 const token =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyODYzLCJ1c2VybmFtZSI6InBodW9uZ2dpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAyLTA0VDE4OjM0OjExLjAwMFoiLCJpYXQiOjE2NzU2ODM4MTIsImV4cCI6MTY3NTc3MDIxMn0.htJcCWg9EKF98AMTTTYCrXtWgw6iFnK5p_kPJPw63aA';
 
-const CardItem = ({data}) => {
+const CardItem = ({data, navigation}) => {
   const [postUser, setPostUser] = useState({});
   const [postUserAvatar, setPostUserAvatar] = useState('');
   const {getUserById} = useUser();
@@ -34,7 +34,11 @@ const CardItem = ({data}) => {
   }, []);
 
   return (
-    <Card style={styles.cardContainer} mode="contained">
+    <Card
+      style={styles.cardContainer}
+      mode="contained"
+      onPress={() => navigation.navigate('Single')}
+    >
       <Card.Title
         title={postUser.username}
         style={{color: '#f57b42'}}
@@ -54,7 +58,7 @@ const CardItem = ({data}) => {
         style={styles.cardImage}
         source={{uri: uploadsUrl + data.thumbnails.w320}}
       />
-      <CardIconButton dataId={data.file_id} />
+      <CardIconButton dataId={data.file_id} navigation={navigation} />
       <Text variant="titleLarge">{data.title}</Text>
       <Text varient="bodyMedium">{data.description}</Text>
       <Text varient="bodySmall" style={styles.dateText}>
@@ -94,6 +98,7 @@ const styles = StyleSheet.create({
 
 CardItem.propTypes = {
   data: PropTypes.object,
+  navigation: PropTypes.object,
 };
 
 export default CardItem;
