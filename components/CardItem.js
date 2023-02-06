@@ -6,7 +6,7 @@ import {View} from 'react-native';
 import CardTag from './CardTag';
 import CardIconButton from './CardIconButton';
 import {uploadsUrl} from '../utils/variables';
-import {useUser} from '../hooks/ApiHooks';
+import {useTag, useUser} from '../hooks/ApiHooks';
 
 // Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
 const token =
@@ -14,15 +14,23 @@ const token =
 
 const CardItem = ({data}) => {
   const [postUser, setPostUser] = useState({});
+  const [postUserAvatar, setPostUserAvatar] = useState('');
   const {getUserById} = useUser();
-
+  const {getFilesByTag} = useTag();
   const getPostUser = async () => {
     const user = await getUserById(data.user_id, token);
     setPostUser(user);
   };
 
+  const loadAvatar = async () => {
+    const tag = 'avatar_' + data.user_id;
+    const files = await getFilesByTag(tag);
+    setPostUserAvatar(files?.pop()?.filename);
+  };
+
   useEffect(() => {
     getPostUser();
+    loadAvatar();
   }, []);
 
   return (
@@ -34,25 +42,25 @@ const CardItem = ({data}) => {
           <Avatar.Image
             {...props}
             size={50}
-            source={{uri: 'http://placekitten.com/200/300'}}
+            source={{
+              uri: postUserAvatar
+                ? uploadsUrl + postUserAvatar
+                : 'http://placekitten.com/200/300',
+            }}
           />
         )}
       />
       <Card.Cover
         style={styles.cardImage}
-        source={{uri: uploadsUrl + data.thumbnails.w160}}
+        source={{uri: uploadsUrl + data.thumbnails.w320}}
       />
       <CardIconButton dataId={data.file_id} />
       <Text variant="titleLarge">{data.title}</Text>
       <Text varient="bodyMedium">{data.description}</Text>
-      <View
-        style={{
-          flex: 1,
-          flexWrap: 'wrap',
-          flexDirection: 'row',
-          paddingTop: 16,
-        }}
-      >
+      <Text varient="bodySmall" style={styles.dateText}>
+        {new Date(data.time_added).toLocaleString('fi-FI')}
+      </Text>
+      <View style={styles.cardTagContainer}>
         <CardTag tag="#finland" />
         <CardTag tag="#espoo" />
         <CardTag tag="#vantaa" />
@@ -70,6 +78,17 @@ const styles = StyleSheet.create({
   },
   cardImage: {
     objectFit: 'cover',
+  },
+  cardTagContainer: {
+    flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    paddingTop: 16,
+  },
+  dateText: {
+    marginTop: 10,
+    fontSize: 11,
+    color: '#949494',
   },
 });
 
