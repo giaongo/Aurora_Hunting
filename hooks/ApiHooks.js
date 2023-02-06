@@ -35,6 +35,22 @@ const useMedia = () => {
   return mediaArray;
 };
 
+const useUser = () => {
+  const getUserById = async (userId, token) => {
+    const options = {
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(basesUrl + 'users/' + userId, options);
+    } catch (error) {
+      console.error('getUserByIdError', error);
+    }
+  };
+  return {getUserById};
+};
+
 const useFavourite = () => {
   const loadFavouritesByFileId = async (fileId) => {
     try {
@@ -99,4 +115,4 @@ const useRating = () => {
   return {loadRatingsByFileId};
 };
 
-export {useMedia, useFavourite, useComment, useRating};
+export {useMedia, useUser, useFavourite, useComment, useRating};
