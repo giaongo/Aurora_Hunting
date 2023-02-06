@@ -1,51 +1,77 @@
-import { Image, ImageBackground, StyleSheet, View, Text, SafeAreaView } from "react-native";
-import WallPaper from "../components/WallPaper";
+import { FlatList, Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Avatar, Divider, IconButton, List, MD3Colors, Text, Button } from "react-native-paper";
+import AvatarImage from "../components/Avatar";
+import Grid from "../components/Grid";
+import Imagebackground from "../components/Imagebackground";
+import Statistics from "../components/Statistics";
 
 const Profile = () => {
-    return (
+  return (
+      <ScrollView style={styles.container}>
+        <Imagebackground/>
+        <AvatarImage/>
+        <View style={styles.usernameContainer}>
+          <Text style={styles.username}>Username</Text>
+        </View>
+        <Statistics />
+        <View style={styles.buttonEidtProfileContainer}>
+          <Button
+            mode="contained"
+            onPress={() => console.log('Edit Profile')}
+            dark={true}
+            buttonColor={'#6adc99'}>
+            Edit Profile
+          </Button>
+        </View>
+        <View style={styles.buttonLogOutContainer}>
+          <Button
+            mode="contained"
+            onPress={() => console.log('Log out')}
+            dark={true}
+            buttonColor={'#6adc99'}>
+            Log out
+          </Button>
+        </View>
+        <Grid />
 
-        <SafeAreaView style={styles.container}>
-          <ImageBackground
-            source={{uri: 'http://placekitten.com/g/200/300'}}
-            resizeMethod='auto'
-            style={styles.backgroundImg}
-          />
-          <Image
-            source={{uri: 'https://placedog.net/500'}}
-            style={styles.image}
-          />
-          <Text style={styles.username}>Username goes here</Text>
-        </SafeAreaView>
+      </ScrollView>
 
-
-
-    );
+  );
 }
 
 const styles = StyleSheet.create({
   container:{
     flex:1,
     width:'100%',
-    justifyContent:'center',
-    alignItems:'center',
+    backgroundColor:'gray',
   },
-  backgroundImg: {
-    flex: 1,
-    width:'100%',
-    height:'50%',
-    opacity:'0.5'
-  },
-  image: {
-    height:150,
-    width:150,
-    borderRadius: 100,
+  usernameContainer:{
     position:'absolute',
-    top:'10%'
+    alignItems: 'center',
+    left:0,
+    right:0,
+    top:180
   },
-  username: {
-    position:'absolute'
+  username:{
+    fontSize:25,
+    color:'black',
+    fontWeight:'800'
+  },
+  buttonEidtProfileContainer:{
+    position:'absolute',
+    left:0,
+    right:0,
+    top:275,
+  },
+  buttonLogOutContainer:{
+    position:'absolute',
+    left:0,
+    right:10,
+    alignItems:'flex-end',
+    top:50
   }
 
 })
-
 export default Profile;
+
+

@@ -1,10 +1,16 @@
 import {SafeAreaView, StatusBar} from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import {StyleSheet, Text, View} from 'react-native';
 import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
 import Navigator from './navigators/Navigator';
 import {StyleSheet, Platform} from 'react-native';
+import EditProfile from './views/EditProfile';
+
+import Profile from './views/Profile';
+
 export default function App() {
   const theme = {
     ...DefaultTheme,
@@ -20,6 +26,7 @@ export default function App() {
       <SafeAreaView style={styles.AndroidSafeArea}>
         <Navigator></Navigator>
       </SafeAreaView>
+
     </PaperProvider>
   );
 }
