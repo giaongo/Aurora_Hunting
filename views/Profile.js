@@ -1,31 +1,27 @@
-<<<<<<< HEAD
-import { Image, ImageBackground, StyleSheet, View, Text } from "react-native";
+import { Image, ImageBackground, StyleSheet, View, Text, SafeAreaView } from "react-native";
 import WallPaper from "../components/WallPaper";
 
 const Profile = () => {
     return (
-      <>
-        <View style={styles.container}>
-          <ImageBackground 
-            source={{uri: 'http://placekitten.com/g/200/300'}} 
+
+        <SafeAreaView style={styles.container}>
+          <ImageBackground
+            source={{uri: 'http://placekitten.com/g/200/300'}}
             resizeMethod='auto'
-            style={styles.backgroundImg} 
+            style={styles.backgroundImg}
           />
-          <Image 
+          <Image
             source={{uri: 'https://placedog.net/500'}}
             style={styles.image}
           />
           <Text style={styles.username}>Username goes here</Text>
-        </View>
-        <View>
-
-        </View>
+        </SafeAreaView>
 
 
-      </>
+
     );
 }
- 
+
 const styles = StyleSheet.create({
   container:{
     flex:1,
@@ -53,27 +49,3 @@ const styles = StyleSheet.create({
 })
 
 export default Profile;
-=======
-import React from 'react';
-import {Text} from 'react-native-paper';
-import {StyleSheet, SafeAreaView} from 'react-native';
-const Profile = () => {
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text>Profile</Text>
-    </SafeAreaView>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 40,
-  },
-});
-
-export default Profile;
->>>>>>> b40e499b2645f06046ecfbf5a392797fbeeb05a2
