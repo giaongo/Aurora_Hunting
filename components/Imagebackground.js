@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   backgroundImg: {
     flex:1,
     width:'100%',
-    height:420,
+    height:350,
     opacity:'0.5',
   },
 })

@@ -20,11 +20,11 @@ const DATA = [
 const Statistics = () => {
   return (
     <View style={styles.statisticsContainer}>
-          {DATA.map((item) => {
+          {DATA.map((item,index) => {
             return(
-            <View style={styles.statisticsColumn}>
-              <Text style={styles.statisticsNumber}>{item.number}</Text>
-              <Text style={styles.statisticsContent}>{item.content}</Text>
+            <View style={styles.statisticsColumn} key={index}>
+              <Text   style={styles.statisticsNumber}>{item.number}</Text>
+              <Text   style={styles.statisticsContent}>{item.content}</Text>
             </View>
             )
           })}
@@ -35,23 +35,25 @@ const Statistics = () => {
 const styles = StyleSheet.create({
   statisticsContainer:{
     flex:1,
-    width:"100%",
     position:'absolute',
     flexDirection:'row',
     justifyContent:"space-evenly",
-    top:'40%',
+    alignItems:'center',
+    left:0,
+    right:0,
+    top: 220,
   },
   statisticsColumn:{
     flexDirection:'column',
-    alignItems:'center'
+    alignItems:'center',
   },
   statisticsNumber:{
-    fontSize:25,
+    fontSize:20,
     fontWeight:'800',
 
   },
   statisticsContent:{
-    fontSize:20,
+    fontSize:15,
     fontWeight:'800'
   },
 })

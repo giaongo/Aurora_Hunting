@@ -1,20 +1,26 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Avatar } from "react-native-paper";
 
 const AvatarImage = () => {
   return (
-    <Avatar.Image
+    <View style={styles.container}>
+      <Avatar.Image
       source={{uri: 'https://placedog.net/500'}}
-      style={styles.avatar}
-      size={120}
+      size={135}
     />
+    </View>
+
   );
 }
 
 const styles = StyleSheet.create({
-  avatar:{
+  container:{
     position:'absolute',
-    top:'15%'
-  }
+    alignItems:'center',
+    left:0,
+    right:0,
+    top:50
+  },
+
 })
 export default AvatarImage;

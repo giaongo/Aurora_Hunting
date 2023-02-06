@@ -4,6 +4,7 @@ import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
+import EditProfile from './views/EditProfile';
 
 import Profile from './views/Profile';
 
@@ -28,7 +29,8 @@ export default function App() {
         >
           Press me
         </Button> */}
-        <Profile/>
+        {/* <Profile/> */}
+        <EditProfile/>
       </View>
     </PaperProvider>
   );
