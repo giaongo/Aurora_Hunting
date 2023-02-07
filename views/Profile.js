@@ -14,7 +14,7 @@ const Profile = () => {
         <Text style={styles.username}>Username</Text>
       </View>
       <Statistics />
-      <View style={styles.buttonEidtProfileContainer}>
+      <View style={styles.buttonEditProfileContainer}>
         <Button
           mode="contained"
           onPress={() => console.log('Edit Profile')}
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-    backgroundColor: 'gray',
+    backgroundColor: '#212121',
   },
   usernameContainer: {
     position: 'absolute',
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: '800',
   },
-  buttonEidtProfileContainer: {
+  buttonEditProfileContainer: {
     position: 'absolute',
     left: 0,
     right: 0,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 10,
     alignItems: 'flex-end',
-    top: 50,
+    top: 25,
   },
 });
 export default Profile;
