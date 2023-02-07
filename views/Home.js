@@ -3,7 +3,7 @@ import {FlatList, StyleSheet, View} from 'react-native';
 import CardItem from '../components/CardItem';
 import {useMedia} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
-const HomePage = ({navigation}) => {
+const Home = ({navigation}) => {
   const mediaArray = useMedia();
   return (
     <View style={styles.container}>
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
   },
 });
 
-HomePage.propTypes = {
+Home.propTypes = {
   navigation: PropTypes.object,
 };
 
-export default HomePage;
+export default Home;

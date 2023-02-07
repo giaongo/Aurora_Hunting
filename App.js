@@ -6,9 +6,7 @@ import {
   Provider as PaperProvider,
 } from 'react-native-paper';
 import Navigator from './navigators/Navigator';
-import EditProfile from './views/EditProfile';
 
-import Profile from './views/Profile';
 
 export default function App() {
   const theme = {
