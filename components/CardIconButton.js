@@ -20,7 +20,7 @@ const CardIconButton = ({dataId, navigation}) => {
 
   // Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
   const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyODYzLCJ1c2VybmFtZSI6InBodW9uZ2dpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAyLTA0VDE4OjM0OjExLjAwMFoiLCJpYXQiOjE2NzU2Nzc5MDMsImV4cCI6MTY3NTc2NDMwM30.8oi_2f0Z_eNuPstjwJH_0S85QmSDz14KIlYEeAO5hzU';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNzAzLCJ1c2VybmFtZSI6IlRhaSBOZ3V5ZW4iLCJlbWFpbCI6InRhaS5uZ3V5ZW40QG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAxLTEzVDE0OjE3OjI2LjAwMFoiLCJpYXQiOjE2NzU3Njg3OTYsImV4cCI6MTY3NTg1NTE5Nn0.gtcSHXrePExqBOV92yZ2SEMPos9CZW58MKhdypHHN0M';
   const userId = 2863;
 
   const getFavouritesByFileId = async () => {
@@ -81,7 +81,7 @@ const CardIconButton = ({dataId, navigation}) => {
         size={30}
         iconColor="#E0E0E0"
         onPress={() => {
-          navigation.navigate('Comment');
+          navigation.navigate('Comment', dataId);
         }}
       />
       <Text>{commentArray.length || 0}</Text>

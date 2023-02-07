@@ -7,7 +7,7 @@ import Upload from '../views/Upload';
 import Profile from '../views/Profile';
 import Single from '../views/Single';
 import Comment from '../views/Comment';
-import HomeScreen from '../views/Home';
+import Home from '../views/Home';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -29,7 +29,7 @@ const TabScreen = () => {
     >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={Home}
         options={{
           tabBarIcon: ({color}) => (
             <Avatar.Icon
@@ -86,7 +86,7 @@ const TabScreen = () => {
 const StackScreen = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Aurora Hunting" component={TabScreen} />
+      <Stack.Screen name="Aurora_Hunting" component={TabScreen} />
       <Stack.Screen name="Comment" component={Comment} />
       <Stack.Screen name="Single" component={Single} />
     </Stack.Navigator>

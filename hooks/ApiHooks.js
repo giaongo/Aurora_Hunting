@@ -101,7 +101,37 @@ const useComment = () => {
       console.error('getCommentError', error);
     }
   };
-  return {loadCommentsByFileId};
+
+  const postComments = async (token, fileId, comment) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type' :'application/json',
+      },
+      body: JSON.stringify({fileId, comment})
+    };
+    try {
+      return await doFetch(baseUrl + 'comments', options);
+    } catch (error) {
+      console.error('postComments: ', error);
+    }
+  };
+
+  const deleteComments = async(token, commentId) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'comments/' + commentId, options);
+    } catch (error) {
+      console.error('deleteComments: ', error);
+    }
+  }
+  return {loadCommentsByFileId, postComments, deleteComments};
 };
 
 const useRating = () => {
