@@ -10,7 +10,7 @@ import {useTag, useUser} from '../hooks/ApiHooks';
 
 // Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyODYzLCJ1c2VybmFtZSI6InBodW9uZ2dpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAyLTA0VDE4OjM0OjExLjAwMFoiLCJpYXQiOjE2NzU2ODM4MTIsImV4cCI6MTY3NTc3MDIxMn0.htJcCWg9EKF98AMTTTYCrXtWgw6iFnK5p_kPJPw63aA';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyODYzLCJ1c2VybmFtZSI6InBodW9uZ2dpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAyLTA0VDE4OjM0OjExLjAwMFoiLCJpYXQiOjE2NzU3NzA1MTksImV4cCI6MTY3NTg1NjkxOX0.nTGqZfmh8ot8TWvboO7bracJUTUJ4xHmCaN8lpJ-nXY';
 
 const CardItem = ({data, navigation}) => {
   const [postUser, setPostUser] = useState({});
