@@ -18,9 +18,11 @@ import {
 } from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
+import {Video} from 'expo-av';
 
 const Upload = () => {
   const [mediaFile, setMediaFile] = useState(null);
+  const video = React.useRef(null);
   const {
     control,
     formState: {errors},
@@ -59,6 +61,19 @@ const Upload = () => {
         >
           <Card mode="contained" style={{borderRadius: '0'}}>
             <View style={styles.cardUploadContainer}>
+              {mediaFile && (
+                <View
+                  style={{position: 'absolute', right: 0, top: 0, zIndex: 10}}
+                >
+                  <IconButton
+                    icon="close-thick"
+                    size={22}
+                    iconColor="white"
+                    containerColor="#bf2c2c"
+                    onPress={() => setMediaFile(null)}
+                  />
+                </View>
+              )}
               {!mediaFile ? (
                 <View style={styles.cardUpload}>
                   <IconButton
@@ -79,7 +94,17 @@ const Upload = () => {
                   style={{height: '100%'}}
                 />
               ) : (
-                <Text>Video</Text>
+                <Video
+                  ref={video}
+                  style={{height: '100%'}}
+                  source={{uri: mediaFile?.uri}}
+                  useNativeControls
+                  resizeMode="contain"
+                  isLooping
+                  onError={(error) => {
+                    console.error('videoError', error);
+                  }}
+                />
               )}
             </View>
 
@@ -166,7 +191,7 @@ const Upload = () => {
                     label="Location Tag (separate wtih commas)"
                     mode="outlined"
                     textColor="#212121"
-                    placeholder="(Eg: Pohjoisranta, Rovaniemi) "
+                    placeholder="Eg: Pohjoisranta, Rovaniemi"
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
@@ -209,7 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#212121',
   },
   cardUploadContainer: {
-    height: 190,
+    height: 200,
     borderWidth: 3,
     borderStyle: 'dashed',
     marginHorizontal: 16,

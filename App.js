@@ -1,5 +1,4 @@
-import {SafeAreaView} from 'react-native';
-import {StatusBar} from 'expo-status-bar';
+import {SafeAreaView, StatusBar} from 'react-native';
 import {StyleSheet, Platform} from 'react-native';
 import {
   MD3LightTheme as DefaultTheme,
