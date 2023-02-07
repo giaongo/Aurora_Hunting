@@ -86,7 +86,7 @@ const TabScreen = () => {
 const StackScreen = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={TabScreen} />
+      <Stack.Screen name="Aurora Hunting" component={TabScreen} />
       <Stack.Screen name="Comment" component={Comment} />
       <Stack.Screen name="Single" component={Single} />
     </Stack.Navigator>
