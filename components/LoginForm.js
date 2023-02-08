@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useContext} from 'react';
 import {Controller, useForm} from 'react-hook-form';
-import {Button, Card, Text, TextInput} from 'react-native-paper';
+import {StyleSheet, View} from 'react-native';
+import {Button, TextInput} from 'react-native-paper';
 import {MainContext} from '../contexts/MainContext';
 import {useAuthentication} from '../hooks/ApiHooks';
 
@@ -30,14 +31,15 @@ const LoginForm = () => {
   };
 
   return (
-    <Card>
-      <Text>Login Form</Text>
+    <View>
       <Controller
         control={control}
         rules={{required: {value: true, message: 'is required'}}}
         render={({field: {onChange, onBlur, value}}) => (
           <TextInput
+            style={styles.form}
             placeholder="Username"
+            mode="outlined"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -52,7 +54,9 @@ const LoginForm = () => {
         rules={{required: {value: true, message: 'is required'}}}
         render={({field: {onChange, onBlur, value}}) => (
           <TextInput
+            style={styles.form}
             placeholder="Password"
+            mode="outlined"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -63,6 +67,7 @@ const LoginForm = () => {
         name="password"
       />
       <Button
+        style={styles.button}
         icon="login"
         mode="contained"
         buttonColor="#A5C132"
@@ -70,8 +75,20 @@ const LoginForm = () => {
       >
         Login
       </Button>
-    </Card>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  form: {
+    marginHorizontal: 60,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  button: {
+    marginHorizontal: 60,
+    marginVertical: 80,
+  },
+});
 
 export default LoginForm;

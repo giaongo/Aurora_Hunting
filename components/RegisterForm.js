@@ -1,5 +1,6 @@
 import {Controller, useForm} from 'react-hook-form';
-import {Button, Card, Text, TextInput} from 'react-native-paper';
+import {StyleSheet, View} from 'react-native';
+import {Button, TextInput} from 'react-native-paper';
 import {useUser} from '../hooks/ApiHooks';
 
 const RegisterForm = (props) => {
@@ -43,13 +44,14 @@ const RegisterForm = (props) => {
   };
 
   return (
-    <Card>
-      <Text>Registration Form</Text>
+    <View>
       <Controller
         control={control}
         rules={{minLength: {value: 3, message: 'must be at least 3 chars'}}}
         render={({field: {onChange, onBlur, value}}) => (
           <TextInput
+            style={styles.form}
+            mode="outlined"
             placeholder="Full name"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -74,6 +76,8 @@ const RegisterForm = (props) => {
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <TextInput
+            style={styles.form}
+            mode="outlined"
             placeholder="Username"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -96,6 +100,8 @@ const RegisterForm = (props) => {
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <TextInput
+            style={styles.form}
+            mode="outlined"
             placeholder="Email"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -121,6 +127,8 @@ const RegisterForm = (props) => {
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <TextInput
+            style={styles.form}
+            mode="outlined"
             placeholder="Password"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -145,6 +153,8 @@ const RegisterForm = (props) => {
         }}
         render={({field: {onChange, onBlur, value}}) => (
           <TextInput
+            style={styles.form}
+            mode="outlined"
             placeholder="Confirm password"
             onBlur={onBlur}
             onChangeText={onChange}
@@ -162,12 +172,30 @@ const RegisterForm = (props) => {
         icon="account-plus"
         mode="contained"
         buttonColor="#A5C132"
+        style={styles.button}
         onPress={handleSubmit(register)}
       >
         Register
       </Button>
-    </Card>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  form: {
+    marginTop: 8,
+    marginHorizontal: 60,
+    textAlign: 'center',
+  },
+  button: {
+    marginHorizontal: 60,
+    margin: 10,
+    marginVertical: 18,
+  },
+  card: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
 
 export default RegisterForm;

@@ -5,7 +5,14 @@ import RegisterForm from '../components/RegisterForm';
 import SwitchSelector from 'react-native-switch-selector';
 import * as React from 'react';
 import {useContext, useEffect, useState} from 'react';
-import {Keyboard, ScrollView, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  Keyboard,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Card} from 'react-native-paper';
 import {MainContext} from '../contexts/MainContext';
 import {useUser} from '../hooks/ApiHooks';
@@ -41,7 +48,14 @@ const Login = ({navigation}) => {
       <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
         <Card>
           <View>
+            <Image
+              source={require('../assets/logo.png')}
+              style={styles.imageContainer}
+            />
+          </View>
+          <View>
             <SwitchSelector
+              style={styles.switchButton}
               options={options}
               initial={0}
               buttonColor={'#A5C132'}
@@ -57,6 +71,19 @@ const Login = ({navigation}) => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  imageContainer: {
+    margin: 50,
+    width: 140,
+    height: 190,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+  switchButton: {
+    marginHorizontal: 60,
+  },
+});
 
 Login.propTypes = {
   navigation: PropTypes.object,
