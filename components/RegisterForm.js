@@ -1,6 +1,6 @@
 import {Controller, useForm} from 'react-hook-form';
 import {StyleSheet, View} from 'react-native';
-import {Button, TextInput} from 'react-native-paper';
+import {Button, HelperText, TextInput} from 'react-native-paper';
 import {useUser} from '../hooks/ApiHooks';
 
 const RegisterForm = (props) => {
@@ -49,17 +49,24 @@ const RegisterForm = (props) => {
         control={control}
         rules={{minLength: {value: 3, message: 'must be at least 3 chars'}}}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={styles.form}
-            mode="outlined"
-            placeholder="Full name"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            secureTextEntry={true}
-            autoCapitalize="words"
-            errorMessage={errors.full_name && errors.full_name.message}
-          />
+          <>
+            <TextInput
+              style={styles.form}
+              mode="outlined"
+              placeholder="Full name"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              secureTextEntry={true}
+              autoCapitalize="words"
+              errorMessage={errors.full_name && errors.full_name.message}
+            />
+            {errors.full_name && errors.full_name.message ? (
+              <HelperText type="error" visible={true} style={styles.errorText}>
+                {errors.full_name.message}
+              </HelperText>
+            ) : null}
+          </>
         )}
         name="full_name"
       />
@@ -75,16 +82,23 @@ const RegisterForm = (props) => {
           validate: checkUser,
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={styles.form}
-            mode="outlined"
-            placeholder="Username"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            autoCapitalize="none"
-            errorMessage={errors.username && errors.username.message}
-          />
+          <>
+            <TextInput
+              style={styles.form}
+              mode="outlined"
+              placeholder="Username"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize="none"
+              errorMessage={errors.username && errors.username.message}
+            />
+            {errors.username && errors.username.message ? (
+              <HelperText type="error" visible={true} style={styles.errorText}>
+                {errors.username.message}
+              </HelperText>
+            ) : null}
+          </>
         )}
         name="username"
       />
@@ -99,16 +113,23 @@ const RegisterForm = (props) => {
           },
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={styles.form}
-            mode="outlined"
-            placeholder="Email"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            autoCapitalize="none"
-            errorMessage={errors.email && errors.email.message}
-          />
+          <>
+            <TextInput
+              style={styles.form}
+              mode="outlined"
+              placeholder="Email"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize="none"
+              errorMessage={errors.email && errors.email.message}
+            />
+            {errors.email && errors.email.message ? (
+              <HelperText type="error" visible={true} style={styles.errorText}>
+                {errors.email.message}
+              </HelperText>
+            ) : null}
+          </>
         )}
         name="email"
       />
@@ -126,16 +147,23 @@ const RegisterForm = (props) => {
           },
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={styles.form}
-            mode="outlined"
-            placeholder="Password"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            secureTextEntry={true}
-            errorMessage={errors.password && errors.password.message}
-          />
+          <>
+            <TextInput
+              style={styles.form}
+              mode="outlined"
+              placeholder="Password"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              secureTextEntry={true}
+              errorMessage={errors.password && errors.password.message}
+            />
+            {errors.password && errors.password.message ? (
+              <HelperText type="error" visible={true} style={styles.errorText}>
+                {errors.password.message}
+              </HelperText>
+            ) : null}
+          </>
         )}
         name="password"
       />
@@ -152,18 +180,25 @@ const RegisterForm = (props) => {
           },
         }}
         render={({field: {onChange, onBlur, value}}) => (
-          <TextInput
-            style={styles.form}
-            mode="outlined"
-            placeholder="Confirm password"
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-            secureTextEntry={true}
-            errorMessage={
-              errors.confirmPassword && errors.confirmPassword.message
-            }
-          />
+          <>
+            <TextInput
+              style={styles.form}
+              mode="outlined"
+              placeholder="Confirm password"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              secureTextEntry={true}
+              errorMessage={
+                errors.confirmPassword && errors.confirmPassword.message
+              }
+            />
+            {errors.confirmPassword && errors.confirmPassword.message ? (
+              <HelperText type="error" visible={true} style={styles.errorText}>
+                {errors.confirmPassword.message}
+              </HelperText>
+            ) : null}
+          </>
         )}
         name="confirmPassword"
       />
@@ -191,10 +226,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 60,
     margin: 10,
     marginVertical: 18,
+    cursor: 'pointer',
   },
   card: {
     flex: 1,
     justifyContent: 'center',
+  },
+  errorText: {
+    textAlign: 'center',
   },
 });
 
