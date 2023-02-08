@@ -1,11 +1,10 @@
-import {SafeAreaView} from 'react-native';
-import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View, Platform} from 'react-native';
+import {Platform, SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
 import Navigator from './navigators/Navigator';
+import {MainProvider} from './contexts/MainContext';
 
 export default function App() {
   const theme = {
@@ -18,10 +17,12 @@ export default function App() {
   };
   return (
     <PaperProvider theme={theme}>
-      <StatusBar />
-      <SafeAreaView style={styles.AndroidSafeArea}>
-        <Navigator></Navigator>
-      </SafeAreaView>
+      <MainProvider>
+        <StatusBar />
+        <SafeAreaView style={styles.AndroidSafeArea}>
+          <Navigator></Navigator>
+        </SafeAreaView>
+      </MainProvider>
     </PaperProvider>
   );
 }
