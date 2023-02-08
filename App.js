@@ -1,11 +1,11 @@
-import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, View} from 'react-native';
+// import {StatusBar} from 'expo-status-bar';
+import {Platform, SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
-
-import { Button } from 'react-native-paper';
+import Navigator from './navigators/Navigator';
+import {MainProvider} from './contexts/MainContext';
 
 export default function App() {
   const theme = {
@@ -18,26 +18,20 @@ export default function App() {
   };
   return (
     <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <StatusBar style="auto" />
-        <Button
-          icon="camera"
-          mode="contained"
-          onPress={() => console.log('Pressed')}
-        >
-          Press me
-        </Button>
-      </View>
+      <MainProvider>
+        <StatusBar />
+        <SafeAreaView style={styles.AndroidSafeArea}>
+          <Navigator></Navigator>
+        </SafeAreaView>
+      </MainProvider>
     </PaperProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  AndroidSafeArea: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? 30 : 0,
+    backgroundColor: '#212121',
   },
 });
