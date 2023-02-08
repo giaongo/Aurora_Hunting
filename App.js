@@ -3,8 +3,8 @@ import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
-import Navigator from './navigators/Navigator';
 import {MainProvider} from './contexts/MainContext';
+import Navigator from './navigators/Navigator';
 
 export default function App() {
   const theme = {

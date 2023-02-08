@@ -35,22 +35,6 @@ const useMedia = () => {
   return mediaArray;
 };
 
-const useUser = () => {
-  const getUserById = async (userId, token) => {
-    const options = {
-      headers: {
-        'x-access-token': token,
-      },
-    };
-    try {
-      return await doFetch(baseUrl + 'users/' + userId, options);
-    } catch (error) {
-      console.error('getUserByIdError', error);
-    }
-  };
-  return {getUserById};
-};
-
 const useFavourite = () => {
   const loadFavouritesByFileId = async (fileId) => {
     try {
@@ -145,7 +129,7 @@ const useAuthentication = () => {
   return {postLogin};
 };
 
-const checkUser = () => {
+const useUser = () => {
   const getUserByToken = async (token) => {
     const options = {
       method: 'GET',
@@ -204,5 +188,4 @@ export {
   useRating,
   useTag,
   useAuthentication,
-  checkUser,
 };
