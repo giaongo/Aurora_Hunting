@@ -4,7 +4,7 @@ import CardItem from '../components/CardItem';
 import {useMedia} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 const Home = ({navigation}) => {
-  const mediaArray = useMedia();
+  const {mediaArray} = useMedia();
   return (
     <View style={styles.container}>
       <FlatList

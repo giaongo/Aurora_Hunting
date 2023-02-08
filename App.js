@@ -4,6 +4,7 @@ import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
+import {MainProvider} from './contexts/MainContext';
 import Navigator from './navigators/Navigator';
 
 export default function App() {
@@ -17,10 +18,12 @@ export default function App() {
   };
   return (
     <PaperProvider theme={theme}>
-      <StatusBar />
-      <SafeAreaView style={styles.AndroidSafeArea}>
-        <Navigator></Navigator>
-      </SafeAreaView>
+      <MainProvider>
+        <StatusBar />
+        <SafeAreaView style={styles.AndroidSafeArea}>
+          <Navigator></Navigator>
+        </SafeAreaView>
+      </MainProvider>
     </PaperProvider>
   );
 }

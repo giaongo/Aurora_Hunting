@@ -19,9 +19,18 @@ import {
 import {Controller, useForm} from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
 import {Video} from 'expo-av';
+import {useMedia, useTag} from '../hooks/ApiHooks';
+import {appId} from '../utils/variables';
+import PropTypes from 'prop-types';
 
-const Upload = () => {
+// Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyODYzLCJ1c2VybmFtZSI6InBodW9uZ2dpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAyLTA0VDE4OjM0OjExLjAwMFoiLCJpYXQiOjE2NzU4NjMwNDgsImV4cCI6MTY3NTk0OTQ0OH0.Y6u5OSxxtenZRU2xq5XeynMBv-K-EXQk25V0RB3QB0U';
+
+const Upload = ({navigation}) => {
   const [mediaFile, setMediaFile] = useState(null);
+  const {postMedia} = useMedia();
+  const {postTag} = useTag();
   const video = React.useRef(null);
   const {
     control,
@@ -50,7 +59,33 @@ const Upload = () => {
   };
 
   const uploadFile = async (uploadData) => {
-    console.log('upload data', uploadData);
+    const formData = new FormData();
+    formData.append('description', uploadData.description);
+    formData.append('title', uploadData.title);
+    const mediaFileName = mediaFile.uri.split('/').pop();
+    let mediaFileExt = mediaFileName.split('.').pop();
+    if (mediaFileExt === 'jpg') mediaFileExt = 'jpeg';
+    const mimeType = mediaFile.type + '/' + mediaFileExt;
+    formData.append('file', {
+      uri: mediaFile.uri,
+      name: mediaFileName,
+      type: mimeType,
+    });
+    try {
+      const mediaUploadResult = await postMedia(formData, token);
+      const locationTags = uploadData.locationTag
+        .split(',')
+        .map((tag) => '_location_' + tag.trim().toLowerCase());
+      const tagsToUpload = [...locationTags, '_media'];
+      const tagsUploadResult = await Promise.all(
+        tagsToUpload.map(async (tag) => {
+          return await postTag(mediaUploadResult.file_id, appId + tag, token);
+        })
+      );
+      console.log('tagUploadResult', tagsUploadResult);
+    } catch (error) {
+      console.error('uploadFileError', error);
+    }
   };
 
   return (
@@ -259,5 +294,7 @@ const styles = StyleSheet.create({
     margin: 16,
   },
 });
-
+Upload.propTypes = {
+  navigation: PropTypes.object,
+};
 export default Upload;
