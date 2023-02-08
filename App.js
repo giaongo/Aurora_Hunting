@@ -7,7 +7,6 @@ import {
 } from 'react-native-paper';
 import Navigator from './navigators/Navigator';
 
-
 export default function App() {
   const theme = {
     ...DefaultTheme,
@@ -23,7 +22,6 @@ export default function App() {
       <SafeAreaView style={styles.AndroidSafeArea}>
         <Navigator></Navigator>
       </SafeAreaView>
-
     </PaperProvider>
   );
 }
