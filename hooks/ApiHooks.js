@@ -123,6 +123,20 @@ const useTag = () => {
       console.error('getFilesByTagError', error);
     }
   };
-  return {getFilesByTag};
+  const postTag = async (fileId, tag, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+      },
+      body: JSON.stringify({file_id: fileId, tag}),
+    };
+    try {
+      return await doFetch(baseUrl + 'tags', options);
+    } catch (error) {
+      console.error('postTagError', error);
+    }
+  };
+  return {getFilesByTag, postTag};
 };
 export {useMedia, useUser, useFavourite, useComment, useRating, useTag};

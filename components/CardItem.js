@@ -18,14 +18,22 @@ const CardItem = ({data, navigation}) => {
   const {getUserById} = useUser();
   const {getFilesByTag} = useTag();
   const getPostUser = async () => {
-    const user = await getUserById(data.user_id, token);
-    setPostUser(user);
+    try {
+      const user = await getUserById(data.user_id, token);
+      setPostUser(user);
+    } catch (error) {
+      console.error('getPostUserError', error);
+    }
   };
 
   const loadAvatar = async () => {
-    const tag = 'avatar_' + data.user_id;
-    const files = await getFilesByTag(tag);
-    setPostUserAvatar(files?.pop()?.filename);
+    try {
+      const tag = 'avatar_' + data.user_id;
+      const files = await getFilesByTag(tag);
+      setPostUserAvatar(files?.pop()?.filename);
+    } catch (error) {
+      console.error('loadAvatarError', error);
+    }
   };
 
   useEffect(() => {
