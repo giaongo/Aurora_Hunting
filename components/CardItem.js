@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Avatar, Card, Text} from 'react-native-paper';
 import {StyleSheet} from 'react-native';
@@ -7,16 +7,16 @@ import CardTag from './CardTag';
 import CardIconButton from './CardIconButton';
 import {uploadsUrl} from '../utils/variables';
 import {useTag, useUser} from '../hooks/ApiHooks';
-import {MainContext} from '../contexts/MainContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CardItem = ({data, navigation}) => {
   const [postUser, setPostUser] = useState({});
   const [postUserAvatar, setPostUserAvatar] = useState('');
-  const {userToken} = useContext(MainContext);
   const {getUserById} = useUser();
   const {getFilesByTag} = useTag();
   const getPostUser = async () => {
     try {
+      const userToken = await AsyncStorage.getItem('userToken');
       const user = await getUserById(data.user_id, userToken);
       setPostUser(user);
     } catch (error) {
