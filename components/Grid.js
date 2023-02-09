@@ -1,12 +1,4 @@
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import {List} from 'react-native-paper';
+import {Image, StyleSheet, View, TouchableOpacity} from 'react-native';
 
 // Sample Data
 const northernLights = [

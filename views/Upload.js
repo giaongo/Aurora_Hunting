@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Card,
   IconButton,
@@ -22,13 +22,11 @@ import {Video} from 'expo-av';
 import {useMedia, useTag} from '../hooks/ApiHooks';
 import {appId} from '../utils/variables';
 import PropTypes from 'prop-types';
-
-// Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyODYzLCJ1c2VybmFtZSI6InBodW9uZ2dpYW8iLCJlbWFpbCI6ImdpYW8ubmdvQG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAyLTA0VDE4OjM0OjExLjAwMFoiLCJpYXQiOjE2NzU4NjMwNDgsImV4cCI6MTY3NTk0OTQ0OH0.Y6u5OSxxtenZRU2xq5XeynMBv-K-EXQk25V0RB3QB0U';
+import {MainContext} from '../contexts/MainContext';
 
 const Upload = ({navigation}) => {
   const [mediaFile, setMediaFile] = useState(null);
+  const {userToken} = useContext(MainContext);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
@@ -72,14 +70,18 @@ const Upload = ({navigation}) => {
       type: mimeType,
     });
     try {
-      const mediaUploadResult = await postMedia(formData, token);
+      const mediaUploadResult = await postMedia(formData, userToken);
       const locationTags = uploadData.locationTag
         .split(',')
         .map((tag) => '_location_' + tag.trim().toLowerCase());
       const tagsToUpload = [...locationTags, '_media'];
       const tagsUploadResult = await Promise.all(
         tagsToUpload.map(async (tag) => {
-          return await postTag(mediaUploadResult.file_id, appId + tag, token);
+          return await postTag(
+            mediaUploadResult.file_id,
+            appId + tag,
+            userToken
+          );
         })
       );
       console.log('tagUploadResult', tagsUploadResult);

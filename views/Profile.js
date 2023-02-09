@@ -1,11 +1,15 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useContext} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Text, Button} from 'react-native-paper';
 import AvatarImage from '../components/Avatar';
 import Grid from '../components/Grid';
 import Imagebackground from '../components/Imagebackground';
 import Statistics from '../components/Statistics';
+import {MainContext} from '../contexts/MainContext';
 
 const Profile = () => {
+  const {setUser, setIsLoggedIn} = useContext(MainContext);
   return (
     <ScrollView style={styles.container}>
       <Imagebackground />
@@ -27,7 +31,16 @@ const Profile = () => {
       <View style={styles.buttonLogOutContainer}>
         <Button
           mode="contained"
-          onPress={() => console.log('Log out')}
+          onPress={async () => {
+            console.log('Logging out');
+            setUser({});
+            setIsLoggedIn(false);
+            try {
+              await AsyncStorage.clear();
+            } catch (error) {
+              console.error('clearing asyncstorage failed', error);
+            }
+          }}
           dark={true}
           buttonColor={'#6adc99'}
         >
