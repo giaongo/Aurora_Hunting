@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {Card, HelperText, TextInput, Button} from 'react-native-paper';
 import {
   StyleSheet,
@@ -9,12 +9,14 @@ import {
   Keyboard,
   View,
   TouchableWithoutFeedback,
+  Text,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Video} from 'expo-av';
 import {uploadsUrl} from '../utils/variables';
 import {Controller, useForm} from 'react-hook-form';
 import {useHeaderHeight} from '@react-navigation/elements';
+import {useTag} from '../hooks/ApiHooks';
 
 const Modify = ({route}) => {
   const {
@@ -33,6 +35,21 @@ const Modify = ({route}) => {
     defaultValues: {title: title, description: description},
     mode: 'onBlur',
   });
+  const {getAndFilterAllTagsByFileId} = useTag();
+  const [locationTags, setLocationTags] = useState([]);
+
+  const loadFilterdTags = async () => {
+    try {
+      const tags = await getAndFilterAllTagsByFileId(fileId);
+      setLocationTags(tags);
+    } catch (error) {
+      console.error('loadFilterTagsError', error);
+    }
+  };
+
+  useEffect(() => {
+    loadFilterdTags();
+  }, []);
 
   const modifyFile = () => {
     console.log('Modifyfile');
@@ -68,7 +85,7 @@ const Modify = ({route}) => {
             ) : (
               <Video
                 ref={video}
-                style={{height: 350}}
+                style={{height: 250}}
                 source={{uri: uploadsUrl + filename}}
                 useNativeControls
                 resizeMode="contain"
@@ -147,6 +164,18 @@ const Modify = ({route}) => {
                   )}
                   name="description"
                 />
+                <View style={styles.cardTagContainer}>
+                  {locationTags &&
+                    locationTags?.map((tag, index) => {
+                      return (
+                        <Card key={index} style={styles.cardTag}>
+                          <Text variant="titleSmall" style={styles.cardTagText}>
+                            {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
+                          </Text>
+                        </Card>
+                      );
+                    })}
+                </View>
                 <Card.Content>
                   <Button
                     mode="contained"
@@ -170,7 +199,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     width: '100%',
-    height: 200,
+    height: 250,
   },
   input: {
     marginHorizontal: 8,
@@ -184,6 +213,22 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 30,
     margin: 20,
+  },
+  cardTagContainer: {
+    paddingTop: 8,
+    flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+  },
+  cardTag: {
+    backgroundColor: '#2C3539',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 8,
+    marginRight: 18,
+  },
+  cardTagText: {
+    color: '#DAA520',
   },
 });
 

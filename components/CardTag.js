@@ -3,37 +3,35 @@ import PropTypes from 'prop-types';
 import {Text, Card} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import {useTag} from '../hooks/ApiHooks';
-import {appId} from '../utils/variables';
 
 const CardTag = ({dataId}) => {
-  const [locationTags, setLocationTags] = useState(null);
-  const {getAllTagsByFileId} = useTag();
+  const [locationTags, setLocationTags] = useState([]);
+  const {getAndFilterAllTagsByFileId} = useTag();
 
-  const loadAllTagsByFileId = async () => {
-    const allTags = await getAllTagsByFileId(dataId);
-    const regex = new RegExp(`${appId}_location_`, 'g');
-    const locationTags = allTags
-      .filter((tagData) => tagData.tag.match(regex))
-      .map((tagData) => tagData.tag.split('_').pop());
-
-    setLocationTags(locationTags);
+  const loadFilterdTags = async () => {
+    try {
+      const tags = await getAndFilterAllTagsByFileId(dataId);
+      setLocationTags(tags);
+    } catch (error) {
+      console.error('loadFilterTagsError', error);
+    }
   };
-
   useEffect(() => {
-    loadAllTagsByFileId();
+    loadFilterdTags();
   }, []);
 
   return (
     <View style={styles.cardTagContainer}>
-      {locationTags?.map((tag, index) => {
-        return (
-          <Card key={index} style={styles.cardTag}>
-            <Text variant="titleSmall" style={styles.cardTagText}>
-              {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
-            </Text>
-          </Card>
-        );
-      })}
+      {locationTags &&
+        locationTags?.map((tag, index) => {
+          return (
+            <Card key={index} style={styles.cardTag}>
+              <Text variant="titleSmall" style={styles.cardTagText}>
+                {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
+              </Text>
+            </Card>
+          );
+        })}
     </View>
   );
 };

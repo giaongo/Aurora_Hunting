@@ -148,7 +148,25 @@ const useTag = () => {
       throw new Error('getAllTagsByFileIdError: ' + error.message);
     }
   };
-  return {getFilesByTag, postTag, getAllTagsByFileId};
+  const getAndFilterAllTagsByFileId = async (dataId) => {
+    try {
+      const allTags = await getAllTagsByFileId(dataId);
+      const regex = new RegExp(`${appId}_location_`, 'g');
+      const locationTags = allTags
+        .filter((tagData) => tagData.tag.match(regex))
+        .map((tagData) => tagData.tag.split('_').pop());
+
+      return locationTags;
+    } catch (error) {
+      throw new Error('getAndFilterAllTagsByFileIdError: ' + error.message);
+    }
+  };
+  return {
+    getFilesByTag,
+    postTag,
+    getAllTagsByFileId,
+    getAndFilterAllTagsByFileId,
+  };
 };
 
 const useAuthentication = () => {
