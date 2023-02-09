@@ -71,9 +71,7 @@ const CardItem = ({data, navigation}) => {
         {new Date(data.time_added).toLocaleString('fi-FI')}
       </Text>
       <View style={styles.cardTagContainer}>
-        <CardTag tag="#finland" />
-        <CardTag tag="#espoo" />
-        <CardTag tag="#vantaa" />
+        <CardTag dataId={data.file_id} />
       </View>
     </Card>
   );
