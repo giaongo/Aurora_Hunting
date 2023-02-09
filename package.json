@@ -26,6 +26,7 @@
     "react-native-screens": "~3.18.0",
     "expo-image-picker": "~14.0.2",
     "expo-av": "~13.0.2"
+    "react-native-switch-selector": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

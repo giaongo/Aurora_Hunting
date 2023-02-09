@@ -1,5 +1,4 @@
-import {SafeAreaView, StatusBar} from 'react-native';
-import {StyleSheet, Platform} from 'react-native';
+import {Platform, SafeAreaView, StyleSheet, StatusBar} from 'react-native';
 import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
