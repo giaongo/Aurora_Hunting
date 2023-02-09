@@ -7,7 +7,7 @@ import Upload from '../views/Upload';
 import Profile from '../views/Profile';
 import Single from '../views/Single';
 import Comment from '../views/Comment';
-import HomeScreen from '../views/Home';
+import Home from '../views/Home';
 import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 
