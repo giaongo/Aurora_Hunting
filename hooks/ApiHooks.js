@@ -32,7 +32,24 @@ const useMedia = () => {
   useEffect(() => {
     loadMedia();
   }, []);
-  return mediaArray;
+
+  const postMedia = async (fileData, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'multipart/form-data',
+      },
+      body: fileData,
+    };
+    try {
+      return await doFetch(baseUrl + 'media', options);
+    } catch (error) {
+      console.error('postMediaError', error);
+    }
+  };
+
+  return {mediaArray, postMedia};
 };
 
 const useFavourite = () => {
@@ -137,7 +154,22 @@ const useTag = () => {
       console.error('getFilesByTagError', error);
     }
   };
-  return {getFilesByTag};
+  const postTag = async (fileId, tag, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({file_id: fileId, tag: tag}),
+    };
+    try {
+      return await doFetch(baseUrl + 'tags', options);
+    } catch (error) {
+      console.error('postTagError', error);
+    }
+  };
+  return {getFilesByTag, postTag};
 };
 
 const useAuthentication = () => {

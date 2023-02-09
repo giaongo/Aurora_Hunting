@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Avatar, Card, Text} from 'react-native-paper';
 import {StyleSheet} from 'react-native';
@@ -7,25 +7,31 @@ import CardTag from './CardTag';
 import CardIconButton from './CardIconButton';
 import {uploadsUrl} from '../utils/variables';
 import {useTag, useUser} from '../hooks/ApiHooks';
-
-// Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNzAzLCJ1c2VybmFtZSI6IlRhaSBOZ3V5ZW4iLCJlbWFpbCI6InRhaS5uZ3V5ZW40QG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAxLTEzVDE0OjE3OjI2LjAwMFoiLCJpYXQiOjE2NzU3Njg3OTYsImV4cCI6MTY3NTg1NTE5Nn0.gtcSHXrePExqBOV92yZ2SEMPos9CZW58MKhdypHHN0M';
+import {MainContext} from '../contexts/MainContext';
 
 const CardItem = ({data, navigation}) => {
   const [postUser, setPostUser] = useState({});
   const [postUserAvatar, setPostUserAvatar] = useState('');
+  const {userToken} = useContext(MainContext);
   const {getUserById} = useUser();
   const {getFilesByTag} = useTag();
   const getPostUser = async () => {
-    const user = await getUserById(data.user_id, token);
-    setPostUser(user);
+    try {
+      const user = await getUserById(data.user_id, userToken);
+      setPostUser(user);
+    } catch (error) {
+      console.error('getPostUserError', error);
+    }
   };
 
   const loadAvatar = async () => {
-    const tag = 'avatar_' + data.user_id;
-    const files = await getFilesByTag(tag);
-    setPostUserAvatar(files?.pop()?.filename);
+    try {
+      const tag = 'avatar_' + data.user_id;
+      const files = await getFilesByTag(tag);
+      setPostUserAvatar(files?.pop()?.filename);
+    } catch (error) {
+      console.error('loadAvatarError', error);
+    }
   };
 
   useEffect(() => {

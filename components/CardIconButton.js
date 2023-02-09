@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {View, StyleSheet} from 'react-native';
 import {IconButton, Text} from 'react-native-paper';
 import {useComment, useFavourite, useRating} from '../hooks/ApiHooks';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MainContext} from '../contexts/MainContext';
 
 const CardIconButton = ({dataId, navigation}) => {
+  const {userToken, user} = useContext(MainContext);
   const [favouriteArray, setFavouriteArray] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
 
@@ -19,45 +20,60 @@ const CardIconButton = ({dataId, navigation}) => {
   const {loadCommentsByFileId} = useComment();
   const {loadRatingsByFileId} = useRating();
 
-  // Hard codeded token and user id. This part will be replaced by fetching user data from main context and AsyncStorage
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNzAzLCJ1c2VybmFtZSI6IlRhaSBOZ3V5ZW4iLCJlbWFpbCI6InRhaS5uZ3V5ZW40QG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAxLTEzVDE0OjE3OjI2LjAwMFoiLCJpYXQiOjE2NzU3Njg3OTYsImV4cCI6MTY3NTg1NTE5Nn0.gtcSHXrePExqBOV92yZ2SEMPos9CZW58MKhdypHHN0M';
-  const userId = 2863;
-
   const getFavouritesByFileId = async () => {
-    const favourites = await loadFavouritesByFileId(dataId);
-    setFavouriteArray(favourites);
-    const checkFavourite = favourites.some(
-      (favourite) => favourite.user_id === userId
-    );
-    setIsFavourite(checkFavourite);
+    try {
+      const favourites = await loadFavouritesByFileId(dataId);
+      setFavouriteArray(favourites);
+      const checkFavourite = favourites.some(
+        (favourite) => favourite.user_id === user.user_id
+      );
+      setIsFavourite(checkFavourite);
+    } catch (error) {
+      console.error('getFavoritesByFileIdError', error);
+    }
   };
 
   const getCommentsByFileId = async () => {
-    const comments = await loadCommentsByFileId(dataId);
-    setCommentArray(comments);
+    try {
+      const comments = await loadCommentsByFileId(dataId);
+      setCommentArray(comments);
+    } catch (error) {
+      console.error('getCommentsByFileIdError', error);
+    }
   };
 
   const getRatingsByFileId = async () => {
-    const ratings = await loadRatingsByFileId(dataId);
-    const ratingOnlyArray = ratings.map((element) => element.rating);
-    setAverageRating(
-      ratingOnlyArray.length &&
-        ratingOnlyArray.reduce((prev, cur) => prev + cur, 0) /
-          ratingOnlyArray.length
-    );
+    try {
+      const ratings = await loadRatingsByFileId(dataId);
+      const ratingOnlyArray = ratings.map((element) => element.rating);
+      setAverageRating(
+        ratingOnlyArray.length &&
+          ratingOnlyArray.reduce((prev, cur) => prev + cur, 0) /
+            ratingOnlyArray.length
+      );
+    } catch (error) {
+      console.error('getRatingsByFileIdError', error);
+    }
   };
 
   const likeFile = async () => {
-    const result = await addFavourite(dataId, token);
-    console.log('result of adding favourite', result);
-    getFavouritesByFileId();
+    try {
+      const result = await addFavourite(dataId, userToken);
+      console.log('result of adding favourite', result);
+      getFavouritesByFileId();
+    } catch (error) {
+      console.error('likeFileError', error);
+    }
   };
 
   const dislikeFile = async () => {
-    const result = await removeFavourite(dataId, token);
-    console.log('result of removing favourite', result);
-    getFavouritesByFileId();
+    try {
+      const result = await removeFavourite(dataId, userToken);
+      console.log('result of removing favourite', result);
+      getFavouritesByFileId();
+    } catch (error) {
+      console.error('dislikeFileError', error);
+    }
   };
 
   useEffect(() => {
