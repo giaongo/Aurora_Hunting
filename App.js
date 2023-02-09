@@ -13,6 +13,7 @@ export default function App() {
       ...DefaultTheme.colors,
       secondary: 'yellow',
       onSurface: '#BDBDBD',
+      surfaceVariant: '#212121',
     },
   };
   return (

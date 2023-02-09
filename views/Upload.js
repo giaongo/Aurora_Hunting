@@ -16,6 +16,7 @@ import {
   Platform,
   Image,
   Alert,
+  Keyboard,
 } from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
@@ -128,7 +129,7 @@ const Upload = ({navigation}) => {
   );
   return (
     <ScrollView style={styles.uploadScreen}>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >

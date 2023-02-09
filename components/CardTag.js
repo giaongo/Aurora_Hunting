@@ -8,6 +8,7 @@ import {appId} from '../utils/variables';
 const CardTag = ({dataId}) => {
   const [locationTags, setLocationTags] = useState(null);
   const {getAllTagsByFileId} = useTag();
+
   const loadAllTagsByFileId = async () => {
     const allTags = await getAllTagsByFileId(dataId);
     const regex = new RegExp(`${appId}_location_`, 'g');
@@ -17,6 +18,7 @@ const CardTag = ({dataId}) => {
 
     setLocationTags(locationTags);
   };
+
   useEffect(() => {
     loadAllTagsByFileId();
   }, []);
@@ -47,7 +49,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C3539',
     borderRadius: 10,
     padding: 10,
-    marginTop:5,
+    marginTop: 5,
     marginRight: 5,
   },
   cardTagText: {

@@ -25,7 +25,7 @@ const useMedia = () => {
           return await doFetch(baseUrl + 'media/' + file.file_id);
         })
       );
-      setMediaArray(media);
+      setMediaArray(media.reverse());
     } catch (error) {
       throw new Error('loadMediaError: ' + error.message);
     }
