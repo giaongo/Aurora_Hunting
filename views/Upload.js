@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {
   Card,
   IconButton,
@@ -15,6 +15,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Alert,
 } from 'react-native';
 import {Controller, useForm} from 'react-hook-form';
 import * as ImagePicker from 'expo-image-picker';
@@ -23,9 +24,12 @@ import {useMedia, useTag} from '../hooks/ApiHooks';
 import {appId} from '../utils/variables';
 import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MainContext} from '../contexts/MainContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 const Upload = ({navigation}) => {
   const [mediaFile, setMediaFile] = useState(null);
+  const {update, setUpdate} = useContext(MainContext);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
@@ -33,11 +37,17 @@ const Upload = ({navigation}) => {
     control,
     formState: {errors},
     handleSubmit,
+    reset,
+    trigger,
   } = useForm({
     defaultValues: {title: '', description: '', locationTag: ''},
     mode: 'onBlur',
   });
 
+  const resetForm = () => {
+    setMediaFile(null);
+    reset();
+  };
   const pickFile = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -49,6 +59,7 @@ const Upload = ({navigation}) => {
       console.log(result);
       if (!result.canceled) {
         setMediaFile(result.assets[0]);
+        trigger();
       }
     } catch (error) {
       console.error('Media Upload error', error);
@@ -84,12 +95,37 @@ const Upload = ({navigation}) => {
           );
         })
       );
-      console.log('tagUploadResult', tagsUploadResult);
+      tagsUploadResult.length &&
+        Alert.alert(
+          'Your media is uploaded successfully',
+          'File id: ' + mediaUploadResult.file_id,
+          [
+            {
+              text: 'Back to Home',
+              onPress: () => {
+                setUpdate(!update);
+                navigation.navigate('Home');
+              },
+            },
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+          ]
+        );
     } catch (error) {
       console.error('uploadFileError', error);
     }
   };
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        resetForm();
+      };
+    }, [])
+  );
   return (
     <ScrollView style={styles.uploadScreen}>
       <TouchableOpacity>
@@ -249,13 +285,16 @@ const Upload = ({navigation}) => {
                 mode="contained"
                 style={styles.button}
                 disabled={
-                  errors.title || errors.description || errors.locationTag
+                  !mediaFile ||
+                  errors.title ||
+                  errors.description ||
+                  errors.locationTag
                 }
                 onPress={handleSubmit(uploadFile)}
               >
                 Upload
               </Button>
-              <Button mode="outlined" style={styles.button}>
+              <Button mode="outlined" style={styles.button} onPress={resetForm}>
                 Reset
               </Button>
             </Card.Content>
