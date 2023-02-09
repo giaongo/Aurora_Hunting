@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {View, StyleSheet} from 'react-native';
 import {IconButton, Text} from 'react-native-paper';
 import {useComment, useFavourite, useRating} from '../hooks/ApiHooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CardIconButton = ({dataId, navigation}) => {
   const [favouriteArray, setFavouriteArray] = useState([]);

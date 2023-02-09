@@ -1,13 +1,15 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
+import React, {useContext} from 'react';
 import {Avatar} from 'react-native-paper';
 import Upload from '../views/Upload';
 import Profile from '../views/Profile';
 import Single from '../views/Single';
 import Comment from '../views/Comment';
-import Home from '../views/Home';
+import HomeScreen from '../views/Home';
+import Login from '../views/Login';
+import {MainContext} from '../contexts/MainContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -84,14 +86,31 @@ const TabScreen = () => {
 };
 
 const StackScreen = () => {
+  const {isLoggedIn} = useContext(MainContext);
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Aurora_Hunting" component={TabScreen} />
-      <Stack.Screen name="Comment" component={Comment} />
-      <Stack.Screen name="Single" component={Single} />
+      {isLoggedIn ? (
+        <>
+          <Stack.Screen
+            name="Tabs"
+            component={TabScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen name="Aurora Hunting" component={TabScreen} />
+          <Stack.Screen name="Comment" component={Comment} />
+          <Stack.Screen name="Single" component={Single} />
+        </>
+      ) : (
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{headerShown: false}}
+        ></Stack.Screen>
+      )}
     </Stack.Navigator>
   );
 };
+
 const Navigator = () => {
   return (
     <NavigationContainer>
