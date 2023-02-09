@@ -1,24 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {Avatar, Card, List, Text} from 'react-native-paper';
-import {StyleSheet, SafeAreaView, ScrollView, FlatList, View} from 'react-native';
-import { useComment, useTag, useUser } from '../hooks/ApiHooks';
+import {ActivityIndicator, Avatar, Button, Card, IconButton, List, Text, TextInput} from 'react-native-paper';
+import {StyleSheet, SafeAreaView, ScrollView, FlatList, View, Platform} from 'react-native';
+import { useComment, useMedia, useTag, useUser } from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import { uploadsUrl } from '../utils/variables';
 import { MainContext } from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CommentItem from '../components/CommentItem';
+import { KeyboardAvoidingView } from 'react-native';
+import { useForm } from 'react-hook-form';
+import { Alert } from 'react-native';
 
 
 const Comment = ({route}) => {
   const fileId = route.params;
-  const { loadCommentsByFileId, postComments } = useComment();
-  const {getUserById} = useUser();
-  const {getFilesByTag} = useTag();
-  const {user, userToken} = useContext(MainContext);
+  const {control, handleSubmit, formState: {errors}, trigger, setValue} = useForm({
+    defaultValues: {}
+  });
   const [commentArr, setCommentArr] = useState([]);
-  const [postUser, setPostUser] = useState({});
-  const [postUserAvatar, setPostUserAvatar] = useState('');
+  const [comment, setComment] = useState('');
+  const [userAvatar, setUserAvatar] = useState('');
+  const [submitButtonState, setSubmitButtonState] = useState(true);
+  const { loadCommentsByFileId, postComments } = useComment();
 
-  const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyNzAzLCJ1c2VybmFtZSI6IlRhaSBOZ3V5ZW4iLCJlbWFpbCI6InRhaS5uZ3V5ZW40QG1ldHJvcG9saWEuZmkiLCJmdWxsX25hbWUiOm51bGwsImlzX2FkbWluIjpudWxsLCJ0aW1lX2NyZWF0ZWQiOiIyMDIzLTAxLTEzVDE0OjE3OjI2LjAwMFoiLCJpYXQiOjE2NzU5MzM0MDMsImV4cCI6MTY3NjAxOTgwM30.qOUDNExHAjaodEY2o1Nn-u1xI7tdTtN2tv1MwGr9mcg';
+  const {getMediaByUserId} = useMedia();
+  const {getUserByToken} = useUser();
+  const {getFilesByTag} = useTag();
 
 
   const loadComments = async() => {
@@ -30,59 +37,40 @@ const Comment = ({route}) => {
     }
   };
 
-  const loadAvatar = async(item) => {
+  const addComment = async () => {
     try {
-        const tag = 'avatar_' + item.user_id;
-        const files = await getFilesByTag(tag);
-        return setPostUserAvatar(files?.pop()?.filename);
+      const token = await AsyncStorage.getItem('userToken');
+      const result = await postComments(token, fileId, comment);
+      result ? Alert.alert('post comment successfully') : Alert.alert('Please try again');
     } catch (error) {
-      console.error('loadAvatar: ', error);
+      console.error('add Comment: ', error);
+    }
+  }
+
+  const handleChange = (content) => {
+    if (content.length != 0){
+      setComment(content);
+      setSubmitButtonState(false);
+    }
+  }
+
+  const loadCommentAvatar = async() => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userInfo = await getUserByToken(token);
+      const tag = 'avatar_' + userInfo.user_id;
+      const files = await getFilesByTag(tag);
+      setUserAvatar(files.pop().filename);
+    } catch (error) {
+      console.error('loadCommentAvatar: ', error);
     }
   };
 
-  const getPostUser = async (item) => {
-    try {
-      const user = await getUserById(item.user_id, token);
-      setPostUser(user);
-    } catch (error) {
-      console.error('getPostUser: ', error)
-    }
-
-  };
 
   useEffect(()=> {
     loadComments();
-    loadAvatar();
-    getPostUser();
+    loadCommentAvatar();
   }, []);
-
-  const CommentItem = (items) => {
-    const item = items.data;
-
-    const timeAdded = item.time_added.split('T')[0];
-    return (
-      <Card style={styles.cardContainer}>
-        <Card.Title
-        title={postUser.username}
-        style={{color: '#f57b42'}}
-        left={(props) => (
-          <Avatar.Image
-            {...props}
-            size={50}
-            source={{
-              uri: loadAvatar(item)
-                ? uploadsUrl + postUserAvatar
-                : 'http://placekitten.com/200/300',
-            }}
-          />
-        )}
-      />
-        <Text variant='bodyMedium'>{item.comment}</Text>
-        <Text variant='bodyMedium'>{item.time_added}</Text>
-      </Card>
-
-    )
-  }
 
   return (
     <View style={styles.container}>
@@ -95,9 +83,38 @@ const Comment = ({route}) => {
           )
         }}
       />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+      <View style={styles.addContainer}>
+        <Avatar.Image
+          source={{uri: userAvatar ? uploadsUrl + userAvatar : 'https://placedog.net/500'}}
+        />
+        <TextInput
+          mode='flat'
+          placeholder='add comment...'
+          value={comment}
+          style={{width:'60%', alignSelf:'center', marginHorizontal:10}}
+          onChangeText={handleChange}
+        />
+
+        <IconButton
+          icon={'send'}
+          mode='elevated'
+          size={40}
+          iconColor={'white'}
+          style={{marginHorizontal:0}}
+          disabled={submitButtonState}
+          onPress={async()=> {
+            await addComment();
+          }}
+        />
+      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -105,12 +122,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#212121',
     justifyContent: 'center',
   },
-  cardContainer:{
-    flex:1,
+  addContainer:{
+    width:'100%',
     flexDirection:'row',
-    // backgroundColor: '#212121',
-    // borderRadius:0
-  },
+    justifyContent:'center',
+    backgroundColor:'black',
+  }
 });
 
 Comment.propTypes = {

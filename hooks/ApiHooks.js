@@ -47,9 +47,37 @@ const useMedia = () => {
     } catch (error) {
       console.error('postMediaError', error);
     }
+  }
+
+  const deleteMedia = async (token, id) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'comments/' + id, options);
+    } catch (error) {
+      console.error('deleteMedia: ', error);
+    }
+  }
+
+  const getMediaByUserId = async(token, userId) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'media/user/' + userId, options);
+    } catch (error) {
+      console.error('getMediaByUserId', error);
+    }
   };
 
-  return {mediaArray, postMedia};
+  return {mediaArray, postMedia, getMediaByUserId,deleteMedia};
 };
 
 const useFavourite = () => {
@@ -110,7 +138,7 @@ const useComment = () => {
         'x-access-token': token,
         'Content-Type' :'application/json',
       },
-      body: JSON.stringify({fileId, comment})
+      body: JSON.stringify({file_id: fileId, comment})
     };
     try {
       return await doFetch(baseUrl + 'comments', options);
