@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import {
   Card,
   IconButton,
@@ -22,11 +22,10 @@ import {Video} from 'expo-av';
 import {useMedia, useTag} from '../hooks/ApiHooks';
 import {appId} from '../utils/variables';
 import PropTypes from 'prop-types';
-import {MainContext} from '../contexts/MainContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Upload = ({navigation}) => {
   const [mediaFile, setMediaFile] = useState(null);
-  const {userToken} = useContext(MainContext);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
@@ -70,6 +69,7 @@ const Upload = ({navigation}) => {
       type: mimeType,
     });
     try {
+      const userToken = await AsyncStorage.getItem('userToken');
       const mediaUploadResult = await postMedia(formData, userToken);
       const locationTags = uploadData.locationTag
         .split(',')

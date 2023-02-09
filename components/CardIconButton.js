@@ -4,9 +4,10 @@ import {View, StyleSheet} from 'react-native';
 import {IconButton, Text} from 'react-native-paper';
 import {useComment, useFavourite, useRating} from '../hooks/ApiHooks';
 import {MainContext} from '../contexts/MainContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CardIconButton = ({dataId, navigation}) => {
-  const {userToken, user} = useContext(MainContext);
+  const {user} = useContext(MainContext);
   const [favouriteArray, setFavouriteArray] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
 
@@ -58,6 +59,7 @@ const CardIconButton = ({dataId, navigation}) => {
 
   const likeFile = async () => {
     try {
+      const userToken = await AsyncStorage.getItem('userToken');
       const result = await addFavourite(dataId, userToken);
       console.log('result of adding favourite', result);
       getFavouritesByFileId();
@@ -68,6 +70,7 @@ const CardIconButton = ({dataId, navigation}) => {
 
   const dislikeFile = async () => {
     try {
+      const userToken = await AsyncStorage.getItem('userToken');
       const result = await removeFavourite(dataId, userToken);
       console.log('result of removing favourite', result);
       getFavouritesByFileId();
