@@ -19,7 +19,7 @@ const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
   const loadMedia = async () => {
     try {
-      const result = await useTag().getFilesByTag(appId + '_media');
+      const result = await useTag().getFilesByTag(appId + '_mediafile');
       const media = await Promise.all(
         result.map(async (file) => {
           return await doFetch(baseUrl + 'media/' + file.file_id);
@@ -161,6 +161,7 @@ const useTag = () => {
       throw new Error('getAndFilterAllTagsByFileIdError: ' + error.message);
     }
   };
+
   return {
     getFilesByTag,
     postTag,

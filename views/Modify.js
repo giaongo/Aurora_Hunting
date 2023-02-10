@@ -1,5 +1,11 @@
-import React, {useRef, useState, useEffect} from 'react';
-import {Card, HelperText, TextInput, Button} from 'react-native-paper';
+import React, {useRef, useState} from 'react';
+import {
+  Card,
+  HelperText,
+  TextInput,
+  Button,
+  IconButton,
+} from 'react-native-paper';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -16,7 +22,6 @@ import {Video} from 'expo-av';
 import {uploadsUrl} from '../utils/variables';
 import {Controller, useForm} from 'react-hook-form';
 import {useHeaderHeight} from '@react-navigation/elements';
-import {useTag} from '../hooks/ApiHooks';
 
 const Modify = ({route}) => {
   const {
@@ -26,36 +31,39 @@ const Modify = ({route}) => {
     filename,
     media_type: mediaType,
   } = route.params;
+
   const video = useRef(null);
+  const allData = JSON.parse(description);
+  const descriptionData = allData.description;
+  const locationTagsData = allData.tags;
+  const locationData = locationTagsData.join(',');
+  const [locationTags, setLocationTags] = useState(locationTagsData);
+
   const {
     control,
     formState: {errors},
     handleSubmit,
   } = useForm({
-    defaultValues: {title: title, description: description},
+    defaultValues: {
+      title: title,
+      description: descriptionData,
+      locationTag: locationData,
+    },
     mode: 'onBlur',
   });
-  const {getAndFilterAllTagsByFileId} = useTag();
-  const [locationTags, setLocationTags] = useState([]);
 
-  const loadFilterdTags = async () => {
-    try {
-      const tags = await getAndFilterAllTagsByFileId(fileId);
-      setLocationTags(tags);
-    } catch (error) {
-      console.error('loadFilterTagsError', error);
-    }
-  };
-
-  useEffect(() => {
-    loadFilterdTags();
-  }, []);
-
-  const modifyFile = () => {
-    console.log('Modifyfile');
-  };
   const height = useHeaderHeight();
 
+  const modifyFile = () => {
+    console.log('Modify clicked');
+  };
+
+  const tagRemoveOnPress = (tag) => {
+    const newLocationTags = locationTags.filter(
+      (tagElement) => tagElement !== tag
+    );
+    setLocationTags(newLocationTags);
+  };
   return (
     <ScrollView>
       <TouchableWithoutFeedback
@@ -68,12 +76,7 @@ const Modify = ({route}) => {
           style={{flex: 1}}
           enabled
         >
-          <Card
-            mode="contained"
-            style={{
-              borderRadius: '0',
-            }}
-          >
+          <Card mode="contained">
             {mediaType === 'image' ? (
               <Image
                 source={{
@@ -164,14 +167,66 @@ const Modify = ({route}) => {
                   )}
                   name="description"
                 />
+
+                <Controller
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: 'required',
+                    },
+                    minLength: {
+                      value: 5,
+                      message: 'Title min length is 5 characters',
+                    },
+                    onChange: (event) =>
+                      setLocationTags(event.target.value.split(',')),
+                  }}
+                  render={({field: {onChange, onBlur}}) => (
+                    <>
+                      <TextInput
+                        style={styles.input}
+                        label="Location Tag (separate wtih ,)"
+                        mode="outlined"
+                        textColor="#212121"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={locationTags.join(',')}
+                        error={errors.description && errors.description.message}
+                      />
+                      {errors.description && errors.description.message ? (
+                        <HelperText type="error" visible={true}>
+                          {errors.description.message}
+                        </HelperText>
+                      ) : null}
+                    </>
+                  )}
+                  name="locationTag"
+                />
+
                 <View style={styles.cardTagContainer}>
                   {locationTags &&
                     locationTags?.map((tag, index) => {
+                      const trimmedTag = tag.trim();
                       return (
                         <Card key={index} style={styles.cardTag}>
                           <Text variant="titleSmall" style={styles.cardTagText}>
-                            {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
+                            {'#' +
+                              trimmedTag.charAt(0).toUpperCase() +
+                              trimmedTag.slice(1)}
                           </Text>
+                          <IconButton
+                            icon="close-thick"
+                            size={8}
+                            style={{
+                              position: 'absolute',
+                              right: -29,
+                              top: -27,
+                            }}
+                            iconColor="white"
+                            containerColor="#bf2c2c"
+                            onPress={() => tagRemoveOnPress(tag)}
+                          />
                         </Card>
                       );
                     })}
@@ -180,9 +235,12 @@ const Modify = ({route}) => {
                   <Button
                     mode="contained"
                     style={styles.button}
+                    disabled={
+                      errors.title || errors.description || errors.locationTag
+                    }
                     onPress={handleSubmit(modifyFile)}
                   >
-                    Upload
+                    Modify
                   </Button>
                 </Card.Content>
               </View>
@@ -222,10 +280,10 @@ const styles = StyleSheet.create({
   },
   cardTag: {
     backgroundColor: '#2C3539',
-    borderRadius: 10,
     padding: 15,
-    marginVertical: 8,
-    marginRight: 18,
+    marginVertical: 15,
+    marginRight: 15,
+    position: 'relative',
   },
   cardTagText: {
     color: '#DAA520',

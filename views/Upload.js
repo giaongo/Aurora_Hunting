@@ -69,8 +69,19 @@ const Upload = ({navigation}) => {
 
   const uploadFile = async (uploadData) => {
     const formData = new FormData();
-    formData.append('description', uploadData.description);
+    const locationTags = uploadData.locationTag
+      .split(',')
+      .map((tag) => tag.trim().toLowerCase());
+
     formData.append('title', uploadData.title);
+    formData.append(
+      'description',
+      JSON.stringify({
+        description: uploadData.description,
+        tags: locationTags,
+      })
+    );
+
     const mediaFileName = mediaFile.uri.split('/').pop();
     let mediaFileExt = mediaFileName.split('.').pop();
     if (mediaFileExt === 'jpg') mediaFileExt = 'jpeg';
@@ -83,19 +94,13 @@ const Upload = ({navigation}) => {
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       const mediaUploadResult = await postMedia(formData, userToken);
-      const locationTags = uploadData.locationTag
-        .split(',')
-        .map((tag) => '_location_' + tag.trim().toLowerCase());
-      const tagsToUpload = [...locationTags, '_media'];
-      const tagsUploadResult = await Promise.all(
-        tagsToUpload.map(async (tag) => {
-          return await postTag(
-            mediaUploadResult.file_id,
-            appId + tag,
-            userToken
-          );
-        })
+
+      const tagsUploadResult = await postTag(
+        mediaUploadResult.file_id,
+        appId + '_mediafile',
+        userToken
       );
+
       tagsUploadResult.length &&
         Alert.alert(
           'Your media is uploaded successfully',
@@ -115,6 +120,25 @@ const Upload = ({navigation}) => {
             },
           ]
         );
+
+      Alert.alert(
+        'Your media is uploaded successfully',
+        'File id: ' + mediaUploadResult.file_id,
+        [
+          {
+            text: 'Back to Home',
+            onPress: () => {
+              setUpdate(!update);
+              navigation.navigate('Home');
+            },
+          },
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+        ]
+      );
     } catch (error) {
       console.error('uploadFileError', error);
     }
