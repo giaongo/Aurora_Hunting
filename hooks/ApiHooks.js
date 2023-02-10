@@ -19,7 +19,7 @@ const useMedia = () => {
   const [mediaArray, setMediaArray] = useState([]);
   const loadMedia = async () => {
     try {
-      const result = await useTag().getFilesByTag(appId + '_media');
+      const result = await useTag().getFilesByTag(appId + '_mediafile');
       const media = await Promise.all(
         result.map(async (file) => {
           return await doFetch(baseUrl + 'media/' + file.file_id);
@@ -49,7 +49,7 @@ const useMedia = () => {
     } catch (error) {
       throw new Error('postMediaError: ' + error.message);
     }
-  }
+  };
 
   const deleteMedia = async (token, id) => {
     const options = {
@@ -63,9 +63,9 @@ const useMedia = () => {
     } catch (error) {
       console.error('deleteMedia: ', error);
     }
-  }
+  };
 
-  const getMediaByUserId = async(token, userId) => {
+  const getMediaByUserId = async (token, userId) => {
     const options = {
       method: 'GET',
       headers: {
@@ -79,7 +79,23 @@ const useMedia = () => {
     }
   };
 
-  return {mediaArray, postMedia, getMediaByUserId,deleteMedia};
+  const modifyMedia = async (fileData, fileId, token) => {
+    const options = {
+      method: 'PUT',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(fileData),
+    };
+    try {
+      return await doFetch(baseUrl + 'media/' + fileId, options);
+    } catch (error) {
+      throw new Error('modifyMediaError: ' + error.message);
+    }
+  };
+
+  return {mediaArray, postMedia, getMediaByUserId, modifyMedia, deleteMedia};
 };
 
 const useFavourite = () => {
@@ -138,9 +154,9 @@ const useComment = () => {
       method: 'POST',
       headers: {
         'x-access-token': token,
-        'Content-Type' :'application/json',
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({file_id: fileId, comment})
+      body: JSON.stringify({file_id: fileId, comment}),
     };
     try {
       return await doFetch(baseUrl + 'comments', options);
@@ -149,7 +165,7 @@ const useComment = () => {
     }
   };
 
-  const deleteComments = async(token, commentId) => {
+  const deleteComments = async (token, commentId) => {
     const options = {
       method: 'DELETE',
       headers: {
@@ -161,7 +177,7 @@ const useComment = () => {
     } catch (error) {
       console.error('deleteComments: ', error);
     }
-  }
+  };
   return {loadCommentsByFileId, postComments, deleteComments};
 };
 
@@ -206,24 +222,11 @@ const useTag = () => {
       throw new Error('getAllTagsByFileIdError: ' + error.message);
     }
   };
-  const getAndFilterAllTagsByFileId = async (dataId) => {
-    try {
-      const allTags = await getAllTagsByFileId(dataId);
-      const regex = new RegExp(`${appId}_location_`, 'g');
-      const locationTags = allTags
-        .filter((tagData) => tagData.tag.match(regex))
-        .map((tagData) => tagData.tag.split('_').pop());
 
-      return locationTags;
-    } catch (error) {
-      throw new Error('getAndFilterAllTagsByFileIdError: ' + error.message);
-    }
-  };
   return {
     getFilesByTag,
     postTag,
     getAllTagsByFileId,
-    getAndFilterAllTagsByFileId,
   };
 };
 

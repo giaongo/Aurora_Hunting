@@ -40,6 +40,9 @@ const CardItem = ({data, navigation}) => {
     console.log('Edit pressed');
     navigation.navigate('Modify', data);
   };
+  const allData = JSON.parse(data.description);
+  const descriptionData = allData.description;
+  const locationTagsData = allData.tags;
 
   useEffect(() => {
     getPostUser();
@@ -95,12 +98,12 @@ const CardItem = ({data, navigation}) => {
         {data.title}
       </Text>
       <Text varient="bodyMedium" style={styles.cardDescription}>
-        {data.description}
+        {descriptionData}
       </Text>
       <Text varient="bodySmall" style={styles.dateText}>
         {new Date(data.time_added).toLocaleString('fi-FI')}
       </Text>
-      <CardTag dataId={data.file_id} />
+      <CardTag tags={locationTagsData} />
     </Card>
   );
 };
