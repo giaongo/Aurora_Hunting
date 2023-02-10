@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {
   Card,
   HelperText,
@@ -16,14 +16,18 @@ import {
   View,
   TouchableWithoutFeedback,
   Text,
+  Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Video} from 'expo-av';
 import {uploadsUrl} from '../utils/variables';
 import {Controller, useForm} from 'react-hook-form';
 import {useHeaderHeight} from '@react-navigation/elements';
+import {useMedia} from '../hooks/ApiHooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {MainContext} from '../contexts/MainContext';
 
-const Modify = ({route}) => {
+const Modify = ({route, navigation}) => {
   const {
     file_id: fileId,
     title,
@@ -36,26 +40,57 @@ const Modify = ({route}) => {
   const allData = JSON.parse(description);
   const descriptionData = allData.description;
   const locationTagsData = allData.tags;
-  const locationData = locationTagsData.join(',');
   const [locationTags, setLocationTags] = useState(locationTagsData);
-
+  const {modifyMedia} = useMedia();
+  const {update, setUpdate} = useContext(MainContext);
   const {
     control,
     formState: {errors},
     handleSubmit,
+    setValue,
   } = useForm({
     defaultValues: {
       title: title,
       description: descriptionData,
-      locationTag: locationData,
+      locationTag: locationTags.join(','),
     },
     mode: 'onBlur',
   });
 
   const height = useHeaderHeight();
 
-  const modifyFile = () => {
-    console.log('Modify clicked');
+  const modifyFile = async (modifyFile) => {
+    const locationTags = modifyFile.locationTag
+      .split(',')
+      .map((tag) => tag.trim().toLowerCase());
+    const formattedFile = {
+      title: modifyFile.title,
+      description: JSON.stringify({
+        description: modifyFile.description,
+        tags: locationTags,
+      }),
+    };
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      const result = await modifyMedia(formattedFile, fileId, userToken);
+
+      Alert.alert('Your media is modified successfully', result.message, [
+        {
+          text: 'Back to Home',
+          onPress: () => {
+            setUpdate(!update);
+            navigation.navigate('Home');
+          },
+        },
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel pressed'),
+          style: 'cancel',
+        },
+      ]);
+    } catch (error) {
+      console.error('Modify media failed', error);
+    }
   };
 
   const tagRemoveOnPress = (tag) => {
@@ -63,7 +98,9 @@ const Modify = ({route}) => {
       (tagElement) => tagElement !== tag
     );
     setLocationTags(newLocationTags);
+    setValue('locationTag', newLocationTags.join(','));
   };
+
   return (
     <ScrollView>
       <TouchableWithoutFeedback
@@ -182,7 +219,7 @@ const Modify = ({route}) => {
                     onChange: (event) =>
                       setLocationTags(event.target.value.split(',')),
                   }}
-                  render={({field: {onChange, onBlur}}) => (
+                  render={({field: {onBlur, onChange}}) => (
                     <>
                       <TextInput
                         style={styles.input}
@@ -257,7 +294,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     width: '100%',
-    height: 250,
+    height: 150,
   },
   input: {
     marginHorizontal: 8,
@@ -292,6 +329,7 @@ const styles = StyleSheet.create({
 
 Modify.propTypes = {
   route: PropTypes.object,
+  navigation: PropTypes.object,
 };
 
 export default Modify;

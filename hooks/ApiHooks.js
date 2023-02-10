@@ -51,7 +51,36 @@ const useMedia = () => {
     }
   };
 
-  return {mediaArray, postMedia};
+  const modifyMedia = async (fileData, fileId, token) => {
+    const options = {
+      method: 'PUT',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(fileData),
+    };
+    try {
+      return await doFetch(baseUrl + 'media/' + fileId, options);
+    } catch (error) {
+      throw new Error('modifyMediaError: ' + error.message);
+    }
+  };
+
+  const deleteMedia = async (fileId, token) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'media/' + fileId, options);
+    } catch (error) {
+      throw new Error('deleteMediaError: ' + error.message);
+    }
+  };
+  return {mediaArray, postMedia, modifyMedia, deleteMedia};
 };
 
 const useFavourite = () => {
@@ -148,25 +177,11 @@ const useTag = () => {
       throw new Error('getAllTagsByFileIdError: ' + error.message);
     }
   };
-  const getAndFilterAllTagsByFileId = async (dataId) => {
-    try {
-      const allTags = await getAllTagsByFileId(dataId);
-      const regex = new RegExp(`${appId}_location_`, 'g');
-      const locationTags = allTags
-        .filter((tagData) => tagData.tag.match(regex))
-        .map((tagData) => tagData.tag.split('_').pop());
-
-      return locationTags;
-    } catch (error) {
-      throw new Error('getAndFilterAllTagsByFileIdError: ' + error.message);
-    }
-  };
 
   return {
     getFilesByTag,
     postTag,
     getAllTagsByFileId,
-    getAndFilterAllTagsByFileId,
   };
 };
 
