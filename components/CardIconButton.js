@@ -101,7 +101,7 @@ const CardIconButton = ({dataId, navigation}) => {
         size={30}
         iconColor="#E0E0E0"
         onPress={() => {
-          navigation.navigate('Comment');
+          navigation.navigate('Comment', dataId);
         }}
       />
       <Text>{commentArray.length || 0}</Text>
