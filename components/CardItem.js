@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: '#E0E0E0',
-    fontSize: '18',
+    fontSize: 18,
   },
   cardDescription: {
     marginTop: 5,
