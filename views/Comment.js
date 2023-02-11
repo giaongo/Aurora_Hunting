@@ -59,7 +59,7 @@ const Comment = ({route}) => {
       const userInfo = await getUserByToken(token);
       const tag = 'avatar_' + userInfo.user_id;
       const files = await getFilesByTag(tag);
-      setUserAvatar(files.pop().filename);
+      setUserAvatar(files?.pop().filename);
     } catch (error) {
       console.error('loadCommentAvatar: ', error);
     }
@@ -69,7 +69,7 @@ const Comment = ({route}) => {
   useEffect(()=> {
     loadComments();
     loadCommentAvatar();
-  }, [commentArr]);
+  }, []);
 
   return (
     <View style={styles.container}>

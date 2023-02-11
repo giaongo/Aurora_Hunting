@@ -100,7 +100,7 @@ const CommentItem = ({data}) => {
             onPress={() => {
               setShowMore(!showMore);
             }}
-          >Show </Button>
+          >Show More</Button>
         </Text>
         <Text style={styles.commentDate}>{data.time_added.split('T')[0]}</Text>
       </View>
