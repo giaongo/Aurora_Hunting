@@ -3,7 +3,7 @@ import {ActivityIndicator, Avatar, Button, Card, IconButton, List, Text, TextInp
 import {StyleSheet, SafeAreaView, ScrollView, FlatList, View, Platform} from 'react-native';
 import { useComment, useMedia, useTag, useUser } from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
-import { uploadsUrl } from '../utils/variables';
+import { baseUrl, uploadsUrl } from '../utils/variables';
 import { MainContext } from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommentItem from '../components/CommentItem';
@@ -21,8 +21,8 @@ const Comment = ({route}) => {
   const [comment, setComment] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [submitButtonState, setSubmitButtonState] = useState(true);
+  const [updateComment, setUpdateComment] = useState(false);
   const { loadCommentsByFileId, postComments } = useComment();
-
   const {getUserByToken} = useUser();
   const {getFilesByTag} = useTag();
 
@@ -40,7 +40,7 @@ const Comment = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
-      result ? Alert.alert('post comment successfully') : Alert.alert('Please try again');
+      result ? Alert.alert('post comment successfully') & setUpdateComment(!updateComment) : Alert.alert('Please try again');
     } catch (error) {
       console.error('add Comment: ', error);
     }
@@ -59,7 +59,7 @@ const Comment = ({route}) => {
       const userInfo = await getUserByToken(token);
       const tag = 'avatar_' + userInfo.user_id;
       const files = await getFilesByTag(tag);
-      setUserAvatar(files?.pop().filename);
+      setUserAvatar(files?.pop()?.filename);
     } catch (error) {
       console.error('loadCommentAvatar: ', error);
     }
@@ -69,7 +69,7 @@ const Comment = ({route}) => {
   useEffect(()=> {
     loadComments();
     loadCommentAvatar();
-  }, []);
+  }, [updateComment]);
 
   return (
     <View style={styles.container}>
@@ -104,9 +104,7 @@ const Comment = ({route}) => {
           iconColor={'white'}
           style={{marginHorizontal:0}}
           disabled={submitButtonState}
-          onPress={async()=> {
-            await addComment();
-          }}
+          onPress={addComment}
         />
       </View>
       </KeyboardAvoidingView>

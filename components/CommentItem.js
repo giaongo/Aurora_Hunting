@@ -6,7 +6,6 @@ import {uploadsUrl} from '../utils/variables';
 import {Alert, StyleSheet, View, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
-import { useNavigation } from '@react-navigation/native';
 
 const CommentItem = ({data}) => {
   const [avatar, setAvatar] = useState('');
@@ -16,8 +15,9 @@ const CommentItem = ({data}) => {
   const {getUserById, getUserByToken} = useUser();
   const {deleteMedia} = useMedia();
   const [showMore, setShowMore] = useState(false);
+  const [updateComment, setUpdateComment] = useState(false);
   const [userId, setUserId] = useState('');
-  const navigation = useNavigation();
+
 
   const getUserIdByToken = async() => {
     const token = await AsyncStorage.getItem('userToken');
@@ -55,8 +55,11 @@ const CommentItem = ({data}) => {
           onPress: async() => {
             const token = await AsyncStorage.getItem('userToken');
             const response = await deleteMedia(token, data.comment_id);
-            response && setUpdate(!update);
-            response ? Alert.alert('Deleted Comment successfully') : Alert.alert('There is something wrong')
+            response
+            ? Alert.alert('Deleted Comment successfully')
+            & setUpdateComment(!updateComment)
+            & setUpdate(!update)
+            : Alert.alert('There is something wrong')
           },
         },
       ]);
@@ -65,16 +68,12 @@ const CommentItem = ({data}) => {
     }
   }
 
-  const editComment = () => {
-    console.log('edit pressed');
-    navigation.navigate('ModifyComment', data);
-  }
 
   useEffect(() => {
     loadAvatar();
     getUserIdByToken();
     getUsernameById();
-  }, [])
+  }, [updateComment])
 
 
   return (
@@ -109,11 +108,6 @@ const CommentItem = ({data}) => {
         <Button
           mode='elevated'
           textColor='black'
-          onPress={editComment}
-        >Edit</Button>
-        <Button
-          mode='elevated'
-          textColor='black'
           onPress={doDelete}
         >Delete</Button>
       </View>
@@ -127,7 +121,6 @@ const CommentItem = ({data}) => {
 const styles = StyleSheet.create({
   container:{
     flex:1,
-    // backgroundColor: '#212121',
     flexDirection:'row',
     paddingTop: 20,
   },
@@ -159,7 +152,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer:{
     flexDirection:'column',
-    justifyContent:'space-around',
+    justifyContent:'center',
     height: 150
   },
 
