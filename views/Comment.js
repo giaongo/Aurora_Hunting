@@ -23,7 +23,6 @@ const Comment = ({route}) => {
   const [submitButtonState, setSubmitButtonState] = useState(true);
   const { loadCommentsByFileId, postComments } = useComment();
 
-  const {getMediaByUserId} = useMedia();
   const {getUserByToken} = useUser();
   const {getFilesByTag} = useTag();
 
