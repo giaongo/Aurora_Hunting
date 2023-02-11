@@ -31,6 +31,7 @@ import {useFocusEffect} from '@react-navigation/native';
 const Upload = ({navigation}) => {
   const [mediaFile, setMediaFile] = useState(null);
   const {update, setUpdate} = useContext(MainContext);
+  const [loading, setLoading] = useState(false);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
@@ -68,6 +69,7 @@ const Upload = ({navigation}) => {
   };
 
   const uploadFile = async (uploadData) => {
+    setLoading(true);
     const formData = new FormData();
     const locationTags = uploadData.locationTag
       .split(',')
@@ -141,6 +143,8 @@ const Upload = ({navigation}) => {
       );
     } catch (error) {
       console.error('uploadFileError', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -228,6 +232,7 @@ const Upload = ({navigation}) => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
+                    multiline
                     error={errors.title && errors.title.message}
                   />
                   {errors.title && errors.title.message ? (
@@ -262,6 +267,7 @@ const Upload = ({navigation}) => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
+                    multiline
                     error={errors.description && errors.description.message}
                   />
                   {errors.description && errors.description.message ? (
@@ -316,6 +322,7 @@ const Upload = ({navigation}) => {
                   errors.locationTag
                 }
                 onPress={handleSubmit(uploadFile)}
+                loading={loading}
               >
                 Upload
               </Button>
