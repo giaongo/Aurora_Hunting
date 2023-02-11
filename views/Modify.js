@@ -56,10 +56,12 @@ const Modify = ({route, navigation}) => {
     },
     mode: 'onBlur',
   });
+  const [loading, setLoading] = useState(false);
 
   const height = useHeaderHeight();
 
   const modifyFile = async (modifyFile) => {
+    setLoading(true);
     const locationTags = modifyFile.locationTag
       .split(',')
       .map((tag) => tag.trim().toLowerCase());
@@ -73,7 +75,6 @@ const Modify = ({route, navigation}) => {
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       const result = await modifyMedia(formattedFile, fileId, userToken);
-
       Alert.alert('Your media is modified successfully', result.message, [
         {
           text: 'Back to Home',
@@ -90,6 +91,8 @@ const Modify = ({route, navigation}) => {
       ]);
     } catch (error) {
       console.error('Modify media failed', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -154,6 +157,7 @@ const Modify = ({route, navigation}) => {
                       <TextInput
                         style={styles.input}
                         label="Title"
+                        multiline
                         mode="outlined"
                         textColor="#212121"
                         onBlur={onBlur}
@@ -193,6 +197,7 @@ const Modify = ({route, navigation}) => {
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={value}
+                        multiline
                         error={errors.description && errors.description.message}
                       />
                       {errors.description && errors.description.message ? (
@@ -272,6 +277,7 @@ const Modify = ({route, navigation}) => {
                   <Button
                     mode="contained"
                     style={styles.button}
+                    loading={loading}
                     disabled={
                       errors.title || errors.description || errors.locationTag
                     }
