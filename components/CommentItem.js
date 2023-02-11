@@ -19,12 +19,12 @@ const CommentItem = ({data}) => {
   const [userId, setUserId] = useState('');
   const navigation = useNavigation();
 
-
   const getUserIdByToken = async() => {
     const token = await AsyncStorage.getItem('userToken');
     const user = await getUserByToken(token);
     setUserId(user.user_id);
   }
+
 
   const loadAvatar = async () => {
     try {
@@ -76,6 +76,7 @@ const CommentItem = ({data}) => {
     getUsernameById();
   }, [])
 
+
   return (
     <View style={styles.container}>
       <Avatar.Image
@@ -99,7 +100,7 @@ const CommentItem = ({data}) => {
             onPress={() => {
               setShowMore(!showMore);
             }}
-          >Show more</Button>
+          >Show </Button>
         </Text>
         <Text style={styles.commentDate}>{data.time_added.split('T')[0]}</Text>
       </View>

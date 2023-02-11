@@ -69,7 +69,7 @@ const Comment = ({route}) => {
   useEffect(()=> {
     loadComments();
     loadCommentAvatar();
-  }, []);
+  }, [commentArr]);
 
   return (
     <View style={styles.container}>
