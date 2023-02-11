@@ -161,7 +161,7 @@ const Upload = ({navigation}) => {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <Card mode="contained" style={{borderRadius: '0'}}>
+          <Card mode="contained" style={{borderRadius: 0}}>
             <View style={styles.cardUploadContainer}>
               {mediaFile && (
                 <View
