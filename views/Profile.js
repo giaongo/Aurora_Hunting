@@ -1,23 +1,121 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useContext} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
-import {Text, Button} from 'react-native-paper';
-import AvatarImage from '../components/Avatar';
-import Grid from '../components/Grid';
+import {useContext, useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, View, Image} from 'react-native';
+import {Text, Button, Avatar} from 'react-native-paper';
 import Imagebackground from '../components/Imagebackground';
-import Statistics from '../components/Statistics';
 import {MainContext} from '../contexts/MainContext';
+import { useComment, useFavourite, useMedia, useTag, useUser } from '../hooks/ApiHooks';
+import { uploadsUrl } from '../utils/variables';
+import PropTypes from 'prop-types';
+import { TouchableOpacity } from 'react-native';
 
-const Profile = () => {
+
+
+
+const Profile = ({data, navigation}) => {
   const {setUser, setIsLoggedIn} = useContext(MainContext);
+  const {getUserByToken} = useUser();
+  const {getFilesByTag} = useTag();
+  const {getMediaByUserId} = useMedia();
+  const {getComments} = useComment();
+  const {getFavourite} = useFavourite();
+
+  const [userAvatar, setUserAvatar] = useState('');
+  const [username, setUsername] = useState('');
+  const [userFiles, setUserFiles] = useState([]);
+  const [commentsByUser, setCommentsByUser] = useState([]);
+  const [favouritesByUser, setFavouritesByUser] = useState([]);
+
+
+
+  const loadAvatar = async() => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userInfo = await getUserByToken(token);
+      const tag = 'avatar_' + userInfo.user_id;
+      const files = await getFilesByTag(tag);
+      setUserAvatar(files?.pop().filename);
+    } catch (error) {
+      console.error('loadAvatar: ', error);
+    }
+  }
+
+  const loadUsername = async() => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userInfo = await getUserByToken(token);
+      setUsername(userInfo.username);
+    } catch (error) {
+      console.error('loadUsername: ', error);
+    }
+  }
+
+  const loadUserMediaFiles = async() => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userInfo = await getUserByToken(token);
+      const userFiles = await getMediaByUserId(token, userInfo.user_id);
+      setUserFiles(userFiles);
+    } catch (error) {
+      console.error('loadUserMediaFiles: ', error)
+    }
+  }
+
+  const loadCommetsPostedByUser = async() => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const commentsPostedByUser = await getComments(token);
+      setCommentsByUser(commentsPostedByUser);
+    } catch (error) {
+      console.error('loadCommentsPostedByUser: ', error)
+    }
+  }
+
+  const loadFavouritesByUser = async() => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const favourites = await getFavourite(token);
+      setFavouritesByUser(favourites);
+    } catch (error) {
+      console.error('loadCommentsPostedByUser: ', error)
+    }
+  }
+
+  useEffect(() => {
+    loadAvatar();
+    loadUsername();
+    loadUserMediaFiles();
+    loadCommetsPostedByUser();
+    loadFavouritesByUser();
+  },[])
+
   return (
     <ScrollView style={styles.container}>
       <Imagebackground />
-      <AvatarImage />
-      <View style={styles.usernameContainer}>
-        <Text style={styles.username}>Username</Text>
+      <View style={styles.avatarContainer}>
+        <Avatar.Image
+          source={{uri: userAvatar ? uploadsUrl + userAvatar : 'https://placedog.net/500'}}
+          size={135}
+        />
       </View>
-      <Statistics />
+
+      <View style={styles.usernameContainer}>
+        <Text style={styles.username}>{username}</Text>
+      </View>
+      <View style={styles.statisticsContainer}>
+          <View style={styles.statisticsColumn} >
+            <Text style={styles.statisticsNumber}>{favouritesByUser.length}</Text>
+            <Text style={styles.statisticsContent}>Favourites</Text>
+          </View>
+          <View style={styles.statisticsColumn} >
+            <Text style={styles.statisticsNumber}>{commentsByUser.length}</Text>
+            <Text style={styles.statisticsContent}>Comments</Text>
+          </View>
+          <View style={styles.statisticsColumn} >
+            <Text style={styles.statisticsNumber}>{userFiles.length}</Text>
+            <Text style={styles.statisticsContent}>Posts</Text>
+          </View>
+    </View>
       <View style={styles.buttonEditProfileContainer}>
         <Button
           mode="contained"
@@ -47,7 +145,22 @@ const Profile = () => {
           Log out
         </Button>
       </View>
-      <Grid />
+      <View style={styles.gridContainer}>
+      {userFiles.map((file) => {
+        return (
+          <TouchableOpacity
+            style={styles.button}
+            key={file.id}
+            onPress={() => console.log('pressed')}
+            >
+            <Image
+              source={{uri: uploadsUrl + file.filename  || 'https://placedog.net/500'}}
+              style={styles.image}
+            />
+          </TouchableOpacity>
+        );
+      })}
+    </View>
     </ScrollView>
   );
 };
@@ -66,9 +179,16 @@ const styles = StyleSheet.create({
     top: 180,
   },
   username: {
-    fontSize: 25,
-    color: 'black',
+    fontSize: 30,
+    color: 'white',
     fontWeight: '800',
+  },
+  avatarContainer:{
+    position: 'absolute',
+    alignItems: 'center',
+    left: 0,
+    right: 0,
+    top: 45,
   },
   buttonEditProfileContainer: {
     position: 'absolute',
@@ -83,5 +203,44 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     top: 25,
   },
+  gridContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  button: {
+    width: '33.3%',
+  },
+  image: {
+    height: 100,
+    borderWidth:1,
+    backgroundColor:'blue'
+  },
+  statisticsContainer: {
+    flex: 1,
+    position: 'absolute',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    left: 0,
+    right: 0,
+    top: 220,
+  },
+  statisticsColumn: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  statisticsNumber: {
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  statisticsContent: {
+    fontSize: 20,
+    fontWeight: '800',
+  },
 });
+
+Profile.propTypes = {
+  navigation: PropTypes.object,
+};
 export default Profile;

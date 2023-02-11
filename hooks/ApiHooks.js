@@ -137,7 +137,21 @@ const useFavourite = () => {
     }
   };
 
-  return {loadFavouritesByFileId, addFavourite, removeFavourite};
+  const getFavourite = async(token) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'favourites', options);
+    } catch (error) {
+      throw new Error('getFavourite: ' + error.message);
+    }
+  }
+
+  return {loadFavouritesByFileId, addFavourite, removeFavourite, getFavourite};
 };
 
 const useComment = () => {
@@ -178,7 +192,21 @@ const useComment = () => {
       console.error('deleteComments: ', error);
     }
   };
-  return {loadCommentsByFileId, postComments, deleteComments};
+
+  const getComments = async(token) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'comments', options);
+    } catch (error) {
+      console.error('getComments: ', error);
+    }
+  }
+  return {loadCommentsByFileId, postComments, deleteComments, getComments};
 };
 
 const useRating = () => {
