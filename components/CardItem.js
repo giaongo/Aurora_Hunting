@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Avatar, IconButton, Card, Text} from 'react-native-paper';
-import {StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import CardTag from './CardTag';
 import CardIconButton from './CardIconButton';
 import {uploadsUrl} from '../utils/variables';
-import {useTag, useUser} from '../hooks/ApiHooks';
+import {useMedia, useTag, useUser} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OptionsMenu from 'react-native-option-menu';
 import {MainContext} from '../contexts/MainContext';
@@ -15,7 +15,8 @@ const CardItem = ({data, navigation}) => {
   const [postUserAvatar, setPostUserAvatar] = useState('');
   const {getUserById} = useUser();
   const {getFilesByTag} = useTag();
-  const {user} = useContext(MainContext);
+  const {deleteMedia} = useMedia();
+  const {user, update, setUpdate} = useContext(MainContext);
   const getPostUser = async () => {
     try {
       const userToken = await AsyncStorage.getItem('userToken');
@@ -37,9 +38,33 @@ const CardItem = ({data, navigation}) => {
   };
 
   const editPost = () => {
-    console.log('Edit pressed');
     navigation.navigate('Modify', data);
   };
+
+  const removeMedia = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      const result = await deleteMedia(data.file_id, userToken);
+      console.log('delete post result', result);
+      setUpdate(!update);
+    } catch (error) {
+      console.error('deleteMediaError', error);
+    }
+  };
+  const deletePost = async () => {
+    Alert.alert('Delete Post?', 'This action cannot be undone', [
+      {
+        text: 'DELETE',
+        onPress: () => removeMedia(),
+      },
+      {
+        text: 'CANCEL',
+        onPress: () => console.log('cancel delete pressed'),
+        style: 'cancel',
+      },
+    ]);
+  };
+
   const allData = JSON.parse(data.description);
   const descriptionData = allData.description;
   const locationTagsData = allData.tags;
@@ -67,7 +92,7 @@ const CardItem = ({data, navigation}) => {
             }
             destructiveIndex={1}
             options={['Edit', 'Delete', 'Cancel']}
-            actions={[editPost]}
+            actions={[editPost, deletePost]}
           />
         )}
 
@@ -94,9 +119,7 @@ const CardItem = ({data, navigation}) => {
       />
 
       <CardIconButton dataId={data.file_id} navigation={navigation} />
-      <Text variant="titleLarge" style={styles.cardTitle}>
-        {data.title}
-      </Text>
+      <Text style={styles.cardTitle}>{data.title}</Text>
       <Text varient="bodyMedium" style={styles.cardDescription}>
         {descriptionData}
       </Text>
@@ -126,6 +149,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     color: '#E0E0E0',
+    fontSize: '18',
   },
   cardDescription: {
     marginTop: 5,
