@@ -306,6 +306,23 @@ const useUser = () => {
     }
   };
 
+  const putUser = async(token, data) => {
+    const options = {
+      method: 'PUT',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    };
+    try {
+      const putResult = await doFetch(baseUrl + 'users', options);
+      return putResult;
+    } catch (error) {
+      throw new Error('putUser: ' + error.message);
+    }
+  }
+
   const checkUsername = async (username) => {
     try {
       const result = await doFetch(baseUrl + 'users/username/' + username);
@@ -325,7 +342,7 @@ const useUser = () => {
     }
   };
 
-  return {getUserByToken, postUser, checkUsername, getUserById};
+  return {getUserByToken, postUser, checkUsername, getUserById, putUser};
 };
 
 export {

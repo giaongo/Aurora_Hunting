@@ -13,18 +13,25 @@ import Imagebackground from '../components/Imagebackground';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
 import { MainContext } from '../contexts/MainContext';
-import { useTag } from '../hooks/ApiHooks';
+import { useTag, useUser } from '../hooks/ApiHooks';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { uploadsUrl } from '../utils/variables';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 const EditProfile = () => {
-  const [userAvatar, setUserAvatar] = useState('');
-  const navigation = useNavigation();
-
-  const {user} = useContext(MainContext);
+  const {user, userPassword, setUserPassword} = useContext(MainContext);
   const {getFilesByTag} = useTag();
+  const {getUserByToken, putUser} = useUser();
+
+  console.log(userPassword);
+
+  const [userAvatar, setUserAvatar] = useState('');
+  const [userNewUsername, setUserNewUsername] = useState(user.username);
+  const [userNewEmail, setUserNewEmail] = useState(user.email);
+  const navigation = useNavigation();
 
   const loadAvatar = async() => {
     try {
@@ -33,6 +40,22 @@ const EditProfile = () => {
       setUserAvatar(files?.pop().filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
+    }
+  }
+
+  const modifyUserInfo = async() => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userInfo = {
+        username: userNewUsername,
+        email: userNewEmail,
+      }
+      const result =  await putUser(token, userInfo);
+      result
+      ? Alert.alert('Update user information successfully')
+      : Alert.alert('There is something wrong')
+    } catch (error) {
+     console.error('modifyUserInfo: ', error);
     }
   }
 
@@ -53,7 +76,6 @@ const EditProfile = () => {
         <Button
           mode="contained"
           onPress={() => navigation.navigate('Profile')}
-          dark={true}
           buttonColor={'#6adc99'}
         >
           Cancel
@@ -62,8 +84,7 @@ const EditProfile = () => {
       <View style={styles.buttonDoneContainer}>
         <Button
           mode="contained"
-          onPress={() => console.log('Done')}
-          dark={true}
+          onPress={modifyUserInfo}
           buttonColor={'#6adc99'}
         >
           Done
@@ -104,6 +125,7 @@ const EditProfile = () => {
               style={{width: '100%', justifyContent:'center'}}
               numberOfLines={1}
               defaultValue={user.username}
+              onChangeText={newUsername => setUserNewUsername(newUsername)}
             />
           </View>
           <Divider />
@@ -115,6 +137,7 @@ const EditProfile = () => {
               style={{width: '100%', justifyContent:'center'}}
               numberOfLines={1}
               defaultValue={user.email}
+              onChangeText={newEmail => setUserNewEmail(newEmail)}
             />
           </View>
           <Divider />
@@ -125,7 +148,7 @@ const EditProfile = () => {
               placeholder={'full name'}
               style={{width: '100%', justifyContent:'center'}}
               numberOfLines={1}
-              defaultValue={user.full_name || 'Nothing'}
+              defaultValue={user.full_name || '' }
             />
           </View>
         </KeyboardAvoidingView>
@@ -158,7 +181,7 @@ const styles = StyleSheet.create({
     left: 10,
     right: 0,
     alignItems: 'flex-start',
-    top: 30,
+    top: 50,
   },
   buttonEditProfileContainer: {
     position: 'absolute',
