@@ -161,7 +161,7 @@ const Upload = ({navigation}) => {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <Card mode="contained" style={{borderRadius: '0'}}>
+          <Card mode="contained" style={{borderRadius: 0}}>
             <View style={styles.cardUploadContainer}>
               {mediaFile && (
                 <View
@@ -339,7 +339,7 @@ const Upload = ({navigation}) => {
 
 const styles = StyleSheet.create({
   uploadScreen: {
-    backgroundColor: '#212121',
+    backgroundColor: '#121212',
   },
   cardUploadContainer: {
     height: 200,

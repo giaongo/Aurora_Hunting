@@ -133,7 +133,7 @@ const CardItem = ({data, navigation}) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: '#212121',
+    backgroundColor: '#121212',
     flex: 1,
     marginBottom: 35,
     marginHorizontal: 30,

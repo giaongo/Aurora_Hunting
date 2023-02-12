@@ -3,6 +3,7 @@ import {
   MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
 } from 'react-native-paper';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {MainProvider} from './contexts/MainContext';
 import Navigator from './navigators/Navigator';
 
@@ -11,8 +12,9 @@ export default function App() {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      secondary: 'yellow',
       onSurface: '#BDBDBD',
+      onSurfaceDisabled: '#dedcdc',
+      surfaceDisabled: 'grey',
     },
   };
   return (
@@ -21,6 +23,7 @@ export default function App() {
         <StatusBar />
         <SafeAreaView style={styles.AndroidSafeArea}>
           <Navigator></Navigator>
+          <Toast topOffset={100} />
         </SafeAreaView>
       </MainProvider>
     </PaperProvider>
