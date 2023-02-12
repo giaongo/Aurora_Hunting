@@ -189,7 +189,35 @@ const useRating = () => {
       throw new Error('getRatingError: ' + error.message);
     }
   };
-  return {loadRatingsByFileId};
+  const postRating = async (fileId, rating, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({file_id: fileId, rating: rating}),
+    };
+    try {
+      return await doFetch(baseUrl + 'ratings', options);
+    } catch (error) {
+      throw new Error('postRatingError: ' + error.message);
+    }
+  };
+  const removeRatingByFileId = async (fileId, token) => {
+    const options = {
+      method: 'DELETE',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'ratings/file/' + fileId, options);
+    } catch (error) {
+      throw new Error('removeRatingError: ' + error.message);
+    }
+  };
+  return {loadRatingsByFileId, postRating, removeRatingByFileId};
 };
 
 const useTag = () => {

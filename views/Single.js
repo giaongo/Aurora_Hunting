@@ -1,13 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {IconButton, Text} from 'react-native-paper';
-import {StyleSheet, SafeAreaView, ScrollView} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {IconButton, Text, Button} from 'react-native-paper';
+import {StyleSheet, ScrollView} from 'react-native';
 import PropTypes from 'prop-types';
 import {ImageBackground} from 'react-native';
 import {uploadsUrl} from '../utils/variables';
 import {View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useUser} from '../hooks/ApiHooks';
+import {useRating, useUser} from '../hooks/ApiHooks';
 import CardIconButton from '../components/CardIconButton';
+import StarRating from '../components/StarRating';
+import {MainContext} from '../contexts/MainContext';
 const Single = ({route, navigation}) => {
   const {
     file_id: fileId,
@@ -20,7 +22,10 @@ const Single = ({route, navigation}) => {
   } = route.params;
   const [postUser, setPostUser] = useState({});
   const {getUserById} = useUser();
-
+  const {loadRatingsByFileId} = useRating();
+  const {user} = useContext(MainContext);
+  const [userRating, setUserRating] = useState(null);
+  const {update} = useContext(MainContext);
   const getPostUser = async () => {
     try {
       const userToken = await AsyncStorage.getItem('userToken');
@@ -31,6 +36,20 @@ const Single = ({route, navigation}) => {
     }
   };
 
+  const getUserRating = async () => {
+    try {
+      const result = await loadRatingsByFileId(fileId);
+
+      const userRatingValue = result.filter(
+        (rating) => rating.user_id === user.user_id
+      );
+      userRatingValue.length
+        ? setUserRating(userRatingValue[0].rating)
+        : setUserRating(0);
+    } catch (error) {
+      console.error('getUserRatingError', error);
+    }
+  };
   const allData = JSON.parse(description);
   const descriptionData = allData.description;
   const locationTagsData = allData.tags;
@@ -38,6 +57,11 @@ const Single = ({route, navigation}) => {
   useEffect(() => {
     getPostUser();
   }, []);
+
+  useEffect(() => {
+    getUserRating();
+  }, [update]);
+
   return (
     <ScrollView style={styles.backgroundContainer}>
       <ImageBackground
@@ -46,7 +70,7 @@ const Single = ({route, navigation}) => {
         style={styles.imageContainer}
         imageStyle={{borderBottomLeftRadius: 45, borderBottomRightRadius: 45}}
       >
-        <View style={styles.titleBanner} blurType="light" blurAmount={20}>
+        <View style={styles.titleBanner}>
           <Text style={styles.titleText} variant="titleLarge">
             {title}
           </Text>
@@ -54,9 +78,12 @@ const Single = ({route, navigation}) => {
         </View>
       </ImageBackground>
       <CardIconButton dataId={fileId} navigation={navigation} />
-      <View style={{marginLeft: 20}}>
+      <View style={{marginLeft: 8}}>
         <Text>Description:</Text>
         <Text>{descriptionData}</Text>
+        {userRating !== null ? (
+          <StarRating initialRating={userRating} fileId={fileId} />
+        ) : null}
       </View>
     </ScrollView>
   );
@@ -64,7 +91,7 @@ const Single = ({route, navigation}) => {
 
 const styles = StyleSheet.create({
   backgroundContainer: {
-    backgroundColor: 'black',
+    backgroundColor: '#121212',
   },
   imageContainer: {
     height: 400,

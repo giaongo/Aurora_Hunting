@@ -339,7 +339,7 @@ const Upload = ({navigation}) => {
 
 const styles = StyleSheet.create({
   uploadScreen: {
-    backgroundColor: '#212121',
+    backgroundColor: '#121212',
   },
   cardUploadContainer: {
     height: 200,
