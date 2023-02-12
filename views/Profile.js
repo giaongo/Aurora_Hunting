@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, View, Image} from 'react-native';
 import {Text, Button, Avatar} from 'react-native-paper';
 import Imagebackground from '../components/Imagebackground';
@@ -8,31 +8,29 @@ import { useComment, useFavourite, useMedia, useTag, useUser } from '../hooks/Ap
 import { uploadsUrl } from '../utils/variables';
 import PropTypes from 'prop-types';
 import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Video } from 'expo-av';
 
 
 
 
-const Profile = ({data, navigation}) => {
-  const {setUser, setIsLoggedIn} = useContext(MainContext);
-  const {getUserByToken} = useUser();
+const Profile = () => {
+  const {setUser, setIsLoggedIn, user,} = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {getMediaByUserId} = useMedia();
   const {getComments} = useComment();
   const {getFavourite} = useFavourite();
+  const video = React.useRef(null);
 
   const [userAvatar, setUserAvatar] = useState('');
-  const [username, setUsername] = useState('');
   const [userFiles, setUserFiles] = useState([]);
   const [commentsByUser, setCommentsByUser] = useState([]);
   const [favouritesByUser, setFavouritesByUser] = useState([]);
-
-
+  const navigation = useNavigation();
 
   const loadAvatar = async() => {
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      const userInfo = await getUserByToken(token);
-      const tag = 'avatar_' + userInfo.user_id;
+      const tag = 'avatar_' + user.user_id;
       const files = await getFilesByTag(tag);
       setUserAvatar(files?.pop().filename);
     } catch (error) {
@@ -40,28 +38,19 @@ const Profile = ({data, navigation}) => {
     }
   }
 
-  const loadUsername = async() => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      const userInfo = await getUserByToken(token);
-      setUsername(userInfo.username);
-    } catch (error) {
-      console.error('loadUsername: ', error);
-    }
-  }
 
   const loadUserMediaFiles = async() => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const userInfo = await getUserByToken(token);
-      const userFiles = await getMediaByUserId(token, userInfo.user_id);
+      const userFiles = await getMediaByUserId(token, user.user_id);
       setUserFiles(userFiles);
     } catch (error) {
       console.error('loadUserMediaFiles: ', error)
     }
   }
 
-  const loadCommetsPostedByUser = async() => {
+
+  const loadCommentsPostedByUser = async() => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const commentsPostedByUser = await getComments(token);
@@ -83,9 +72,8 @@ const Profile = ({data, navigation}) => {
 
   useEffect(() => {
     loadAvatar();
-    loadUsername();
     loadUserMediaFiles();
-    loadCommetsPostedByUser();
+    loadCommentsPostedByUser();
     loadFavouritesByUser();
   },[])
 
@@ -100,10 +88,10 @@ const Profile = ({data, navigation}) => {
       </View>
 
       <View style={styles.usernameContainer}>
-        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.username}>{user.username}</Text>
       </View>
       <View style={styles.statisticsContainer}>
-          <View style={styles.statisticsColumn} >
+          <View style={styles.statisticsColumn}>
             <Text style={styles.statisticsNumber}>{favouritesByUser.length}</Text>
             <Text style={styles.statisticsContent}>Favourites</Text>
           </View>
@@ -119,7 +107,7 @@ const Profile = ({data, navigation}) => {
       <View style={styles.buttonEditProfileContainer}>
         <Button
           mode="contained"
-          onPress={() => console.log('Edit Profile')}
+          onPress={() => navigation.navigate('EditProfile')}
           dark={true}
           buttonColor={'#6adc99'}
         >
@@ -146,20 +134,32 @@ const Profile = ({data, navigation}) => {
         </Button>
       </View>
       <View style={styles.gridContainer}>
-      {userFiles.map((file) => {
+      {userFiles.reverse().map((file) => {
         return (
           <TouchableOpacity
             style={styles.button}
-            key={file.id}
-            onPress={() => console.log('pressed')}
+            onPress={() => navigation.navigate('Single', file)}
+            key={file.file_id}
             >
+            {file.mime_type === 'image/jpeg' ?
             <Image
-              source={{uri: uploadsUrl + file.filename  || 'https://placedog.net/500'}}
+            key={file.file_id}
+            source={{uri: uploadsUrl + file.filename  || 'https://placedog.net/500'}}
+            style={styles.image}
+            /> :
+            <Video
+              ref={video}
+              source={{uri: uploadsUrl + file.filename || 'https://placedog.net/500' }}
+              resizeMode='contain'
               style={styles.image}
             />
+
+            }
+
           </TouchableOpacity>
         );
       })}
+
     </View>
     </ScrollView>
   );
@@ -214,7 +214,6 @@ const styles = StyleSheet.create({
   image: {
     height: 100,
     borderWidth:1,
-    backgroundColor:'blue'
   },
   statisticsContainer: {
     flex: 1,
