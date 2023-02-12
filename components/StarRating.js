@@ -59,7 +59,7 @@ const StarRating = ({initialRating, fileId}) => {
   return (
     <View style={styles.container}>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{margin: 8}}>Your Rating:</Text>
+        <Text style={{margin: 16}}>Your Rating:</Text>
         {[1, 2, 3, 4, 5].map((number, index) => {
           if (number <= rating) {
             return (
@@ -95,15 +95,6 @@ const StarRating = ({initialRating, fileId}) => {
           Re-rate
         </Button>
       ) : null}
-
-      {/* <Snackbar
-        visible={visible}
-        onDismiss={onDismissSnackBar}
-        duration="2000"
-        style={styles.snackBar}
-      >
-        {snackBarMessage}
-      </Snackbar> */}
     </View>
   );
 };
@@ -114,12 +105,8 @@ const styles = StyleSheet.create({
   },
   reRateButton: {
     alignSelf: 'flex-end',
-    marginRight: 8,
-  },
-  snackBar: {
-    backgroundColor: '#0b2b24',
-    position: 'fixed',
-    bottom: 0,
+    marginRight: 16,
+    marginBottom: 16,
   },
 });
 StarRating.propTypes = {
