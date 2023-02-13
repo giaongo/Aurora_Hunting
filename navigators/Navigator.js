@@ -11,6 +11,7 @@ import Home from '../views/Home';
 import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import Modify from '../views/Modify';
+import ModifyComment from '../views/ModifyComment';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -101,6 +102,7 @@ const StackScreen = () => {
           <Stack.Screen name="Comment" component={Comment} />
           <Stack.Screen name="Single" component={Single} />
           <Stack.Screen name="Modify" component={Modify} />
+          <Stack.Screen name="ModifyComment" component={ModifyComment} />
         </>
       ) : (
         <Stack.Screen

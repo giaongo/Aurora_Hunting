@@ -23,7 +23,6 @@ const Comment = ({route}) => {
   const [submitButtonState, setSubmitButtonState] = useState(true);
   const { loadCommentsByFileId, postComments } = useComment();
 
-  const {getMediaByUserId} = useMedia();
   const {getUserByToken} = useUser();
   const {getFilesByTag} = useTag();
 
@@ -60,7 +59,7 @@ const Comment = ({route}) => {
       const userInfo = await getUserByToken(token);
       const tag = 'avatar_' + userInfo.user_id;
       const files = await getFilesByTag(tag);
-      setUserAvatar(files.pop().filename);
+      setUserAvatar(files?.pop().filename);
     } catch (error) {
       console.error('loadCommentAvatar: ', error);
     }

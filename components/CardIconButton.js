@@ -7,14 +7,13 @@ import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CardIconButton = ({dataId, navigation}) => {
-  const {user} = useContext(MainContext);
+  const {user, update} = useContext(MainContext);
   const [favouriteArray, setFavouriteArray] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
 
   const [commentArray, setCommentArray] = useState([]);
 
   const [averageRating, setAverageRating] = useState([]);
-  const [clickStar, setClickStar] = useState(false);
 
   const {loadFavouritesByFileId, addFavourite, removeFavourite} =
     useFavourite();
@@ -82,8 +81,11 @@ const CardIconButton = ({dataId, navigation}) => {
   useEffect(() => {
     getFavouritesByFileId();
     getCommentsByFileId();
-    getRatingsByFileId();
   }, []);
+
+  useEffect(() => {
+    getRatingsByFileId();
+  }, [update]);
 
   return (
     <View style={styles.cardIconStatus}>
@@ -105,12 +107,7 @@ const CardIconButton = ({dataId, navigation}) => {
         }}
       />
       <Text>{commentArray.length || 0}</Text>
-      <IconButton
-        icon={clickStar ? 'star' : 'star-outline'}
-        size={35}
-        iconColor="#E0E0E0"
-        onPress={() => setClickStar(!clickStar)}
-      />
+      <IconButton icon="star-outline" size={35} iconColor="#E0E0E0" />
       <Text>{averageRating}</Text>
     </View>
   );

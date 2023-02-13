@@ -94,11 +94,11 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '33.3%',
-    backgroundColor: 'pink',
   },
   image: {
     height: 100,
-    borderWidth: 0.5,
+    borderWidth:1,
+    backgroundColor:'blue'
   },
 });
 

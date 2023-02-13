@@ -31,6 +31,7 @@ import {useFocusEffect} from '@react-navigation/native';
 const Upload = ({navigation}) => {
   const [mediaFile, setMediaFile] = useState(null);
   const {update, setUpdate} = useContext(MainContext);
+  const [loading, setLoading] = useState(false);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
@@ -68,9 +69,21 @@ const Upload = ({navigation}) => {
   };
 
   const uploadFile = async (uploadData) => {
+    setLoading(true);
     const formData = new FormData();
-    formData.append('description', uploadData.description);
+    const locationTags = uploadData.locationTag
+      .split(',')
+      .map((tag) => tag.trim().toLowerCase());
+
     formData.append('title', uploadData.title);
+    formData.append(
+      'description',
+      JSON.stringify({
+        description: uploadData.description,
+        tags: locationTags,
+      })
+    );
+
     const mediaFileName = mediaFile.uri.split('/').pop();
     let mediaFileExt = mediaFileName.split('.').pop();
     if (mediaFileExt === 'jpg') mediaFileExt = 'jpeg';
@@ -83,19 +96,13 @@ const Upload = ({navigation}) => {
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       const mediaUploadResult = await postMedia(formData, userToken);
-      const locationTags = uploadData.locationTag
-        .split(',')
-        .map((tag) => '_location_' + tag.trim().toLowerCase());
-      const tagsToUpload = [...locationTags, '_media'];
-      const tagsUploadResult = await Promise.all(
-        tagsToUpload.map(async (tag) => {
-          return await postTag(
-            mediaUploadResult.file_id,
-            appId + tag,
-            userToken
-          );
-        })
+
+      const tagsUploadResult = await postTag(
+        mediaUploadResult.file_id,
+        appId + '_mediafile',
+        userToken
       );
+
       tagsUploadResult.length &&
         Alert.alert(
           'Your media is uploaded successfully',
@@ -115,8 +122,29 @@ const Upload = ({navigation}) => {
             },
           ]
         );
+
+      Alert.alert(
+        'Your media is uploaded successfully',
+        'File id: ' + mediaUploadResult.file_id,
+        [
+          {
+            text: 'Back to Home',
+            onPress: () => {
+              setUpdate(!update);
+              navigation.navigate('Home');
+            },
+          },
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+        ]
+      );
     } catch (error) {
       console.error('uploadFileError', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,7 +161,7 @@ const Upload = ({navigation}) => {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <Card mode="contained" style={{borderRadius: '0'}}>
+          <Card mode="contained" style={{borderRadius: 0}}>
             <View style={styles.cardUploadContainer}>
               {mediaFile && (
                 <View
@@ -204,6 +232,7 @@ const Upload = ({navigation}) => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
+                    multiline
                     error={errors.title && errors.title.message}
                   />
                   {errors.title && errors.title.message ? (
@@ -238,6 +267,7 @@ const Upload = ({navigation}) => {
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
+                    multiline
                     error={errors.description && errors.description.message}
                   />
                   {errors.description && errors.description.message ? (
@@ -292,6 +322,7 @@ const Upload = ({navigation}) => {
                   errors.locationTag
                 }
                 onPress={handleSubmit(uploadFile)}
+                loading={loading}
               >
                 Upload
               </Button>
@@ -308,7 +339,7 @@ const Upload = ({navigation}) => {
 
 const styles = StyleSheet.create({
   uploadScreen: {
-    backgroundColor: '#212121',
+    backgroundColor: '#121212',
   },
   cardUploadContainer: {
     height: 200,
