@@ -51,7 +51,7 @@ const useMedia = () => {
     }
   };
 
-  const deleteMedia = async (token, id) => {
+  const deleteMedia = async (id, token) => {
     const options = {
       method: 'DELETE',
       headers: {
@@ -59,9 +59,9 @@ const useMedia = () => {
       },
     };
     try {
-      return await doFetch(baseUrl + 'comments/' + id, options);
+      return await doFetch(baseUrl + 'media/' + id, options);
     } catch (error) {
-      console.error('deleteMedia: ', error);
+      throw new Error('deleteMedia: ' + error.message);
     }
   };
 
@@ -75,7 +75,7 @@ const useMedia = () => {
     try {
       return await doFetch(baseUrl + 'media/user/' + userId, options);
     } catch (error) {
-      console.error('getMediaByUserId', error);
+      throw new Error('getMediaByUserId: ' + error.message);
     }
   };
 
