@@ -54,6 +54,8 @@ const RegisterForm = (props) => {
               style={styles.form}
               mode="outlined"
               placeholder="Full name"
+              placeholderTextColor={'grey'}
+              textColor="Black"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -87,6 +89,8 @@ const RegisterForm = (props) => {
               style={styles.form}
               mode="outlined"
               placeholder="Username"
+              placeholderTextColor={'grey'}
+              textColor="Black"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -118,6 +122,8 @@ const RegisterForm = (props) => {
               style={styles.form}
               mode="outlined"
               placeholder="Email"
+              placeholderTextColor={'grey'}
+              textColor="Black"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -152,6 +158,8 @@ const RegisterForm = (props) => {
               style={styles.form}
               mode="outlined"
               placeholder="Password"
+              placeholderTextColor={'grey'}
+              textColor="Black"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -185,6 +193,8 @@ const RegisterForm = (props) => {
               style={styles.form}
               mode="outlined"
               placeholder="Confirm password"
+              placeholderTextColor={'grey'}
+              textColor="Black"
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}

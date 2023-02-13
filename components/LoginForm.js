@@ -40,6 +40,8 @@ const LoginForm = () => {
             <TextInput
               style={styles.form}
               placeholder="Username"
+              placeholderTextColor={'grey'}
+              textColor="Black"
               mode="outlined"
               onBlur={onBlur}
               onChangeText={onChange}
@@ -64,6 +66,8 @@ const LoginForm = () => {
             <TextInput
               style={styles.form}
               placeholder="Password"
+              placeholderTextColor={'grey'}
+              textColor="Black"
               mode="outlined"
               onBlur={onBlur}
               onChangeText={onChange}
