@@ -47,7 +47,10 @@ const RegisterForm = (props) => {
     <View>
       <Controller
         control={control}
-        rules={{minLength: {value: 3, message: 'must be at least 3 chars'}}}
+        rules={{
+          required: {value: true, message: 'This is required.'},
+          minLength: {value: 3, message: 'Must be at least 3 chars'},
+        }}
         render={({field: {onChange, onBlur, value}}) => (
           <>
             <TextInput
@@ -110,7 +113,7 @@ const RegisterForm = (props) => {
       <Controller
         control={control}
         rules={{
-          required: {value: true, message: 'email is required'},
+          required: {value: true, message: 'Email is required.'},
           pattern: {
             value: /^[a-z0-9.-]{1,64}@[a-z0-9.-]{3,64}/u,
             message: 'Must be a valid email',
@@ -145,11 +148,12 @@ const RegisterForm = (props) => {
         rules={{
           required: {
             value: true,
-            message: 'min 5 characters, needs one number, one uppercase letter',
+            message: 'Min 5 characters, needs 1 number, 1 uppercase letter.',
           },
           pattern: {
             value: /(?=.*\p{Lu})(?=.*[0-9]).{5,}/u,
-            message: 'min 5 characters, needs one number, one uppercase letter',
+            message:
+              'Min 5 characters, needs one number, one uppercase letter.',
           },
         }}
         render={({field: {onChange, onBlur, value}}) => (
