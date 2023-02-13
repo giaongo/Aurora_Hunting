@@ -8,14 +8,16 @@ import {useContext, useEffect, useState} from 'react';
 import {
   Image,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Card} from 'react-native-paper';
 import {MainContext} from '../contexts/MainContext';
 import {useUser} from '../hooks/ApiHooks';
+import {useHeaderHeight} from '@react-navigation/elements';
 
 const Login = ({navigation}) => {
   const {setIsLoggedIn, setUser} = useContext(MainContext);
@@ -39,14 +41,21 @@ const Login = ({navigation}) => {
     }
   };
 
+  const height = useHeaderHeight();
+
   useEffect(() => {
     checkToken();
   }, []);
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.container}>
       <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
-        <Card>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={height + 47}
+          style={{flex: 1}}
+          enabled
+        >
           <View>
             <Image
               source={require('../assets/logo.png')}
@@ -66,13 +75,17 @@ const Login = ({navigation}) => {
             />
           </View>
           {toggleForm ? <LoginForm /> : <RegisterForm />}
-        </Card>
+        </KeyboardAvoidingView>
       </TouchableOpacity>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    width: '100%',
+  },
   imageContainer: {
     margin: 50,
     width: 140,
