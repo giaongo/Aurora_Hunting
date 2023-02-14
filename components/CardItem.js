@@ -9,6 +9,7 @@ import {useMedia, useTag, useUser} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OptionsMenu from 'react-native-option-menu';
 import {MainContext} from '../contexts/MainContext';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const CardItem = ({data, navigation}) => {
   const [postUser, setPostUser] = useState({});
@@ -45,7 +46,10 @@ const CardItem = ({data, navigation}) => {
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       const result = await deleteMedia(data.file_id, userToken);
-      console.log('delete post result', result);
+      Toast.show({
+        type: 'success',
+        text1: result.message + ' successfully 👍',
+      });
       setUpdate(!update);
     } catch (error) {
       console.error('deleteMediaError', error);
@@ -133,7 +137,7 @@ const CardItem = ({data, navigation}) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: '#212121',
+    backgroundColor: '#121212',
     flex: 1,
     marginBottom: 35,
     marginHorizontal: 30,
