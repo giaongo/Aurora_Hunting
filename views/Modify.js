@@ -105,7 +105,7 @@ const Modify = ({route, navigation}) => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: '#121212'}}>
       <TouchableWithoutFeedback
         onPress={() => Keyboard.dismiss()}
         activeOpacity={1}
