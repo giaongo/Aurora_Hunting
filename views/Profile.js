@@ -15,7 +15,7 @@ import { Video } from 'expo-av';
 
 
 const Profile = () => {
-  const {setUser, setIsLoggedIn, user,update, setUpdate } = useContext(MainContext);
+  const {setUser, setIsLoggedIn, user,update } = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {getMediaByUserId} = useMedia();
   const {getComments} = useComment();
@@ -57,6 +57,7 @@ const Profile = () => {
       const token = await AsyncStorage.getItem('userToken');
       const userFiles = await getMediaByUserId(token, user.user_id);
       setUserFiles(userFiles);
+      console.log(userFiles.map((item) => console.log(item.title.includes('avatar'))));
     } catch (error) {
       console.error('loadUserMediaFiles: ', error)
     }
@@ -115,7 +116,7 @@ const Profile = () => {
             <Text style={styles.statisticsContent}>Comments</Text>
           </View>
           <View style={styles.statisticsColumn} >
-            <Text style={styles.statisticsNumber}>{userFiles.length}</Text>
+            <Text style={styles.statisticsNumber}>{userFiles.filter(file => !file.title.includes('avatar')).length}</Text>
             <Text style={styles.statisticsContent}>Posts</Text>
           </View>
     </View>
@@ -154,29 +155,30 @@ const Profile = () => {
       </View>
       <View style={styles.gridContainer}>
       {userFiles.reverse().map((file) => {
-        return (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Single', file)}
-            key={file.file_id}
-            >
-            {file.mime_type === 'image/jpeg' ?
-            <Image
-            key={file.file_id}
-            source={{uri: uploadsUrl + file.filename  || 'https://placedog.net/500'}}
-            style={styles.image}
-            /> :
-            <Video
-              ref={video}
-              source={{uri: uploadsUrl + file.filename || 'https://placedog.net/500' }}
-              resizeMode='contain'
+        if (!file.title.includes('avatar')){
+          return (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('Single', file)}
+              key={file.file_id}
+              >
+              {file.mime_type === 'image/jpeg' ?
+              <Image
+              key={file.file_id}
+              source={{uri: uploadsUrl + file.filename  || 'https://placedog.net/500'}}
               style={styles.image}
-            />
+              /> :
+              <Video
+                ref={video}
+                source={{uri: uploadsUrl + file.filename || 'https://placedog.net/500' }}
+                resizeMode='contain'
+                style={styles.image}
+              />
+              }
+            </TouchableOpacity>
+          );
+        }
 
-            }
-
-          </TouchableOpacity>
-        );
       })}
 
     </View>

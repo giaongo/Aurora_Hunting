@@ -25,12 +25,14 @@ import { useForm } from 'react-hook-form';
 const EditProfile = ({route}) => {
   const {user, userPassword, setUserPassword, update, setUpdate} = useContext(MainContext);
   const {control, formState:{errors}, handleSubmit, reset, trigger} = useForm({mode:'onBlur'});
-  const {getFilesByTag} = useTag();
+  const {getFilesByTag, postTag} = useTag();
   const {getUserByToken, putUser, checkUsername} = useUser();
   const {postMedia} = useMedia();
 
   const userInfo = route.params;
   const [userAvatar, setUserAvatar] = useState('');
+  const [isAvatarChanged, setIsAvatarChanged] = useState(false);
+  const [avatarChange, setAvatarChange] = useState('');
   const [userNewUsername, setUserNewUsername] = useState(user.username);
   const [userNewEmail, setUserNewEmail] = useState(user.email);
   const navigation = useNavigation();
@@ -42,35 +44,39 @@ const EditProfile = ({route}) => {
       setUserAvatar(files?.pop().filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
+    };
+  };
+
+  const editUserUsernameAndEmail = async() => {
+    const userInformation = {
+      username: userNewUsername,
+      email: userNewEmail,
+    };
+    const token = await AsyncStorage.getItem('userToken');
+    if (await checkUsername(userInformation.username)  === false ){
+      Alert.alert('Username is taken');
     }
-  }
+    else {
+      const result =  await putUser(token, userInformation);
+      result ?
+      Alert.alert('Update user information successfully') :
+      Alert.alert('There is something wrong')
+    };
+    setUpdate(!update);
+  };
 
-
-  const modifyUserInfo = async() => {
+  const modifyUser = async() => {
     try {
       Alert.alert('Update', 'user information?', [
         {text:'Cancel'},
         {
           text:'Yes',
           onPress: async() => {
-            const userInfo = {
-              username: userNewUsername,
-              email: userNewEmail,
-            }
-
-            const token = await AsyncStorage.getItem('userToken');
-            if (await checkUsername(userInfo.username)  === false ){
-              Alert.alert('Username is taken');
-            }
-            else {
-              const result =  await putUser(token, userInfo);
-              result ?
-              Alert.alert('Update user information successfully') :
-              Alert.alert('There is something wrong')
-            }
-            setUpdate(!update);
+            await editUserUsernameAndEmail();
+            await postAvatar();
             navigation.navigate('Profile', update)
           },
+
         },
       ]);
     } catch (error) {
@@ -87,45 +93,56 @@ const EditProfile = ({route}) => {
         quality:0.5
       });
       if (!result.canceled){
+        setAvatarChange(result.assets[0]);
         trigger();
+        setIsAvatarChanged(!isAvatarChanged);
       }
-      console.log(result.assets[0].uri)
-      setUserAvatar(result.assets[0].uri);
-
     } catch (error) {
       console.error('pickAvatar, ', error)
     }
   }
 
-  // const postAvatar = async(avatarData) => {
-  //     const tag = 'avatar_' + user.user_id;
-  //     const mediaFilename = avatarData.assets[0].uri.split('/').pop();
-  //     const formData = new FormData();
-  //     formData.append('file',{
-  //       uri: mediaFilename,
-  //       name: tag
-  //     })
+  const postAvatar = async() => {
+    const formData = new FormData();
+    formData.append('title', userInfo.username + ' avatar');
+    const mediaFileName = avatarChange.uri.split('/').pop();
+    let mediaFileExt = mediaFileName.split('.').pop();
+    if (mediaFileExt === 'jpg') mediaFileExt = 'jpeg';
+    const mimeType = avatarChange.type + '/' + mediaFileExt;
+    formData.append('file',{
+      uri: avatarChange.uri,
+      name:  mediaFileName,
+      type: mimeType
+    })
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const avatarUploadResult = await postMedia(formData, token);
+     const fileId = avatarUploadResult.file_id;
+      const tag = 'avatar_' + user.user_id;
+      const tagsAvatarResult = await postTag(fileId, tag, token);
+      console.log(tagsAvatarResult);
+      const files = await getFilesByTag(tag);
+      setUserAvatar(files?.pop().filename);
+      setUpdate(!update);
+    } catch (error) {
+      console.error('postAvatar', error);
+    }
 
-  //     const avatarUploadResult = await postMedia(formData, token);
-
-  //     console.log(avatarUploadResult)
-  // }
+  }
 
   useEffect(() => {
     loadAvatar();
-  },[])
+  },[update])
 
   return (
     <ScrollView style={styles.container}>
       <Imagebackground />
       <View style={styles.avatarContainer}>
         <Avatar.Image
-          source={{
-            uri: userAvatar.includes('file') ?  userAvatar :
-            !userAvatar.includes('file') ?
-            uploadsUrl + userAvatar :
-            'https://placedog.net/500'
-        }}
+          source={ isAvatarChanged ?
+            {uri: avatarChange ? avatarChange.uri : 'https://placedog.net/500'} :
+            {uri: userAvatar ? uploadsUrl + userAvatar : 'https://placedog.net/500'}
+          }
           size={150}
         />
       </View>
@@ -141,7 +158,7 @@ const EditProfile = ({route}) => {
       <View style={styles.buttonDoneContainer}>
         <Button
           mode="contained"
-          onPress={modifyUserInfo}
+          onPress={modifyUser}
           buttonColor={'#6adc99'}
         >
           Done
