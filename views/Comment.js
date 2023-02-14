@@ -4,7 +4,6 @@ import {StyleSheet, SafeAreaView, ScrollView, FlatList, View, Platform} from 're
 import { useComment, useMedia, useTag, useUser } from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import { baseUrl, uploadsUrl } from '../utils/variables';
-import { MainContext } from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommentItem from '../components/CommentItem';
 import { KeyboardAvoidingView } from 'react-native';

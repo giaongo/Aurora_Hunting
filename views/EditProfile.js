@@ -8,7 +8,6 @@ import {
   Platform,
 } from 'react-native';
 import {Avatar, Button, Divider, IconButton, TextInput} from 'react-native-paper';
-import AvatarImage from '../components/Avatar';
 import Imagebackground from '../components/Imagebackground';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
@@ -25,8 +24,6 @@ const EditProfile = () => {
   const {user, userPassword, setUserPassword} = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {getUserByToken, putUser} = useUser();
-
-  console.log(userPassword);
 
   const [userAvatar, setUserAvatar] = useState('');
   const [userNewUsername, setUserNewUsername] = useState(user.username);
@@ -45,19 +42,30 @@ const EditProfile = () => {
 
   const modifyUserInfo = async() => {
     try {
-      const token = await AsyncStorage.getItem('userToken');
+
       const userInfo = {
         username: userNewUsername,
         email: userNewEmail,
+        // password: 'Password1',
       }
-      const result =  await putUser(token, userInfo);
-      result
-      ? Alert.alert('Update user information successfully')
-      : Alert.alert('There is something wrong')
+      Alert.alert('Update', 'user information?', [
+        {text:'Cancel'},
+        {
+          text:'Yes',
+          onPress: async() => {
+            const token = await AsyncStorage.getItem('userToken');
+            const result =  await putUser(token, userInfo);
+            result
+            ? Alert.alert('Update user information successfully')
+            : Alert.alert('There is something wrong')
+          },
+        },
+      ]);
     } catch (error) {
-     console.error('modifyUserInfo: ', error);
+      console.error('modifyUserInfo: ', error);
     }
   }
+
 
   useEffect(() => {
     loadAvatar();
@@ -141,16 +149,18 @@ const EditProfile = () => {
             />
           </View>
           <Divider />
-          <View style={styles.inputContainer}>
-            <IconButton icon={'information'} size={50} />
+          {/* <View style={styles.inputContainer}>
+            <IconButton icon={'lock'} size={50} />
             <TextInput
               mode="flat"
-              placeholder={'full name'}
+              placeholder={'password'}
+              secureTextEntry={true}
               style={{width: '100%', justifyContent:'center'}}
               numberOfLines={1}
-              defaultValue={user.full_name || '' }
+              defaultValue={userPassword}
+              onChangeText={newPassword => setUserPassword(newPassword)}
             />
-          </View>
+          </View> */}
         </KeyboardAvoidingView>
       </TouchableOpacity>
     </ScrollView>
