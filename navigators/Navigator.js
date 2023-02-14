@@ -100,8 +100,28 @@ const StackScreen = () => {
           />
           <Stack.Screen name="Aurora Hunting" component={TabScreen} />
           <Stack.Screen name="Comment" component={Comment} />
-          <Stack.Screen name="Single" component={Single} />
-          <Stack.Screen name="Modify" component={Modify} />
+          <Stack.Screen
+            name="Single"
+            component={Single}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: '#121212',
+              },
+              headerTintColor: 'white',
+            }}
+          />
+          <Stack.Screen
+            name="Modify"
+            component={Modify}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: '#121212',
+              },
+              headerTintColor: 'white',
+            }}
+          />
           <Stack.Screen name="ModifyComment" component={ModifyComment} />
         </>
       ) : (
