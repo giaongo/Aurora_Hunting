@@ -15,18 +15,21 @@ import { Video } from 'expo-av';
 
 
 const Profile = () => {
-  const {setUser, setIsLoggedIn, user,} = useContext(MainContext);
+  const {setUser, setIsLoggedIn, user,update, setUpdate } = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {getMediaByUserId} = useMedia();
   const {getComments} = useComment();
   const {getFavourite} = useFavourite();
+  const {getUserByToken} = useUser();
   const video = React.useRef(null);
 
   const [userAvatar, setUserAvatar] = useState('');
   const [userFiles, setUserFiles] = useState([]);
+  const [username, setUsername] = useState(user.username);
   const [commentsByUser, setCommentsByUser] = useState([]);
   const [favouritesByUser, setFavouritesByUser] = useState([]);
   const navigation = useNavigation();
+
 
   const loadAvatar = async() => {
     try {
@@ -35,6 +38,16 @@ const Profile = () => {
       setUserAvatar(files?.pop().filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
+    }
+  }
+
+  const loadUsername = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const result = await getUserByToken(token);
+      setUsername(result.username);
+    } catch (error) {
+      console.error('loadUsername: ', error)
     }
   }
 
@@ -70,12 +83,14 @@ const Profile = () => {
     }
   }
 
+
   useEffect(() => {
     loadAvatar();
+    loadUsername();
     loadUserMediaFiles();
     loadCommentsPostedByUser();
     loadFavouritesByUser();
-  },[])
+  },[update])
 
   return (
     <ScrollView style={styles.container}>
@@ -88,7 +103,7 @@ const Profile = () => {
       </View>
 
       <View style={styles.usernameContainer}>
-        <Text style={styles.username}>{user.username}</Text>
+        <Text style={styles.username}>{username}</Text>
       </View>
       <View style={styles.statisticsContainer}>
           <View style={styles.statisticsColumn}>
@@ -107,7 +122,11 @@ const Profile = () => {
       <View style={styles.buttonEditProfileContainer}>
         <Button
           mode="contained"
-          onPress={() => navigation.navigate('EditProfile')}
+          onPress={() => navigation.navigate('EditProfile',
+          {
+            username: username,
+            Email: user.email
+          })}
           dark={true}
           buttonColor={'#6adc99'}
         >

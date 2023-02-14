@@ -7,24 +7,29 @@ import {
   View,
   Platform,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import {Avatar, Button, Divider, IconButton, TextInput} from 'react-native-paper';
 import Imagebackground from '../components/Imagebackground';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
 import { MainContext } from '../contexts/MainContext';
-import { useTag, useUser } from '../hooks/ApiHooks';
+import { useMedia, useTag, useUser } from '../hooks/ApiHooks';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { uploadsUrl } from '../utils/variables';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
+import { useForm } from 'react-hook-form';
 
-const EditProfile = () => {
-  const {user, userPassword, setUserPassword} = useContext(MainContext);
+const EditProfile = ({route}) => {
+  const {user, userPassword, setUserPassword, update, setUpdate} = useContext(MainContext);
+  const {control, formState:{errors}, handleSubmit, reset, trigger} = useForm({mode:'onBlur'});
   const {getFilesByTag} = useTag();
-  const {getUserByToken, putUser} = useUser();
+  const {getUserByToken, putUser, checkUsername} = useUser();
+  const {postMedia} = useMedia();
 
+  const userInfo = route.params;
   const [userAvatar, setUserAvatar] = useState('');
   const [userNewUsername, setUserNewUsername] = useState(user.username);
   const [userNewEmail, setUserNewEmail] = useState(user.email);
@@ -40,24 +45,31 @@ const EditProfile = () => {
     }
   }
 
+
   const modifyUserInfo = async() => {
     try {
-
-      const userInfo = {
-        username: userNewUsername,
-        email: userNewEmail,
-        // password: 'Password1',
-      }
       Alert.alert('Update', 'user information?', [
         {text:'Cancel'},
         {
           text:'Yes',
           onPress: async() => {
+            const userInfo = {
+              username: userNewUsername,
+              email: userNewEmail,
+            }
+
             const token = await AsyncStorage.getItem('userToken');
-            const result =  await putUser(token, userInfo);
-            result
-            ? Alert.alert('Update user information successfully')
-            : Alert.alert('There is something wrong')
+            if (await checkUsername(userInfo.username)  === false ){
+              Alert.alert('Username is taken');
+            }
+            else {
+              const result =  await putUser(token, userInfo);
+              result ?
+              Alert.alert('Update user information successfully') :
+              Alert.alert('There is something wrong')
+            }
+            setUpdate(!update);
+            navigation.navigate('Profile', update)
           },
         },
       ]);
@@ -66,6 +78,38 @@ const EditProfile = () => {
     }
   }
 
+  const pickAvatar = async() => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing:true,
+        aspect: [4,3],
+        quality:0.5
+      });
+      if (!result.canceled){
+        trigger();
+      }
+      console.log(result.assets[0].uri)
+      setUserAvatar(result.assets[0].uri);
+
+    } catch (error) {
+      console.error('pickAvatar, ', error)
+    }
+  }
+
+  // const postAvatar = async(avatarData) => {
+  //     const tag = 'avatar_' + user.user_id;
+  //     const mediaFilename = avatarData.assets[0].uri.split('/').pop();
+  //     const formData = new FormData();
+  //     formData.append('file',{
+  //       uri: mediaFilename,
+  //       name: tag
+  //     })
+
+  //     const avatarUploadResult = await postMedia(formData, token);
+
+  //     console.log(avatarUploadResult)
+  // }
 
   useEffect(() => {
     loadAvatar();
@@ -76,7 +120,12 @@ const EditProfile = () => {
       <Imagebackground />
       <View style={styles.avatarContainer}>
         <Avatar.Image
-          source={{uri: userAvatar ? uploadsUrl + userAvatar :'https://placedog.net/500'}}
+          source={{
+            uri: userAvatar.includes('file') ?  userAvatar :
+            !userAvatar.includes('file') ?
+            uploadsUrl + userAvatar :
+            'https://placedog.net/500'
+        }}
           size={150}
         />
       </View>
@@ -101,7 +150,7 @@ const EditProfile = () => {
       <View style={styles.buttonEditProfileContainer}>
         <Button
           mode="contained"
-          onPress={() => console.log('pick avatar')}
+          onPress={pickAvatar}
           dark={true}
           buttonColor={'#6adc99'}
         >
@@ -132,7 +181,7 @@ const EditProfile = () => {
               placeholder={'username'}
               style={{width: '100%', justifyContent:'center'}}
               numberOfLines={1}
-              defaultValue={user.username}
+              defaultValue={userInfo.username}
               onChangeText={newUsername => setUserNewUsername(newUsername)}
             />
           </View>
@@ -144,7 +193,7 @@ const EditProfile = () => {
               placeholder={'email'}
               style={{width: '100%', justifyContent:'center'}}
               numberOfLines={1}
-              defaultValue={user.email}
+              defaultValue={userInfo.Email}
               onChangeText={newEmail => setUserNewEmail(newEmail)}
             />
           </View>
@@ -183,8 +232,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 10,
-    alignItems: 'flex-end',
-    top: 30,
+    alignItems:  'flex-end',
+    top: 50,
   },
   buttonCancelContainer: {
     position: 'absolute',
@@ -208,6 +257,7 @@ const styles = StyleSheet.create({
 
 EditProfile.propTypes = {
   navigation: PropTypes.object,
+  route: PropTypes.object,
 };
 
 export default EditProfile;

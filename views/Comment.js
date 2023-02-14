@@ -9,10 +9,12 @@ import CommentItem from '../components/CommentItem';
 import { KeyboardAvoidingView } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { Alert } from 'react-native';
+import { MainContext } from '../contexts/MainContext';
 
 
 const Comment = ({route}) => {
   const fileId = route.params;
+  const {update, setUpdate} = useContext(MainContext);
   const {control, handleSubmit, formState: {errors}, trigger, setValue} = useForm({
     defaultValues: {}
   });
@@ -39,7 +41,7 @@ const Comment = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
-      result ? Alert.alert('post comment successfully') & setUpdateComment(!updateComment) : Alert.alert('Please try again');
+      result ? Alert.alert('post comment successfully') & setUpdateComment(!updateComment) & setUpdate(!update): Alert.alert('Please try again');
     } catch (error) {
       console.error('add Comment: ', error);
     }
