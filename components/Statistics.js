@@ -1,7 +1,6 @@
 import {StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
 
-
 const DATA = [
   {
     number: '20',

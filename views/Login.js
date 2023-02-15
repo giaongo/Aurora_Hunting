@@ -48,7 +48,7 @@ const Login = ({navigation}) => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
       <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -82,10 +82,6 @@ const Login = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-    width: '100%',
-  },
   imageContainer: {
     margin: 50,
     width: 140,
