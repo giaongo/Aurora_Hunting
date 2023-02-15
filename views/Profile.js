@@ -1,8 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useContext, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View, Image} from 'react-native';
+import {ScrollView, StyleSheet, View, Image, ImageBackground} from 'react-native';
 import {Text, Button, Avatar} from 'react-native-paper';
-import Imagebackground from '../components/Imagebackground';
 import {MainContext} from '../contexts/MainContext';
 import { useComment, useFavourite, useMedia, useTag, useUser } from '../hooks/ApiHooks';
 import { uploadsUrl } from '../utils/variables';
@@ -15,7 +14,7 @@ import { Video } from 'expo-av';
 
 
 const Profile = () => {
-  const {setUser, setIsLoggedIn, user,update } = useContext(MainContext);
+  const {setUser, setIsLoggedIn, user,update, setUpdate } = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {getMediaByUserId} = useMedia();
   const {getComments} = useComment();
@@ -24,6 +23,7 @@ const Profile = () => {
   const video = React.useRef(null);
 
   const [userAvatar, setUserAvatar] = useState('');
+  const [userWallPaper, setUserWallPaper] = useState('');
   const [userFiles, setUserFiles] = useState([]);
   const [username, setUsername] = useState(user.username);
   const [commentsByUser, setCommentsByUser] = useState([]);
@@ -39,7 +39,17 @@ const Profile = () => {
     } catch (error) {
       console.error('loadAvatar: ', error);
     }
-  }
+  };
+
+  const loadWallPaper = async() => {
+    try {
+      const tag = 'wallpaper_' + user.user_id;
+      const files = await getFilesByTag(tag);
+      setUserWallPaper(files?.pop().filename);
+    } catch (error) {
+      console.error('loadWallPaper: ', error);
+    }
+  };
 
   const loadUsername = async () => {
     try {
@@ -49,7 +59,7 @@ const Profile = () => {
     } catch (error) {
       console.error('loadUsername: ', error)
     }
-  }
+  };
 
 
   const loadUserMediaFiles = async() => {
@@ -57,11 +67,10 @@ const Profile = () => {
       const token = await AsyncStorage.getItem('userToken');
       const userFiles = await getMediaByUserId(token, user.user_id);
       setUserFiles(userFiles);
-      console.log(userFiles.map((item) => console.log(item.title.includes('avatar'))));
     } catch (error) {
       console.error('loadUserMediaFiles: ', error)
     }
-  }
+  };
 
 
   const loadCommentsPostedByUser = async() => {
@@ -72,7 +81,7 @@ const Profile = () => {
     } catch (error) {
       console.error('loadCommentsPostedByUser: ', error)
     }
-  }
+  };
 
   const loadFavouritesByUser = async() => {
     try {
@@ -82,11 +91,12 @@ const Profile = () => {
     } catch (error) {
       console.error('loadCommentsPostedByUser: ', error)
     }
-  }
+  };
 
 
   useEffect(() => {
     loadAvatar();
+    loadWallPaper();
     loadUsername();
     loadUserMediaFiles();
     loadCommentsPostedByUser();
@@ -95,7 +105,11 @@ const Profile = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Imagebackground />
+      <ImageBackground
+      source={{uri: userWallPaper ? uploadsUrl + userWallPaper : 'https://placedog.net/500/280'}}
+      resizeMethod={'auto'}
+      style={styles.backgroundImg}
+      />
       <View style={styles.avatarContainer}>
         <Avatar.Image
           source={{uri: userAvatar ? uploadsUrl + userAvatar : 'https://placedog.net/500'}}
@@ -116,7 +130,7 @@ const Profile = () => {
             <Text style={styles.statisticsContent}>Comments</Text>
           </View>
           <View style={styles.statisticsColumn} >
-            <Text style={styles.statisticsNumber}>{userFiles.filter(file => !file.title.includes('avatar')).length}</Text>
+            <Text style={styles.statisticsNumber}>{userFiles.filter(file => !file.title.includes('avatar') && !file.title.includes('wallpaper')).length}</Text>
             <Text style={styles.statisticsContent}>Posts</Text>
           </View>
     </View>
@@ -155,7 +169,7 @@ const Profile = () => {
       </View>
       <View style={styles.gridContainer}>
       {userFiles.reverse().map((file) => {
-        if (!file.title.includes('avatar')){
+        if (!file.title.includes('avatar') && !file.title.includes('wallpaper')){
           return (
             <TouchableOpacity
               style={styles.button}
@@ -191,6 +205,11 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     backgroundColor: '#212121',
+  },
+  backgroundImg: {
+    width: '100%',
+    height: 350,
+    opacity: 0.5,
   },
   usernameContainer: {
     position: 'absolute',

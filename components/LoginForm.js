@@ -21,6 +21,7 @@ const LoginForm = () => {
   const LogIn = async (loginData) => {
     console.log('Login button pressed', loginData);
     setUserPassword(loginData.password);
+    // console.log(userPassword);
     try {
       const loginResult = await postLogin(loginData);
       console.log('logIn', loginResult);

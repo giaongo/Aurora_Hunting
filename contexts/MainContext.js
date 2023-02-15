@@ -6,7 +6,7 @@ const MainProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
   const [update, setUpdate] = useState(true);
-  const [userPassword, setUserPassword] = useState('');
+  const [userPassword, setUserPassword] = useState();
 
   return (
     <MainContext.Provider

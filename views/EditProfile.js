@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {Avatar, Button, Divider, IconButton, TextInput} from 'react-native-paper';
-import Imagebackground from '../components/Imagebackground';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
 import { MainContext } from '../contexts/MainContext';
@@ -21,6 +20,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { ImageBackground } from 'react-native';
 
 const EditProfile = ({route}) => {
   const {user, userPassword, setUserPassword, update, setUpdate} = useContext(MainContext);
@@ -33,9 +33,16 @@ const EditProfile = ({route}) => {
   const [userAvatar, setUserAvatar] = useState('');
   const [isAvatarChanged, setIsAvatarChanged] = useState(false);
   const [avatarChange, setAvatarChange] = useState('');
+  const [wallPaperChange, setWallPaperChange] = useState('');
+  const [userWallPaper, setUserWallPaper] = useState('');
+  const [isWallPaperChanged, setIsWallPaperChanged] = useState(false);
   const [userNewUsername, setUserNewUsername] = useState(user.username);
   const [userNewEmail, setUserNewEmail] = useState(user.email);
   const navigation = useNavigation();
+
+  const testPassword = () => {
+    console.log(userPassword);
+  }
 
   const loadAvatar = async() => {
     try {
@@ -47,13 +54,23 @@ const EditProfile = ({route}) => {
     };
   };
 
+  const loadWallPaper = async() => {
+    try {
+      const tag = 'wallpaper_' + user.user_id;
+      const files = await getFilesByTag(tag);
+      setUserWallPaper(files?.pop().filename);
+    } catch (error) {
+      console.error('loadAvatar: ', error);
+    };
+  };
+
   const editUserUsernameAndEmail = async() => {
     const userInformation = {
       username: userNewUsername,
       email: userNewEmail,
     };
     const token = await AsyncStorage.getItem('userToken');
-    if (await checkUsername(userInformation.username)  === false ){
+    if (await checkUsername(userInformation.username)  === false && (userInformation.username != user.username )){
       Alert.alert('Username is taken');
     }
     else {
@@ -62,7 +79,6 @@ const EditProfile = ({route}) => {
       Alert.alert('Update user information successfully') :
       Alert.alert('There is something wrong')
     };
-    setUpdate(!update);
   };
 
   const modifyUser = async() => {
@@ -73,16 +89,62 @@ const EditProfile = ({route}) => {
           text:'Yes',
           onPress: async() => {
             await editUserUsernameAndEmail();
-            await postAvatar();
-            navigation.navigate('Profile', update)
+            !avatarChange ? null : await postAvatar();
+            !wallPaperChange ? null : await postWallPaper();
+            setUpdate(!update);
+            navigation.navigate('Profile', update);
           },
-
         },
       ]);
     } catch (error) {
       console.error('modifyUserInfo: ', error);
     }
-  }
+  };
+
+  const pickWallPaper = async() => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing:true,
+        aspect: [4,3],
+        quality:0.5
+      });
+      if (!result.canceled){
+        setWallPaperChange(result.assets[0]);
+        trigger();
+        setIsWallPaperChanged(!isWallPaperChanged);
+      }
+    } catch (error) {
+      console.error('pickAvatar, ', error)
+    }
+  };
+
+  const postWallPaper = async() => {
+    const formData = new FormData();
+    formData.append('title', userInfo.username + ' wallpaper');
+    const mediaFileName = wallPaperChange.uri.split('/').pop();
+    let mediaFileExt = mediaFileName.split('.').pop();
+    if (mediaFileExt === 'jpg') mediaFileExt = 'jpeg';
+    const mimeType = wallPaperChange.type + '/' + mediaFileExt;
+    formData.append('file',{
+      uri: wallPaperChange.uri,
+      name:  mediaFileName,
+      type: mimeType
+    })
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const wallPaperUploadResult = await postMedia(formData, token);
+     const fileId = wallPaperUploadResult.file_id;
+      const tag = 'wallpaper_' + user.user_id;
+      const tagsWallPaperResult = await postTag(fileId, tag, token);
+      console.log(tagsWallPaperResult);
+      const files = await getFilesByTag(tag);
+      setUserWallPaper(files?.pop().filename);
+    } catch (error) {
+      console.error('postWallPaper', error);
+    }
+  };
+
 
   const pickAvatar = async() => {
     try {
@@ -100,7 +162,7 @@ const EditProfile = ({route}) => {
     } catch (error) {
       console.error('pickAvatar, ', error)
     }
-  }
+  };
 
   const postAvatar = async() => {
     const formData = new FormData();
@@ -123,20 +185,27 @@ const EditProfile = ({route}) => {
       console.log(tagsAvatarResult);
       const files = await getFilesByTag(tag);
       setUserAvatar(files?.pop().filename);
-      setUpdate(!update);
     } catch (error) {
       console.error('postAvatar', error);
     }
 
-  }
+  };
 
   useEffect(() => {
     loadAvatar();
+    loadWallPaper();
+    testPassword();
   },[update])
 
   return (
     <ScrollView style={styles.container}>
-      <Imagebackground />
+      <ImageBackground
+      source={ isWallPaperChanged ?
+        {uri: wallPaperChange ? wallPaperChange.uri : 'https://placedog.net/500/200'} :
+        {uri: userWallPaper ? uploadsUrl + userWallPaper : 'https://placedog.net/500'}}
+      resizeMethod={'auto'}
+      style={styles.backgroundImg}
+      />
       <View style={styles.avatarContainer}>
         <Avatar.Image
           source={ isAvatarChanged ?
@@ -175,7 +244,7 @@ const EditProfile = ({route}) => {
         </Button>
         <Button
           mode="contained"
-          onPress={() => console.log('pick wall paper')}
+          onPress={pickWallPaper}
           dark={true}
           buttonColor={'#6adc99'}
         >
@@ -215,7 +284,7 @@ const EditProfile = ({route}) => {
             />
           </View>
           <Divider />
-          {/* <View style={styles.inputContainer}>
+          <View style={styles.inputContainer}>
             <IconButton icon={'lock'} size={50} />
             <TextInput
               mode="flat"
@@ -224,9 +293,9 @@ const EditProfile = ({route}) => {
               style={{width: '100%', justifyContent:'center'}}
               numberOfLines={1}
               defaultValue={userPassword}
-              onChangeText={newPassword => setUserPassword(newPassword)}
+              // onChangeText={newPassword => setUserPassword(newPassword)}
             />
-          </View> */}
+          </View>
         </KeyboardAvoidingView>
       </TouchableOpacity>
     </ScrollView>
@@ -237,6 +306,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
+  },
+  backgroundImg: {
+    width: '100%',
+    height: 350,
+    opacity: 0.5,
   },
   avatarContainer:{
     position: 'absolute',
