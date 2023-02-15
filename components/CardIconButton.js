@@ -48,8 +48,10 @@ const CardIconButton = ({dataId, navigation}) => {
       const ratingOnlyArray = ratings.map((element) => element.rating);
       setAverageRating(
         ratingOnlyArray.length &&
-          ratingOnlyArray.reduce((prev, cur) => prev + cur, 0) /
+          (
+            ratingOnlyArray.reduce((prev, cur) => prev + cur, 0) /
             ratingOnlyArray.length
+          ).toFixed(1)
       );
     } catch (error) {
       console.error('getRatingsByFileIdError', error);

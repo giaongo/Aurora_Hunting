@@ -3,6 +3,7 @@ import React, {useContext} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {StyleSheet, View} from 'react-native';
 import {Button, HelperText, TextInput} from 'react-native-paper';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {MainContext} from '../contexts/MainContext';
 import {useAuthentication} from '../hooks/ApiHooks';
 
@@ -17,6 +18,12 @@ const LoginForm = () => {
     defaultValues: {username: '', password: ''},
   });
 
+  const showToast = (type, title) => {
+    Toast.show({
+      type: type,
+      text1: title,
+    });
+  };
 
   const LogIn = async (loginData) => {
     console.log('Login button pressed', loginData);
@@ -28,8 +35,10 @@ const LoginForm = () => {
       await AsyncStorage.setItem('userToken', loginResult.token);
       setUser(loginResult.user);
       setIsLoggedIn(true);
+      showToast('success', 'Logged in successfully 👍');
     } catch (error) {
       console.error('logIn failed', error);
+      showToast('error', 'Incorrect username or password ☹️');
     }
   };
 
