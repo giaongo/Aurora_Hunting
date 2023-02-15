@@ -18,7 +18,6 @@ const CommentItem = ({data}) => {
   const [showMore, setShowMore] = useState(false);
   const [updateComment, setUpdateComment] = useState(false);
   const [userId, setUserId] = useState('');
-  const navigation = useNavigation();
 
   const getUserIdByToken = async () => {
     const token = await AsyncStorage.getItem('userToken');
@@ -68,10 +67,6 @@ const CommentItem = ({data}) => {
     }
   };
 
-  const editComment = () => {
-    console.log('edit pressed');
-    navigation.navigate('ModifyComment', data);
-  };
 
   useEffect(() => {
     loadAvatar();
@@ -108,9 +103,6 @@ const CommentItem = ({data}) => {
       </View>
       {userId === data.user_id ? (
         <View style={styles.buttonContainer}>
-          <Button mode="elevated" textColor="black" onPress={editComment}>
-            Edit
-          </Button>
           <Button mode="elevated" textColor="black" onPress={doDelete}>
             Delete
           </Button>

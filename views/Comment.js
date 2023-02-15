@@ -20,7 +20,7 @@ import {
 import {useComment, useMedia, useTag, useUser} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {MainContext} from '../contexts/MainContext';
+import {MainContext, MainProvider} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommentItem from '../components/CommentItem';
 import {KeyboardAvoidingView} from 'react-native';
@@ -60,7 +60,7 @@ const Comment = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
-      result ? Alert.alert('post comment successfully') & setUpdateComment(!updateComment) & setUpdate(!update): Alert.alert('Please try again');
+      result ? Alert.alert('post comment successfully') & setUpdateComment(!updateComment): Alert.alert('Please try again');
     } catch (error) {
       console.error('add Comment: ', error);
     }
