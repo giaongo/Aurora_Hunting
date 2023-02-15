@@ -292,10 +292,10 @@ const Upload = ({navigation}) => {
                 <>
                   <TextInput
                     style={styles.input}
-                    label="Location Tag (separate wtih commas)"
+                    label="Address Tag (separate wtih commas)"
                     mode="outlined"
                     textColor="#212121"
-                    placeholder="Eg: Pohjoisranta, Rovaniemi"
+                    placeholder="Eg: Pohjoisranta 22, Rovaniemi, Finland"
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}

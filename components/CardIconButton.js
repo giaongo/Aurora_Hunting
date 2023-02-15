@@ -117,7 +117,6 @@ const CardIconButton = ({dataId, navigation}) => {
 
 const styles = StyleSheet.create({
   cardIconStatus: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   },
