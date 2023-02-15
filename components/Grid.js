@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 100,
-    borderWidth:1,
-    backgroundColor:'blue'
+    borderWidth: 1,
+    backgroundColor: 'blue',
   },
 });
 
