@@ -48,7 +48,7 @@ const EditProfile = ({route}) => {
     try {
       const tag = 'avatar_' + user.user_id;
       const files = await getFilesByTag(tag);
-      setUserAvatar(files?.pop().filename);
+      setUserAvatar(files?.pop()?.filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
     };
@@ -58,7 +58,7 @@ const EditProfile = ({route}) => {
     try {
       const tag = 'wallpaper_' + user.user_id;
       const files = await getFilesByTag(tag);
-      setUserWallPaper(files?.pop().filename);
+      setUserWallPaper(files?.pop()?.filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
     };
