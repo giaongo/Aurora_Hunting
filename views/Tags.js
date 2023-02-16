@@ -4,36 +4,30 @@ import {Card, Text} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import CardTag from '../components/CardTag';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useTag, useUser} from '../hooks/ApiHooks';
+import {useTag} from '../hooks/ApiHooks';
 
-const Tags = (data, navigation) => {
-  // const [postUser, setPostUser] = useState({});
-  // const {getUserById} = useUser();
-  // const {getFilesByTag} = useTag();
+const Tags = (navigation, route) => {
+  const {description, user_id: userId} = route.params;
 
-  // const getPostUser = async () => {
-  //   try {
-  //     const userToken = await AsyncStorage.getItem('userToken');
-  //     const user = await getUserById(data.user_id, userToken);
-  //     setPostUser(user);
-  //   } catch (error) {
-  //     console.error('getPostUserError', error);
-  //   }
-  // };
-  // const {getUserById} = useUser();
-  // const {getFilesByTag} = useTag();
+  const [setPostUser] = useState({});
 
-  // const getLocationTags = async () => {
-  //   try {
-  //     const userToken = await AsyncStorage.getItem('userToken');
-  //     const user = await getUserById(data.user_id, userToken);
-  //   } catch (error) {
-  //     console.error('getPostUserError', error);
-  //   }
-  // };
+  const allData = JSON.parse(description);
+  const locationTagsData = allData.tags;
 
-  // const allData = JSON.parse(data.tags);
-  // const locationTagsData = allData.tags;
+  const {getListOfTags} = useTag();
+  const getTags = async () => {
+    try {
+      const userToken = await AsyncStorage.getItem('userToken');
+      const user = await getListOfTags(userId, userToken);
+      setPostUser(user);
+    } catch (error) {
+      console.error('getTagsError', error);
+    }
+  };
+
+  useEffect(() => {
+    getTags();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -41,8 +35,9 @@ const Tags = (data, navigation) => {
 
       <Card>
         <Text style={styles.title}>#Rovaniemi</Text>
+        <CardTag navigation={navigation} />
 
-        {/* <CardTag tags={locationTagsData} /> */}
+        <CardTag tags={locationTagsData} />
       </Card>
     </View>
   );
@@ -64,7 +59,7 @@ const styles = StyleSheet.create({
 });
 
 Tags.propTypes = {
-  data: PropTypes.object,
+  route: PropTypes.object,
   navigation: PropTypes.object,
 };
 

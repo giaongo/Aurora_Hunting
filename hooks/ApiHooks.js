@@ -250,11 +250,25 @@ const useTag = () => {
       throw new Error('getAllTagsByFileIdError: ' + error.message);
     }
   };
+  const getListOfTags = async (token, tag) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'tags' + tag, options);
+    } catch (error) {
+      throw new Error('getTagError: ' + error.message);
+    }
+  };
 
   return {
     getFilesByTag,
     postTag,
     getAllTagsByFileId,
+    getListOfTags,
   };
 };
 
