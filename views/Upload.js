@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
   Card,
   IconButton,
@@ -26,30 +26,58 @@ import {appId} from '../utils/variables';
 import PropTypes from 'prop-types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
-import {useFocusEffect} from '@react-navigation/native';
+import Geocoder from 'react-native-geocoding';
+import {REACT_APP_GOOGLE_API} from '@env';
 
-const Upload = ({navigation}) => {
+const Upload = ({navigation, route = {}}) => {
+  const {latitude, longitude} = (route?.params && route?.params?.data) || {
+    latitude: null,
+    longitude: null,
+  };
   const [mediaFile, setMediaFile] = useState(null);
   const {update, setUpdate} = useContext(MainContext);
   const [loading, setLoading] = useState(false);
+  const [locationName, setLocationName] = useState('');
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
+
   const {
     control,
     formState: {errors},
     handleSubmit,
     reset,
     trigger,
+    setValue,
+    resetField,
   } = useForm({
     defaultValues: {title: '', description: '', locationTag: ''},
     mode: 'onBlur',
   });
 
   const resetForm = () => {
+    setLocationName('');
     setMediaFile(null);
     reset();
   };
+
+  const getLocationNameFromLatLng = async () => {
+    try {
+      if (latitude && longitude) {
+        const GOOGLE_API = REACT_APP_GOOGLE_API;
+        Geocoder.init(GOOGLE_API);
+        const result = await Geocoder.from(latitude, longitude);
+        const reversedAddressFromLatLng = result.results[0].formatted_address;
+        setValue(reversedAddressFromLatLng);
+        setLocationName(reversedAddressFromLatLng);
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.error('getLocationNameFromLatLngError', error);
+    }
+  };
+
   const pickFile = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -58,7 +86,6 @@ const Upload = ({navigation}) => {
         aspect: [4, 3],
         quality: 0.5,
       });
-      console.log(result);
       if (!result.canceled) {
         setMediaFile(result.assets[0]);
         trigger();
@@ -113,6 +140,7 @@ const Upload = ({navigation}) => {
               onPress: () => {
                 setUpdate(!update);
                 navigation.navigate('Home');
+                resetForm();
               },
             },
             {
@@ -122,25 +150,6 @@ const Upload = ({navigation}) => {
             },
           ]
         );
-
-      Alert.alert(
-        'Your media is uploaded successfully',
-        'File id: ' + mediaUploadResult.file_id,
-        [
-          {
-            text: 'Back to Home',
-            onPress: () => {
-              setUpdate(!update);
-              navigation.navigate('Home');
-            },
-          },
-          {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
-          },
-        ]
-      );
     } catch (error) {
       console.error('uploadFileError', error);
     } finally {
@@ -148,13 +157,10 @@ const Upload = ({navigation}) => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        resetForm();
-      };
-    }, [])
-  );
+  useEffect(() => {
+    getLocationNameFromLatLng();
+  }, [update]);
+
   return (
     <ScrollView style={styles.uploadScreen}>
       <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
@@ -254,7 +260,7 @@ const Upload = ({navigation}) => {
                 },
                 minLength: {
                   value: 5,
-                  message: 'Title min length is 5 characters',
+                  message: 'Description min length is 5 characters',
                 },
               }}
               render={({field: {onChange, onBlur, value}}) => (
@@ -287,18 +293,20 @@ const Upload = ({navigation}) => {
                   value: true,
                   message: 'required',
                 },
+                onChange: (event) => setLocationName(event.target.value),
               }}
-              render={({field: {onChange, onBlur, value}}) => (
+              render={({field: {onChange, onBlur}}) => (
                 <>
                   <TextInput
                     style={styles.input}
                     label="Address Tag (separate wtih commas)"
                     mode="outlined"
+                    multiline
                     textColor="#212121"
                     placeholder="Eg: Pohjoisranta 22, Rovaniemi, Finland"
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    value={value}
+                    value={locationName}
                     error={errors.locationTag && errors.locationTag.message}
                   />
                   {errors.locationTag && errors.locationTag.message ? (
@@ -309,6 +317,18 @@ const Upload = ({navigation}) => {
                 </>
               )}
               name="locationTag"
+            />
+            <IconButton
+              icon="map-marker-radius"
+              size={30}
+              iconColor="white"
+              onPress={() =>
+                navigation.navigate('LocationMap', {
+                  latitude: 66.713617,
+                  longitude: 27.4292196,
+                  routeName: 'Upload',
+                })
+              }
             />
 
             <Card.Content style={styles.buttonContainer}>
@@ -369,5 +389,6 @@ const styles = StyleSheet.create({
 });
 Upload.propTypes = {
   navigation: PropTypes.object,
+  route: PropTypes.object,
 };
 export default Upload;

@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Button, IconButton, Text} from 'react-native-paper';
+import {IconButton, Text} from 'react-native-paper';
 import {StyleSheet, ScrollView} from 'react-native';
 import PropTypes from 'prop-types';
 import {ImageBackground} from 'react-native';
@@ -55,7 +55,8 @@ const Single = ({route, navigation}) => {
       Geocoder.init(GOOGLE_API);
       const json = await Geocoder.from(locationTags);
       const location = json?.results[0].geometry.location;
-      location && setLocationLatLon(location);
+      location &&
+        setLocationLatLon({latitude: location.lat, longitude: location.lng});
     } catch (error) {
       console.error('getLocationLatLonDataError', error);
     }
@@ -125,7 +126,12 @@ const Single = ({route, navigation}) => {
             icon="map-marker-radius"
             size={30}
             iconColor="white"
-            onPress={() => navigation.navigate('LocationMap', locationLatLon)}
+            onPress={() =>
+              navigation.navigate('LocationMap', {
+                ...locationLatLon,
+                routeName: 'Single',
+              })
+            }
           />
         ) : null}
       </View>

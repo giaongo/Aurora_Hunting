@@ -1,11 +1,5 @@
 import React, {useContext, useRef, useState} from 'react';
-import {
-  Card,
-  HelperText,
-  TextInput,
-  Button,
-  IconButton,
-} from 'react-native-paper';
+import {Card, HelperText, TextInput, Button} from 'react-native-paper';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -15,7 +9,6 @@ import {
   Keyboard,
   View,
   TouchableWithoutFeedback,
-  Text,
   Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -253,31 +246,6 @@ const Modify = ({route, navigation}) => {
                     hasRemoveBtn={true}
                     tagRemoveOnPress={tagRemoveOnPress}
                   />
-                  {/* {locationTags &&
-                    locationTags?.map((tag, index) => {
-                      const trimmedTag = tag.trim();
-                      return (
-                        <Card key={index} style={styles.cardTag}>
-                          <Text variant="titleSmall" style={styles.cardTagText}>
-                            {'#' +
-                              trimmedTag.charAt(0).toUpperCase() +
-                              trimmedTag.slice(1)}
-                          </Text>
-                          <IconButton
-                            icon="close-thick"
-                            size={8}
-                            style={{
-                              position: 'absolute',
-                              right: -29,
-                              top: -27,
-                            }}
-                            iconColor="white"
-                            containerColor="#bf2c2c"
-                            onPress={() => tagRemoveOnPress(tag)}
-                          />
-                        </Card>
-                      );
-                    })} */}
                 </View>
                 <Card.Content>
                   <Button
