@@ -225,6 +225,7 @@ const Modify = ({route, navigation}) => {
                         label="Location Tag (separate wtih ,)"
                         mode="outlined"
                         textColor="#212121"
+                        multiline
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={locationTags.join(',')}

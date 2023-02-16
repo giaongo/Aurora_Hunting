@@ -40,6 +40,7 @@ const Upload = ({navigation, route = {}}) => {
   const latitude = route?.params?.data.latitude || null;
   const longitude = route?.params?.data.longitude || null;
 
+  console.log('route data', route.params);
   const {
     control,
     formState: {errors},
@@ -67,6 +68,7 @@ const Upload = ({navigation, route = {}}) => {
         const reversedAddressFromLatLng = result.results[0].formatted_address;
         setLocationName(reversedAddressFromLatLng);
         setValue('locationTag', reversedAddressFromLatLng);
+        navigation.setParams({data: {}});
       } else {
         return;
       }
@@ -124,9 +126,7 @@ const Upload = ({navigation, route = {}}) => {
     try {
       const userToken = await AsyncStorage.getItem('userToken');
       const mediaUploadResult = await postMedia(formData, userToken);
-
       await postTag(mediaUploadResult.file_id, appId + '_mediafile', userToken);
-      resetForm();
       Alert.alert(
         'Your media is uploaded successfully',
         'File id: ' + mediaUploadResult.file_id,
@@ -135,6 +135,7 @@ const Upload = ({navigation, route = {}}) => {
             text: 'Back to Home',
             onPress: () => {
               setUpdate(!update);
+              resetForm();
               navigation.navigate('Home');
             },
           },
@@ -289,7 +290,7 @@ const Upload = ({navigation, route = {}}) => {
               render={({field: {onChange, onBlur}}) => (
                 <TextInput
                   style={styles.input}
-                  label="Address Tag (separate wtih commas)"
+                  label="Location Tag (separate wtih commas)"
                   mode="outlined"
                   multiline
                   textColor="#212121"
