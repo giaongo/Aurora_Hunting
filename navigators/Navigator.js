@@ -12,6 +12,7 @@ import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import Modify from '../views/Modify';
 import EditProfile from '../views/EditProfile';
+import Search from '../views/Search';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -39,6 +40,20 @@ const TabScreen = () => {
             <Avatar.Icon
               size={35}
               icon="home"
+              color={color}
+              backgroundColor="transparent"
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarIcon: ({color}) => (
+            <Avatar.Icon
+              size={35}
+              icon="magnify"
               color={color}
               backgroundColor="transparent"
             />
