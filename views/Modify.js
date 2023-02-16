@@ -26,6 +26,7 @@ import {useHeaderHeight} from '@react-navigation/elements';
 import {useMedia} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
+import CardTag from '../components/CardTag';
 
 const Modify = ({route, navigation}) => {
   const {
@@ -247,7 +248,12 @@ const Modify = ({route, navigation}) => {
                 />
 
                 <View style={styles.cardTagContainer}>
-                  {locationTags &&
+                  <CardTag
+                    tags={locationTags}
+                    hasRemoveBtn={true}
+                    tagRemoveOnPress={tagRemoveOnPress}
+                  />
+                  {/* {locationTags &&
                     locationTags?.map((tag, index) => {
                       const trimmedTag = tag.trim();
                       return (
@@ -271,7 +277,7 @@ const Modify = ({route, navigation}) => {
                           />
                         </Card>
                       );
-                    })}
+                    })} */}
                 </View>
                 <Card.Content>
                   <Button
