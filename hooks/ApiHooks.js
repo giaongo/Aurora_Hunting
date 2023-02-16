@@ -137,7 +137,7 @@ const useFavourite = () => {
     }
   };
 
-  const getFavourite = async(token) => {
+  const getFavourite = async (token) => {
     const options = {
       method: 'GET',
       headers: {
@@ -149,7 +149,7 @@ const useFavourite = () => {
     } catch (error) {
       throw new Error('getFavourite: ' + error.message);
     }
-  }
+  };
 
   return {loadFavouritesByFileId, addFavourite, removeFavourite, getFavourite};
 };
@@ -193,7 +193,7 @@ const useComment = () => {
     }
   };
 
-  const getComments = async(token) => {
+  const getComments = async (token) => {
     const options = {
       method: 'GET',
       headers: {
@@ -205,7 +205,7 @@ const useComment = () => {
     } catch (error) {
       console.error('getComments: ', error);
     }
-  }
+  };
   return {loadCommentsByFileId, postComments, deleteComments, getComments};
 };
 
@@ -334,7 +334,7 @@ const useUser = () => {
     }
   };
 
-  const putUser = async(token, data) => {
+  const putUser = async (token, data) => {
     const options = {
       method: 'PUT',
       headers: {
@@ -349,7 +349,7 @@ const useUser = () => {
     } catch (error) {
       throw new Error('putUser: ' + error.message);
     }
-  }
+  };
 
   const checkUsername = async (username) => {
     try {

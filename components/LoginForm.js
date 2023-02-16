@@ -8,7 +8,8 @@ import {MainContext} from '../contexts/MainContext';
 import {useAuthentication} from '../hooks/ApiHooks';
 
 const LoginForm = () => {
-  const {setIsLoggedIn, setUser, setUserPassword, userPassword} = useContext(MainContext);
+  const {setIsLoggedIn, setUser, setUserPassword, userPassword} =
+    useContext(MainContext);
   const {postLogin} = useAuthentication();
   const {
     control,

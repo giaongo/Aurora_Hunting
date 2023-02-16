@@ -56,10 +56,10 @@ const CommentItem = ({data}) => {
             const token = await AsyncStorage.getItem('userToken');
             const response = await deleteMedia(token, data.comment_id);
             response
-            ? Alert.alert('Deleted Comment successfully')
-            & setUpdateComment(!updateComment)
-            & setUpdate(!update)
-            : Alert.alert('There is something wrong')
+              ? Alert.alert('Deleted Comment successfully') &
+                setUpdateComment(!updateComment) &
+                setUpdate(!update)
+              : Alert.alert('There is something wrong');
           },
         },
       ]);
@@ -68,13 +68,11 @@ const CommentItem = ({data}) => {
     }
   };
 
-
   useEffect(() => {
     loadAvatar();
     getUserIdByToken();
     getUsernameById();
-  }, [updateComment])
-
+  }, [updateComment]);
 
   return (
     <View style={styles.container}>
@@ -100,7 +98,9 @@ const CommentItem = ({data}) => {
             Show More
           </Button>
         </Text>
-        <Text style={styles.commentDate}>{data.time_added.split('T')[0]} at {data.time_added.split('T')[1]}</Text>
+        <Text style={styles.commentDate}>
+          {data.time_added.split('T')[0]} at {data.time_added.split('T')[1]}
+        </Text>
       </View>
       {userId === data.user_id ? (
         <View style={styles.buttonContainer}>

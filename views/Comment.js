@@ -43,7 +43,7 @@ const Comment = ({route}) => {
   const [userAvatar, setUserAvatar] = useState('');
   const [submitButtonState, setSubmitButtonState] = useState(true);
   const [updateComment, setUpdateComment] = useState(false);
-  const { loadCommentsByFileId, postComments } = useComment();
+  const {loadCommentsByFileId, postComments} = useComment();
   const {getUserByToken} = useUser();
   const {getFilesByTag} = useTag();
 
@@ -60,7 +60,10 @@ const Comment = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
-      result ? Alert.alert('post comment successfully') & setUpdateComment(!updateComment): Alert.alert('Please try again');
+      result
+        ? Alert.alert('post comment successfully') &
+          setUpdateComment(!updateComment)
+        : Alert.alert('Please try again');
     } catch (error) {
       console.error('add Comment: ', error);
     }

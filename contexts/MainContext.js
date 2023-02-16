@@ -18,7 +18,7 @@ const MainProvider = (props) => {
         update,
         setUpdate,
         userPassword,
-        setUserPassword
+        setUserPassword,
       }}
     >
       {props.children}
