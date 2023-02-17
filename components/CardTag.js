@@ -1,19 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Text, Card} from 'react-native-paper';
+import {Text, Card, Button} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
+import CardIconButton from './CardIconButton';
+import { useNavigation } from '@react-navigation/native';
 
 const CardTag = ({tags}) => {
+  const navigation = useNavigation();
   return (
-    <View style={styles.cardTagContainer}>
+    <View style={styles.cardTagContainer} >
       {tags &&
         tags?.map((tag, index) => {
           return (
-            <Card key={index} style={styles.cardTag}>
+            <Button key={index} style={styles.cardTag} onPress={() => navigation.navigate('Weather', tags)} >
               <Text variant="titleSmall" style={styles.cardTagText}>
                 {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
               </Text>
-            </Card>
+            </Button>
           );
         })}
     </View>
@@ -30,7 +33,6 @@ const styles = StyleSheet.create({
   cardTag: {
     backgroundColor: '#2C3539',
     borderRadius: 10,
-    padding: 10,
     marginTop: 5,
     marginRight: 5,
   },

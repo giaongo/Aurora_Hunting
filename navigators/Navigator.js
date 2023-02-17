@@ -12,6 +12,7 @@ import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import Modify from '../views/Modify';
 import EditProfile from '../views/EditProfile';
+import Weather from '../views/Weather';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -103,6 +104,7 @@ const StackScreen = () => {
           <Stack.Screen name="Single" component={Single} />
           <Stack.Screen name="Modify" component={Modify} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="Weather" component={Weather} />
         </>
       ) : (
         <Stack.Screen
