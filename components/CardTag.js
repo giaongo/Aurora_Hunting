@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Text, Card, IconButton} from 'react-native-paper';
+import {Text, Button, IconButton} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import CardIconButton from './CardIconButton';
 import { useNavigation } from '@react-navigation/native';
@@ -30,7 +30,7 @@ const CardTag = ({tags, hasRemoveBtn = false, tagRemoveOnPress = null}) => {
                   onPress={() => tagRemoveOnPress(tag)}
                 />
               ) : null}
-            </Card>
+            </Button>
           );
         })}
     </View>
