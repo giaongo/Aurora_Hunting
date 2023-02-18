@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Text} from 'react-native-paper';
+import {IconButton, Text} from 'react-native-paper';
 import {StyleSheet, ScrollView} from 'react-native';
 import PropTypes from 'prop-types';
 import {ImageBackground} from 'react-native';
@@ -12,6 +12,9 @@ import CardTag from '../components/CardTag';
 import StarRating from '../components/StarRating';
 import {MainContext} from '../contexts/MainContext';
 import {Video} from 'expo-av';
+import {REACT_APP_GOOGLE_API} from '@env';
+import Geocoder from 'react-native-geocoding';
+
 const Single = ({route, navigation}) => {
   const {
     file_id: fileId,
@@ -23,7 +26,12 @@ const Single = ({route, navigation}) => {
     user_id: userId,
   } = route.params;
 
+  const allData = JSON.parse(description);
+  const descriptionData = allData.description;
+  const locationTagsData = allData.tags;
+
   const [postUser, setPostUser] = useState({});
+  const [locationLatLon, setLocationLatLon] = useState(null);
   const {getUserById} = useUser();
   const {loadRatingsByFileId} = useRating();
   const {user} = useContext(MainContext);
@@ -41,6 +49,18 @@ const Single = ({route, navigation}) => {
     }
   };
 
+  const getLocationLatLonData = async (locationTags) => {
+    try {
+      const GOOGLE_API = REACT_APP_GOOGLE_API;
+      Geocoder.init(GOOGLE_API);
+      const json = await Geocoder.from(locationTags);
+      const location = json?.results[0].geometry.location;
+      location &&
+        setLocationLatLon({latitude: location.lat, longitude: location.lng});
+    } catch (error) {
+      console.error('getLocationLatLonDataError', error);
+    }
+  };
   const getUserRating = async () => {
     try {
       const result = await loadRatingsByFileId(fileId);
@@ -55,12 +75,10 @@ const Single = ({route, navigation}) => {
       console.error('getUserRatingError', error);
     }
   };
-  const allData = JSON.parse(description);
-  const descriptionData = allData.description;
-  const locationTagsData = allData.tags;
 
   useEffect(() => {
     getPostUser();
+    getLocationLatLonData(locationTagsData.join(','));
   }, []);
 
   useEffect(() => {
@@ -101,8 +119,23 @@ const Single = ({route, navigation}) => {
           </View>
         </View>
       )}
+      <View style={styles.tagLocationMap}>
+        <CardIconButton dataId={fileId} navigation={navigation} />
+        {locationLatLon ? (
+          <IconButton
+            icon="map-marker-radius"
+            size={30}
+            iconColor="white"
+            onPress={() =>
+              navigation.navigate('LocationMap', {
+                ...locationLatLon,
+                routeName: 'Single',
+              })
+            }
+          />
+        ) : null}
+      </View>
 
-      <CardIconButton dataId={fileId} navigation={navigation} />
       <View style={{marginLeft: 8}}>
         <Text>{descriptionData}</Text>
         <Text varient="bodySmall" style={styles.dateText}>
@@ -155,6 +188,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 11,
     color: '#949494',
+  },
+  tagLocationMap: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

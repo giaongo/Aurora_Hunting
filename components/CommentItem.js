@@ -17,6 +17,7 @@ const CommentItem = ({data}) => {
   const {deleteMedia} = useMedia();
   const [showMore, setShowMore] = useState(false);
   const [updateComment, setUpdateComment] = useState(false);
+  const [isCommentTooLong, setIsCommentTooLong] = useState(false);
   const [userId, setUserId] = useState('');
 
   const getUserIdByToken = async () => {
@@ -99,7 +100,7 @@ const CommentItem = ({data}) => {
             Show More
           </Button>
         </Text>
-        <Text style={styles.commentDate}>{data.time_added.split('T')[0]}</Text>
+        <Text style={styles.commentDate}>{data.time_added.split('T')[0]} at {data.time_added.split('T')[1]}</Text>
       </View>
       {userId === data.user_id ? (
         <View style={styles.buttonContainer}>

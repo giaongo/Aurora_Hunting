@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Text, Card, Button} from 'react-native-paper';
+import {Text, Card, IconButton} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import CardIconButton from './CardIconButton';
 import { useNavigation } from '@react-navigation/native';
 
-const CardTag = ({tags}) => {
+const CardTag = ({tags, hasRemoveBtn = false, tagRemoveOnPress = null}) => {
   const navigation = useNavigation();
   return (
     <View style={styles.cardTagContainer} >
@@ -16,7 +16,21 @@ const CardTag = ({tags}) => {
               <Text variant="titleSmall" style={styles.cardTagText}>
                 {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
               </Text>
-            </Button>
+              {hasRemoveBtn ? (
+                <IconButton
+                  icon="close-thick"
+                  size={8}
+                  style={{
+                    position: 'absolute',
+                    right: -29,
+                    top: -27,
+                  }}
+                  iconColor="white"
+                  containerColor="#bf2c2c"
+                  onPress={() => tagRemoveOnPress(tag)}
+                />
+              ) : null}
+            </Card>
           );
         })}
     </View>
@@ -33,8 +47,10 @@ const styles = StyleSheet.create({
   cardTag: {
     backgroundColor: '#2C3539',
     borderRadius: 10,
-    marginTop: 5,
-    marginRight: 5,
+    padding: 10,
+    marginVertical: 10,
+    marginRight: 15,
+    position: 'relative',
   },
   cardTagText: {
     color: '#DAA520',
@@ -42,6 +58,8 @@ const styles = StyleSheet.create({
 });
 CardTag.propTypes = {
   tags: PropTypes.array,
+  hasRemoveBtn: PropTypes.bool,
+  tagRemoveOnPress: PropTypes.func,
 };
 
 export default CardTag;
