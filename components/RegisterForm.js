@@ -1,9 +1,10 @@
 import {Controller, useForm} from 'react-hook-form';
 import {StyleSheet, View} from 'react-native';
 import {Button, HelperText, TextInput} from 'react-native-paper';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {useUser} from '../hooks/ApiHooks';
 
-const RegisterForm = (props) => {
+const RegisterForm = (props, navigation) => {
   const {postUser, checkUsername} = useUser();
   const {
     control,
@@ -21,6 +22,13 @@ const RegisterForm = (props) => {
     mode: 'onBlur',
   });
 
+  const showToast = (type, title) => {
+    Toast.show({
+      type: type,
+      text1: title,
+    });
+  };
+
   const register = async (registerData) => {
     delete registerData.confirmPassword;
     console.log('Registering', registerData);
@@ -28,8 +36,10 @@ const RegisterForm = (props) => {
       if (!checkUser) return;
       const registerResult = await postUser(registerData);
       console.log('registration result', registerResult);
+      showToast('success', 'Registered successfully 👍');
     } catch (error) {
       console.error('register', error);
+      showToast('error', 'Something went wrong. User Registration failed ☹️');
     }
   };
 
@@ -62,7 +72,6 @@ const RegisterForm = (props) => {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              secureTextEntry={true}
               autoCapitalize="words"
               errorMessage={errors.full_name && errors.full_name.message}
             />

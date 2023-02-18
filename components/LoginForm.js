@@ -3,11 +3,12 @@ import React, {useContext} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {StyleSheet, View} from 'react-native';
 import {Button, HelperText, TextInput} from 'react-native-paper';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 import {MainContext} from '../contexts/MainContext';
 import {useAuthentication} from '../hooks/ApiHooks';
 
 const LoginForm = () => {
-  const {setIsLoggedIn, setUser} = useContext(MainContext);
+  const {setIsLoggedIn, setUser, setUserPassword, userPassword} = useContext(MainContext);
   const {postLogin} = useAuthentication();
   const {
     control,
@@ -17,16 +18,27 @@ const LoginForm = () => {
     defaultValues: {username: '', password: ''},
   });
 
+  const showToast = (type, title) => {
+    Toast.show({
+      type: type,
+      text1: title,
+    });
+  };
+
   const LogIn = async (loginData) => {
     console.log('Login button pressed', loginData);
+    setUserPassword(loginData.password);
+    // console.log(userPassword);
     try {
       const loginResult = await postLogin(loginData);
       console.log('logIn', loginResult);
       await AsyncStorage.setItem('userToken', loginResult.token);
       setUser(loginResult.user);
       setIsLoggedIn(true);
+      showToast('success', 'Logged in successfully 👍');
     } catch (error) {
       console.error('logIn failed', error);
+      showToast('error', 'Incorrect username or password ☹️');
     }
   };
 

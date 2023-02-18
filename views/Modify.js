@@ -222,7 +222,7 @@ const Modify = ({route, navigation}) => {
                     <>
                       <TextInput
                         style={styles.input}
-                        label="Location Tag (separate wtih ,)"
+                        label="Location Tag (separate with ,)"
                         mode="outlined"
                         textColor="#212121"
                         multiline
