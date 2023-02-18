@@ -28,19 +28,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
 import Geocoder from 'react-native-geocoding';
 import {REACT_APP_GOOGLE_API} from '@env';
+import * as Location from 'expo-location';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const Upload = ({navigation, route = {}}) => {
   const [mediaFile, setMediaFile] = useState(null);
   const {update, setUpdate} = useContext(MainContext);
   const [loading, setLoading] = useState(false);
   const [locationName, setLocationName] = useState('');
+  const [errorMsg, setErrorMsg] = useState(null);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
   const latitude = route?.params?.data.latitude || null;
   const longitude = route?.params?.data.longitude || null;
 
-  console.log('route data', route.params);
   const {
     control,
     formState: {errors},
@@ -57,6 +59,30 @@ const Upload = ({navigation, route = {}}) => {
     setLocationName('');
     setMediaFile(null);
     reset();
+  };
+  const checkLocationPermission = async () => {
+    const {granted} = await Location.getForegroundPermissionsAsync();
+    if (!granted) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+  const getCurrentLocation = async () => {
+    const checkPermissionResult = await checkLocationPermission();
+    if (!checkPermissionResult) {
+      const {status} = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      } else {
+        const location = await Location.getCurrentPositionAsync({});
+        return location;
+      }
+    } else {
+      const location = await Location.getCurrentPositionAsync({});
+      return location;
+    }
   };
 
   const getLocationNameFromLatLng = async () => {
@@ -281,6 +307,34 @@ const Upload = ({navigation, route = {}}) => {
               )}
               name="description"
             />
+            <Card.Content style={styles.locationMapContainer}>
+              <Text style={styles.locationMapText}>
+                Drag and drop the marker on the map to pinpoint your aurora
+                location!
+              </Text>
+              <IconButton
+                icon="map-marker-radius"
+                size={30}
+                iconColor="#136b2c"
+                onPress={async () => {
+                  const result = await getCurrentLocation();
+                  if (result) {
+                    navigation.navigate('LocationMap', {
+                      latitude: result.coords.latitude,
+                      longitude: result.coords.longitude,
+                      routeName: 'Upload',
+                    });
+                  } else {
+                    Toast.show({
+                      type: 'error',
+                      text1: errorMsg,
+                      text2:
+                        'Enable location permission in your phone setting please!',
+                    });
+                  }
+                }}
+              />
+            </Card.Content>
 
             <Controller
               control={control}
@@ -301,18 +355,6 @@ const Upload = ({navigation, route = {}}) => {
                 />
               )}
               name="locationTag"
-            />
-            <IconButton
-              icon="map-marker-radius"
-              size={30}
-              iconColor="white"
-              onPress={() =>
-                navigation.navigate('LocationMap', {
-                  latitude: 66.713617,
-                  longitude: 27.4292196,
-                  routeName: 'Upload',
-                })
-              }
             />
 
             <Card.Content style={styles.buttonContainer}>
@@ -355,7 +397,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginHorizontal: 16,
-    marginTop: 16,
+    marginTop: 8,
   },
   buttonContainer: {
     flex: 1,
@@ -364,6 +406,15 @@ const styles = StyleSheet.create({
   button: {
     width: 150,
     margin: 16,
+  },
+  locationMapContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationMapText: {
+    marginTop: 10,
+    width: '80%',
+    color: '#136b2c',
   },
 });
 Upload.propTypes = {
