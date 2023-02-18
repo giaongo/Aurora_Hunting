@@ -11,7 +11,6 @@ import Home from '../views/Home';
 import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import Modify from '../views/Modify';
-import ModifyComment from '../views/ModifyComment';
 import LocationMap from '../views/LocationMap';
 import EditProfile from '../views/EditProfile';
 
@@ -124,7 +123,6 @@ const StackScreen = () => {
               headerTintColor: 'white',
             }}
           />
-          <Stack.Screen name="ModifyComment" component={ModifyComment} />
           <Stack.Screen name="LocationMap" component={LocationMap} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
         </>
