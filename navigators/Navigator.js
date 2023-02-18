@@ -11,6 +11,7 @@ import Home from '../views/Home';
 import Login from '../views/Login';
 import {MainContext} from '../contexts/MainContext';
 import Modify from '../views/Modify';
+import LocationMap from '../views/LocationMap';
 import EditProfile from '../views/EditProfile';
 
 const Tab = createBottomTabNavigator();
@@ -100,8 +101,29 @@ const StackScreen = () => {
           />
           <Stack.Screen name="Aurora Hunting" component={TabScreen} />
           <Stack.Screen name="Comment" component={Comment} />
-          <Stack.Screen name="Single" component={Single} />
-          <Stack.Screen name="Modify" component={Modify} />
+          <Stack.Screen
+            name="Single"
+            component={Single}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: '#121212',
+              },
+              headerTintColor: 'white',
+            }}
+          />
+          <Stack.Screen
+            name="Modify"
+            component={Modify}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: '#121212',
+              },
+              headerTintColor: 'white',
+            }}
+          />
+          <Stack.Screen name="LocationMap" component={LocationMap} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
         </>
       ) : (

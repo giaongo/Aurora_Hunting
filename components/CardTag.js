@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Text, Card} from 'react-native-paper';
+import {Text, Card, IconButton} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 
-const CardTag = ({tags}) => {
+const CardTag = ({tags, hasRemoveBtn = false, tagRemoveOnPress = null}) => {
   return (
     <View style={styles.cardTagContainer}>
       {tags &&
@@ -13,6 +13,20 @@ const CardTag = ({tags}) => {
               <Text variant="titleSmall" style={styles.cardTagText}>
                 {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
               </Text>
+              {hasRemoveBtn ? (
+                <IconButton
+                  icon="close-thick"
+                  size={8}
+                  style={{
+                    position: 'absolute',
+                    right: -29,
+                    top: -27,
+                  }}
+                  iconColor="white"
+                  containerColor="#bf2c2c"
+                  onPress={() => tagRemoveOnPress(tag)}
+                />
+              ) : null}
             </Card>
           );
         })}
@@ -31,8 +45,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#2C3539',
     borderRadius: 10,
     padding: 10,
-    marginTop: 5,
-    marginRight: 5,
+    marginVertical: 10,
+    marginRight: 15,
+    position: 'relative',
   },
   cardTagText: {
     color: '#DAA520',
@@ -40,6 +55,8 @@ const styles = StyleSheet.create({
 });
 CardTag.propTypes = {
   tags: PropTypes.array,
+  hasRemoveBtn: PropTypes.bool,
+  tagRemoveOnPress: PropTypes.func,
 };
 
 export default CardTag;
