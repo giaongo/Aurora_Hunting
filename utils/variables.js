@@ -15,7 +15,7 @@ const weatherCodes = {
     icon: 'weather-partly-cloudy',
   },
   3: {
-    description: 'Overcast',
+    description: 'Cloudy',
     icon: 'weather-cloudy',
   },
   45: {

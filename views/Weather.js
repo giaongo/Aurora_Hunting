@@ -2,7 +2,6 @@ import { View, Text } from 'react-native';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
-import { SectionList } from 'react-native';
 import { FlatList } from 'react-native';
 import { useEffect } from 'react';
 import {REACT_APP_GOOGLE_API_WEATHER} from '@env';
@@ -14,8 +13,6 @@ import {LinearGradient} from 'expo-linear-gradient'
 
 const Weather = ({route}) => {
   const cityNames = route.params;
-  const [latitude, setLatitude] = useState();
-  const [longitude, setLongitude] = useState();
   const [weatherUnit, setWeatherUnit] = useState('');
   const [currentWeather, setCurrentWeather] = useState({});
   const [todaysDate, setTodaysDate] = useState();
@@ -46,10 +43,10 @@ const Weather = ({route}) => {
       const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${cityName}&key=${googleApi}`);
       const data = await response.json();
       if (data.status === "OK") {
-        setLatitude(data.results[0].geometry.location.lat.toFixed(2));
-        setLongitude(data.results[0].geometry.location.lng.toFixed(2));
-        getHourlyWeather(data.results[0].geometry.location.lat.toFixed(2), data.results[0].geometry.location.lng.toFixed(2));
-        getDailyWeather(data.results[0].geometry.location.lat.toFixed(2), data.results[0].geometry.location.lng.toFixed(2));
+        const latitude = data.results[0].geometry.location.lat.toFixed(2);
+        const longitude = data.results[0].geometry.location.lng.toFixed(2);
+        getHourlyWeather(latitude, longitude);
+        getDailyWeather(latitude, longitude);
       } else {
         console.log(`Unable to find latitude and longitude for ${cityName}.`);
         return null;
@@ -135,10 +132,40 @@ const Weather = ({route}) => {
     )
   }
 
+  /*
+  The idea is that the background color is set based on temperature, the hotter it is, the more red/orange it gets and vice versa.
+  Break point which color will change from red/orange to blue-ish is 12 degree Celsius
+  Reference and learning material are from wbma repository or this link : https://www.youtube.com/watch?v=vVVuzPkjxJs&list=PLDIXF8nb0VG1v4S-smVy7GV0MHsJ3PJiL&index=5&ab_channel=MahmoudMousa
+
+  All color logic are also from the video (at 10:25), there are some adjustments so that the colors are more appropriate to the current course's scope.
+  */
+
+  const temperature = () =>{
+    let highColor= 0;
+    let lowColor = 0;
+    let bg1, bg2 = null;
+    let bg = [];
+    if (currentWeather.temperature > 12 ) {
+      highColor = Math.round((1 - (currentWeather.temperature - 20) / 28) * 255) // hot weather
+      lowColor = highColor - 150;
+      bg1 = `rgb(255,${highColor},0)`
+      bg2 = `rgb(255, ${lowColor}, 0)`;
+    } else if (currentWeather.temperature <= 12){
+      highColor = Math.round((1 - (currentWeather.temperature + 10) / 32) *255); // cold weather
+      lowColor = highColor - 150;
+      bg1 = `rgb(0,${highColor},255)`;
+      bg2 = `rgb(0, ${lowColor}, 255)`;
+    }
+    return bg = [bg1, bg2];
+  };
+
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['blue', 'lightblue']} style={{flex:1, alignItems:'center'}}>
+      <LinearGradient
+      colors={temperature()}
+      style={{flex:1, alignItems:'center'}}
+      >
       <Text style={{fontSize:20, marginTop: 10}}> { new Date(currentWeather.time).toLocaleString('en-US', {weekday: 'long'}) + ', ' + new Date(currentWeather.time).getDate('en-US') + ' '+ new Date(currentWeather.time).toLocaleString('en-US', {month: 'long'})}</Text>
       <View style={styles.locationContainer}>
         <IconButton
