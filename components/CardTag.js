@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {Text, Button, IconButton} from 'react-native-paper';
+import {Text, Button, IconButton, Card} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import CardIconButton from './CardIconButton';
 import { useNavigation } from '@react-navigation/native';
@@ -12,7 +12,7 @@ const CardTag = ({tags, hasRemoveBtn = false, tagRemoveOnPress = null}) => {
       {tags &&
         tags?.map((tag, index) => {
           return (
-            <Button key={index} style={styles.cardTag} onPress={() => navigation.navigate('Weather', tags)} >
+            <Card key={index} style={styles.cardTag} onPress={() => navigation.navigate('Weather', tags)} >
               <Text variant="titleSmall" style={styles.cardTagText}>
                 {'#' + tag.charAt(0).toUpperCase() + tag.slice(1)}
               </Text>
@@ -30,7 +30,7 @@ const CardTag = ({tags, hasRemoveBtn = false, tagRemoveOnPress = null}) => {
                   onPress={() => tagRemoveOnPress(tag)}
                 />
               ) : null}
-            </Button>
+            </Card>
           );
         })}
     </View>
