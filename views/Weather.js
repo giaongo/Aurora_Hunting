@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native';
 import { FlatList } from 'react-native';
 import { useEffect } from 'react';
 import {REACT_APP_GOOGLE_API_WEATHER} from '@env';
-import { IconButton } from 'react-native-paper';
+import { Button, IconButton } from 'react-native-paper';
 import { SafeAreaView } from 'react-native';
 import { weatherCodes } from '../utils/variables';
 import {LinearGradient} from 'expo-linear-gradient'
@@ -23,6 +23,7 @@ const Weather = ({route}) => {
   const [dailyWeatherCode, setDailyWeatherCode] = useState([]);
   const [dailyWeatherTempMin, setDailyWeatherTempMin] = useState([]);
   const [dailyWeatherTempMax, setDailyWeatherTempMax] = useState([]);
+
 
 
 
@@ -158,7 +159,6 @@ const Weather = ({route}) => {
     }
     return bg = [bg1, bg2];
   };
-
 
   return (
     <SafeAreaView style={styles.container}>

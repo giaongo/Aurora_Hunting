@@ -8,7 +8,7 @@ import {
   Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import {Avatar, Button, Divider, IconButton, TextInput} from 'react-native-paper';
+import {Avatar, Button, Divider, IconButton, Text, TextInput} from 'react-native-paper';
 import PropTypes from 'prop-types';
 import { useContext } from 'react';
 import { MainContext } from '../contexts/MainContext';
@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { ImageBackground } from 'react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 
 const EditProfile = ({route}) => {
   const {user, userPassword, setUserPassword, update, setUpdate} = useContext(MainContext);
@@ -284,18 +285,6 @@ const EditProfile = ({route}) => {
             />
           </View>
           <Divider />
-          <View style={styles.inputContainer}>
-            <IconButton icon={'lock'} size={50} />
-            <TextInput
-              mode="flat"
-              placeholder={'password'}
-              secureTextEntry={true}
-              style={{width: '100%', justifyContent:'center'}}
-              numberOfLines={1}
-              defaultValue={userPassword}
-              // onChangeText={newPassword => setUserPassword(newPassword)}
-            />
-          </View>
         </KeyboardAvoidingView>
       </TouchableOpacity>
     </ScrollView>

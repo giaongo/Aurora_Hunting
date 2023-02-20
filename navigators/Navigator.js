@@ -14,6 +14,7 @@ import Modify from '../views/Modify';
 import LocationMap from '../views/LocationMap';
 import EditProfile from '../views/EditProfile';
 import Weather from '../views/Weather';
+import Test from '../views/Test';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
