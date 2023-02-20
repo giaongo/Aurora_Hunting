@@ -118,7 +118,6 @@ const CommentItem = ({data}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#212121',
     flexDirection: 'row',
     paddingTop: 20,
   },

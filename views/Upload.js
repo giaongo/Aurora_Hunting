@@ -344,7 +344,7 @@ const Upload = ({navigation, route = {}}) => {
               render={({field: {onChange, onBlur}}) => (
                 <TextInput
                   style={styles.input}
-                  label="Location Tag (separate wtih commas)"
+                  label="City Location Tag (separate with commas)"
                   mode="outlined"
                   multiline
                   textColor="#212121"
