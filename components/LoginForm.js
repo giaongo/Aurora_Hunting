@@ -18,6 +18,18 @@ const LoginForm = () => {
     defaultValues: {username: '', password: ''},
   });
 
+
+  const showToast1 = (message2) => {
+    Toast.show({
+      type: 'info',
+      text1:message2,
+      position:'top',
+      visibilityTime:3000,
+      autoHide:true,
+    });
+  };
+  showToast1('For more weather information: Click on location tag');
+
   const showToast = (type, title) => {
     Toast.show({
       type: type,

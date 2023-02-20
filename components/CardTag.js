@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {Text, Button, IconButton} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
