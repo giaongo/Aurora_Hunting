@@ -1,49 +1,22 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Avatar,
-  Button,
-  Card,
-  IconButton,
-  List,
-  Text,
-  TextInput,
-} from 'react-native-paper';
-import {
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  FlatList,
-  View,
-  Platform,
-} from 'react-native';
-import {useComment, useMedia, useTag, useUser} from '../hooks/ApiHooks';
+import React, {useEffect, useState} from 'react';
+import {Avatar, IconButton, TextInput} from 'react-native-paper';
+import {StyleSheet, FlatList, View, Platform} from 'react-native';
+import {useComment, useTag, useUser} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {MainContext, MainProvider} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommentItem from '../components/CommentItem';
 import {KeyboardAvoidingView} from 'react-native';
-import {useForm} from 'react-hook-form';
 import {Alert} from 'react-native';
 
 const Comment = ({route}) => {
   const fileId = route.params;
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-    trigger,
-    setValue,
-  } = useForm({
-    defaultValues: {},
-  });
   const [commentArr, setCommentArr] = useState([]);
   const [comment, setComment] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [submitButtonState, setSubmitButtonState] = useState(true);
   const [updateComment, setUpdateComment] = useState(false);
-  const { loadCommentsByFileId, postComments } = useComment();
+  const {loadCommentsByFileId, postComments} = useComment();
   const {getUserByToken} = useUser();
   const {getFilesByTag} = useTag();
 
@@ -60,7 +33,10 @@ const Comment = ({route}) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
-      result ? Alert.alert('post comment successfully') & setUpdateComment(!updateComment): Alert.alert('Please try again');
+      result
+        ? Alert.alert('post comment successfully') &
+          setUpdateComment(!updateComment)
+        : Alert.alert('Please try again');
     } catch (error) {
       console.error('add Comment: ', error);
     }
