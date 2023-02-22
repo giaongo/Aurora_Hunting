@@ -49,20 +49,17 @@ const Search = () => {
   const mappedArray = () => {
     return searchResults.map((item, index) => {
       return {
-        uri: item.filename,
+        item: item,
         id: index,
-        file_id: item.file_id,
-        user_id: item.user_id,
       };
     });
   };
 
   const SearchItem = ({item}) => {
-    console.log(item);
     return (
-      <Button onPress={() => navigation.navigate('Single', item)}>
+      <Button onPress={() => navigation.navigate('Single', item.item)}>
         <Image
-          source={{uri: uploadsUrl + item.uri}}
+          source={{uri: uploadsUrl + item.item.filename}}
           style={{width: 100, height: 100}}
         />
       </Button>
