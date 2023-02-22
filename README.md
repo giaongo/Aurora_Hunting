@@ -22,7 +22,7 @@ The app caters to individuals who enjoy outdoor activities, without any age rest
 4. **View, Delete comments**: The user has the ability to both add and delete their own comments within the app.
 5. **Add, Remove liking and Add, Remove rating**: Within the app, users can express their appreciation for posts by liking them and rating them on a scale of 1 to 5 stars.
 6. **Location map**: The app provides users with a map feature, which allows them to check the location of auroras by the location tags.
-7. **Weather**:  Users can also check the weather of the location tagged on the map within the app.
+7. **Weather**:  Users can also check the weather of the location tag within the app.
 
 ## Technologies
 React Native
