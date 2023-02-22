@@ -1,22 +1,30 @@
 import {Avatar, Button, Card} from 'react-native-paper';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {useMedia, useTag, useUser} from '../hooks/ApiHooks';
+import {useComment, useTag, useUser} from '../hooks/ApiHooks';
 import {uploadsUrl} from '../utils/variables';
 import {Alert, StyleSheet, View, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {MainContext} from '../contexts/MainContext';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const CommentItem = ({data}) => {
   const [avatar, setAvatar] = useState('');
   const [username, setUsername] = useState('');
-  const {update, setUpdate} = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {getUserById, getUserByToken} = useUser();
-  const {deleteMedia} = useMedia();
+  const {deleteComments} = useComment();
   const [showMore, setShowMore] = useState(false);
-  const [updateComment, setUpdateComment] = useState(false);
   const [userId, setUserId] = useState('');
+
+  const showToast = (message1, message2) => {
+    Toast.show({
+      type: 'info',
+      text1: message1,
+      text2: message2,
+      position: 'top',
+      visibilityTime: '2000',
+    });
+  };
 
   const getUserIdByToken = async () => {
     const token = await AsyncStorage.getItem('userToken');
@@ -52,12 +60,13 @@ const CommentItem = ({data}) => {
           text: 'Yes',
           onPress: async () => {
             const token = await AsyncStorage.getItem('userToken');
-            const response = await deleteMedia(token, data.comment_id);
+            const response = await deleteComments(token, data.comment_id);
             response
-            ? Alert.alert('Deleted Comment successfully')
-            & setUpdateComment(!updateComment)
-            & setUpdate(!update)
-            : Alert.alert('There is something wrong')
+              ? showToast(
+                  'Delete comment succesfully',
+                  'Please come back again to reload comments'
+                )
+              : showToast('There seems to be a problem, try again later');
           },
         },
       ]);
@@ -66,13 +75,11 @@ const CommentItem = ({data}) => {
     }
   };
 
-
   useEffect(() => {
     loadAvatar();
     getUserIdByToken();
     getUsernameById();
-  }, [updateComment])
-
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -86,19 +93,31 @@ const CommentItem = ({data}) => {
       <View style={styles.contentContainer}>
         <Card.Title title={username.username} style={styles.cardTitle} />
         <Text style={styles.commentContent}>
-          {showMore ? data.comment : `${data.comment.substring(0, 25)}`}
-          <Button
-            mode="text"
-            textColor="white"
-            style={{alignItems: 'flex-end'}}
-            onPress={() => {
-              setShowMore(!showMore);
-            }}
-          >
-            Show More
-          </Button>
+          {data.comment.length >= 25 ? (
+            <>
+              {!showMore ? (
+                <>
+                  <Text>{`${data.comment.substring(0, 25)}...`}</Text>
+                  <Button
+                    mode="text"
+                    textColor="white"
+                    style={{alignItems: 'flex-end'}}
+                    onPress={() => setShowMore(!showMore)}
+                  >
+                    Show More
+                  </Button>
+                </>
+              ) : (
+                <Text>{data.comment}</Text>
+              )}
+            </>
+          ) : (
+            <Text>{data.comment}</Text>
+          )}
         </Text>
-        <Text style={styles.commentDate}>{data.time_added.split('T')[0]} at {data.time_added.split('T')[1]}</Text>
+        <Text style={styles.commentDate}>
+          {data.time_added.split('T')[0]} at {data.time_added.split('T')[1]}
+        </Text>
       </View>
       {userId === data.user_id ? (
         <View style={styles.buttonContainer}>
