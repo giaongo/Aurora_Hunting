@@ -1,34 +1,30 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Button, Searchbar, Text, TextInput} from 'react-native-paper';
+import {Button, Searchbar} from 'react-native-paper';
 import PropTypes from 'prop-types';
 import {useMedia} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import CardItem from '../components/CardItem';
-import {TouchableOpacity} from 'react-native';
-import {KeyboardAvoidingView} from 'react-native';
-import {Keyboard} from 'react-native';
-import {Platform} from 'react-native';
-import {useHeaderHeight} from '@react-navigation/elements';
+import {Image} from 'react-native';
 import {FlatList} from 'react-native';
+import {uploadsUrl} from '../utils/variables';
+import {useNavigation} from '@react-navigation/native';
 
-const Search = (navigation) => {
+const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const {mediaArray, searchMedia} = useMedia();
+  const navigation = useNavigation();
 
   const handleSearch = async () => {
     console.log('searching for', searchQuery);
     try {
       const token = await AsyncStorage.getItem('userToken');
-      console.log(token);
       const results = await searchMedia({title: searchQuery}, token);
-      console.log(results);
       const filteredResults = results.filter((item) =>
         item.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setSearchResults(filteredResults);
-      console.log('handleSearch', filteredResults);
+      console.log(searchResults);
     } catch (error) {
       console.error('search media failed', error);
     }
@@ -48,6 +44,29 @@ const Search = (navigation) => {
     //   } catch (error) {
     //     console.error('search media failed', error);
     //   }
+  };
+
+  const mappedArray = () => {
+    return searchResults.map((item, index) => {
+      return {
+        uri: item.filename,
+        id: index,
+        file_id: item.file_id,
+        user_id: item.user_id,
+      };
+    });
+  };
+
+  const SearchItem = ({item}) => {
+    console.log(item);
+    return (
+      <Button onPress={() => navigation.navigate('Single', item)}>
+        <Image
+          source={{uri: uploadsUrl + item.uri}}
+          style={{width: 100, height: 100}}
+        />
+      </Button>
+    );
   };
 
   // const height = useHeaderHeight();
@@ -80,12 +99,18 @@ const Search = (navigation) => {
         style={{margin: 10}}
       />
       <FlatList
+        horizontal={true}
+        data={mappedArray()}
+        renderItem={({item}) => <SearchItem item={item} />}
+        keyExtractor={(item) => item.id}
+      />
+      {/* <FlatList
         data={(mediaArray, searchResults)}
         keyExtractor={(item) => item.file_id.toString()}
         renderItem={({item}) => (
           <CardItem data={item} navigation={navigation} />
         )}
-      />
+      /> */}
     </View>
     // <View style={styles.container}>
     //   <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
@@ -113,6 +138,7 @@ const Search = (navigation) => {
 
 Search.propTypes = {
   navigation: PropTypes.object,
+  item: PropTypes.object,
 };
 
 const styles = StyleSheet.create({

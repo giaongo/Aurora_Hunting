@@ -142,6 +142,7 @@ const StackScreen = () => {
           <Stack.Screen name="LocationMap" component={LocationMap} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen name="Weather" component={Weather} />
+          <Stack.Screen name="Search" component={Search} />
         </>
       ) : (
         <Stack.Screen
