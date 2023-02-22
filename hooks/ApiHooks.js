@@ -104,7 +104,6 @@ const useMedia = () => {
       },
       body: JSON.stringify({title: fileData.title}),
     };
-    // console.log('checking token', token);
     try {
       return await doFetch(baseUrl + 'media/search', options);
     } catch (error) {

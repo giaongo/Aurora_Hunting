@@ -12,7 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const {mediaArray, searchMedia} = useMedia();
+  const {searchMedia} = useMedia();
   const navigation = useNavigation();
 
   const handleSearch = async () => {
@@ -28,22 +28,6 @@ const Search = () => {
     } catch (error) {
       console.error('search media failed', error);
     }
-
-    // const [searchFile, setSearchFile] = useState('');
-    // const [searchResults, setSearchResults] = useState([]);
-    // const [loading, setLoading] = useState(true);
-    // const {searchMedia} = useMedia();
-
-    // const handleSearch = async () => {
-    //   try {
-    //     const userToken = AsyncStorage.getItem('userToken');
-    //     setLoading(true);
-    //     const results = await searchMedia(searchFile, userToken);
-    //     console.log('searchFile', results);
-    //     setSearchResults(results);
-    //   } catch (error) {
-    //     console.error('search media failed', error);
-    //   }
   };
 
   const mappedArray = () => {
@@ -60,29 +44,11 @@ const Search = () => {
       <Button onPress={() => navigation.navigate('Single', item.item)}>
         <Image
           source={{uri: uploadsUrl + item.item.filename}}
-          style={{width: 100, height: 100}}
+          style={styles.image}
         />
       </Button>
     );
   };
-
-  // const height = useHeaderHeight();
-
-  // const {mediaArray, loadMedia, searchMedia} = useMedia();
-
-  // const searchFile = async (navigation) => {
-  //   try {
-  //     const userToken = AsyncStorage.getItem('userToken');
-  //     const result = await searchMedia(userToken);
-  //     console.log('searchFile', result);
-  //   } catch (error) {
-  //     console.error('search media failed', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   searchFile();
-  // }, []);
 
   return (
     <View style={styles.container}>
@@ -94,42 +60,17 @@ const Search = () => {
         icon="magnify"
         iconColor="black"
         style={{margin: 10}}
+        inputStyle={{color: 'black'}}
       />
       <FlatList
-        horizontal={true}
+        vertical={true}
         data={mappedArray()}
         renderItem={({item}) => <SearchItem item={item} />}
         keyExtractor={(item) => item.id}
+        numColumns={3}
+        contentContainerStyle={styles.list}
       />
-      {/* <FlatList
-        data={(mediaArray, searchResults)}
-        keyExtractor={(item) => item.file_id.toString()}
-        renderItem={({item}) => (
-          <CardItem data={item} navigation={navigation} />
-        )}
-      /> */}
     </View>
-    // <View style={styles.container}>
-    //   <TouchableOpacity onPress={() => Keyboard.dismiss()} activeOpacity={1}>
-    //     <KeyboardAvoidingView
-    //       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    //       keyboardVerticalOffset={height + 47}
-    //       style={{flex: 1}}
-    //       enabled
-    //     ></KeyboardAvoidingView>
-    //   </TouchableOpacity>
-    //   <TextInput
-    //     placeholder="Search for media"
-    //     placeholderTextColor={'Grey'}
-    //     value={searchFile}
-    //     onChangeText={(text) => setSearchFile(text)}
-    //     onSubmitEditing={handleSearch}
-    //     loading={loading}
-    //   />
-    //   {searchResults.map((item) => (
-    //     <CardItem key={item.id} title={item.title} />
-    //   ))}
-    // </View>
   );
 };
 
@@ -145,11 +86,18 @@ const styles = StyleSheet.create({
     alignContent: 'flex-start',
     paddingTop: 50,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    padding: 20,
+  image: {
+    width: 100,
+    height: 100,
+    margin: 5,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#81854A',
+  },
+  list: {
+    flexGrow: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
