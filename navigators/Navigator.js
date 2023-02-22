@@ -118,6 +118,7 @@ const StackScreen = () => {
           <Stack.Screen name="Single" component={Single} />
           <Stack.Screen name="Modify" component={Modify} />
           <Stack.Screen name="ModifyComment" component={ModifyComment} />
+          <Stack.Screen name="Tags" component={Tags} />
         </>
       ) : (
         <Stack.Screen

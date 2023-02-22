@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {Text} from 'react-native-paper';
+import {Button, Text} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTag} from '../hooks/ApiHooks';
 import {FlatList} from 'react-native';
 import LoadingIndicator from '../components/LoadingIndicator';
+import {useNavigation} from '@react-navigation/native';
 
 const Tags = () => {
   const {getListOfTags} = useTag();
   const [loading, setLoading] = useState(true);
   const [tags, setTags] = useState([]);
+  const navigation = useNavigation();
 
   const getTags = async () => {
     try {
@@ -33,7 +35,9 @@ const Tags = () => {
     const tags = descriptionItem.tags;
     return (
       <View style={styles.tag}>
-        <Text style={styles.text}>{'#' + tags.join(', ')}</Text>
+        <Button onPress={() => navigation.navigate('Single', item)}>
+          <Text style={styles.text}>{'#' + tags.join(', ')}</Text>
+        </Button>
       </View>
     );
   };
