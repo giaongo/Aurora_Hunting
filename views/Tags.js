@@ -7,7 +7,7 @@ import {useTag} from '../hooks/ApiHooks';
 import {FlatList} from 'react-native';
 import LoadingIndicator from '../components/LoadingIndicator';
 
-const Tags = (data) => {
+const Tags = () => {
   const {getListOfTags} = useTag();
   const [loading, setLoading] = useState(true);
   const [tags, setTags] = useState([]);
@@ -16,27 +16,24 @@ const Tags = (data) => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const response = await getListOfTags(token);
-      console.log(response);
-      const tags = JSON.parse(response.description).tags;
-      console.log(tags);
-      setTags(tags);
+      console.log('json format', response);
+      setTags(response);
       setLoading(false);
     } catch (error) {
       console.error('getTagsError', error);
     }
   };
 
-  const tagsLocation = JSON.parse(data.description).tags;
-  console.log(tagsLocation);
-
   useEffect(() => {
     getTags();
   }, []);
 
   const renderTag = ({item}) => {
+    const descriptionItem = JSON.parse(item.description);
+    const tags = descriptionItem.tags;
     return (
       <View style={styles.tag}>
-        <Text>{item.tag}</Text>
+        <Text style={styles.text}>{'#' + tags.join(', ')}</Text>
       </View>
     );
   };
@@ -52,6 +49,8 @@ const Tags = (data) => {
         data={tags}
         renderItem={renderTag}
         keyExtractor={(item) => item.tag_id.toString()}
+        numColumns={2}
+        contentContainerStyle={styles.list}
       />
     </View>
   );
@@ -62,24 +61,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
     alignContent: 'flex-start',
-    paddingTop: 50,
+    paddingTop: 25,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    padding: 20,
+    padding: 10,
+  },
+  text: {
+    fontSize: 14,
+    textAlign: 'center',
+    margin: 10,
+    fontWeight: 'bold',
+    color: 'black',
   },
   tag: {
+    backgroundColor: '#81854A',
+    borderRadius: 10,
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#CCCCCC',
+    marginTop: 10,
+    margin: 5,
+  },
+  list: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
   },
 });
 
 Tags.propTypes = {
-  route: PropTypes.object,
   navigation: PropTypes.object,
+  item: PropTypes.object,
 };
 
 export default Tags;
