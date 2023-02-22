@@ -8,6 +8,7 @@ import {Image} from 'react-native';
 import {FlatList} from 'react-native';
 import {uploadsUrl} from '../utils/variables';
 import {useNavigation} from '@react-navigation/native';
+import {useEffect} from 'react';
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,6 +31,12 @@ const Search = () => {
     }
   };
 
+  useEffect(() => {
+    if (searchQuery === '') {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
+
   const mappedArray = () => {
     return searchResults.map((item, index) => {
       return {
@@ -50,6 +57,10 @@ const Search = () => {
     );
   };
 
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
   return (
     <View style={styles.container}>
       <Searchbar
@@ -57,6 +68,7 @@ const Search = () => {
         value={searchQuery}
         onChangeText={(query) => setSearchQuery(query)}
         onSubmitEditing={handleSearch}
+        onClear={clearSearch}
         icon="magnify"
         iconColor="black"
         style={{margin: 10}}
