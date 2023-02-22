@@ -1,4 +1,4 @@
-import {Avatar, Button, Card, SegmentedButtons} from 'react-native-paper';
+import {Avatar, Button, Card} from 'react-native-paper';
 import React, {useContext, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {useMedia, useTag, useUser} from '../hooks/ApiHooks';
@@ -6,7 +6,6 @@ import {uploadsUrl} from '../utils/variables';
 import {Alert, StyleSheet, View, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
-import {useNavigation} from '@react-navigation/native';
 
 const CommentItem = ({data}) => {
   const [avatar, setAvatar] = useState('');
@@ -17,7 +16,6 @@ const CommentItem = ({data}) => {
   const {deleteMedia} = useMedia();
   const [showMore, setShowMore] = useState(false);
   const [updateComment, setUpdateComment] = useState(false);
-  const [isCommentTooLong, setIsCommentTooLong] = useState(false);
   const [userId, setUserId] = useState('');
 
   const getUserIdByToken = async () => {
@@ -118,7 +116,6 @@ const CommentItem = ({data}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#212121',
     flexDirection: 'row',
     paddingTop: 20,
   },
@@ -157,6 +154,7 @@ const styles = StyleSheet.create({
 CommentItem.propTypes = {
   route: PropTypes.object,
   navigation: PropTypes.object,
+  data: PropTypes.object,
 };
 
 export default CommentItem;

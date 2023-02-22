@@ -29,17 +29,10 @@ import {useForm} from 'react-hook-form';
 import {ImageBackground} from 'react-native';
 
 const EditProfile = ({route}) => {
-  const {user, userPassword, setUserPassword, update, setUpdate} =
-    useContext(MainContext);
-  const {
-    control,
-    formState: {errors},
-    handleSubmit,
-    reset,
-    trigger,
-  } = useForm({mode: 'onBlur'});
+  const {user, userPassword, update, setUpdate} = useContext(MainContext);
+  const {trigger} = useForm({mode: 'onBlur'});
   const {getFilesByTag, postTag} = useTag();
-  const {getUserByToken, putUser, checkUsername} = useUser();
+  const {putUser, checkUsername} = useUser();
   const {postMedia} = useMedia();
 
   const userInfo = route.params;
@@ -61,7 +54,7 @@ const EditProfile = ({route}) => {
     try {
       const tag = 'avatar_' + user.user_id;
       const files = await getFilesByTag(tag);
-      setUserAvatar(files?.pop().filename);
+      setUserAvatar(files?.pop()?.filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
     }
@@ -71,7 +64,7 @@ const EditProfile = ({route}) => {
     try {
       const tag = 'wallpaper_' + user.user_id;
       const files = await getFilesByTag(tag);
-      setUserWallPaper(files?.pop().filename);
+      setUserWallPaper(files?.pop()?.filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
     }
@@ -312,18 +305,6 @@ const EditProfile = ({route}) => {
             />
           </View>
           <Divider />
-          <View style={styles.inputContainer}>
-            <IconButton icon={'lock'} size={50} />
-            <TextInput
-              mode="flat"
-              placeholder={'password'}
-              secureTextEntry={true}
-              style={{width: '100%', justifyContent: 'center'}}
-              numberOfLines={1}
-              defaultValue={userPassword}
-              // onChangeText={newPassword => setUserPassword(newPassword)}
-            />
-          </View>
         </KeyboardAvoidingView>
       </TouchableOpacity>
     </ScrollView>

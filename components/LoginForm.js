@@ -8,8 +8,7 @@ import {MainContext} from '../contexts/MainContext';
 import {useAuthentication} from '../hooks/ApiHooks';
 
 const LoginForm = () => {
-  const {setIsLoggedIn, setUser, setUserPassword, userPassword} =
-    useContext(MainContext);
+  const {setIsLoggedIn, setUser} = useContext(MainContext);
   const {postLogin} = useAuthentication();
   const {
     control,
@@ -28,8 +27,6 @@ const LoginForm = () => {
 
   const LogIn = async (loginData) => {
     console.log('Login button pressed', loginData);
-    setUserPassword(loginData.password);
-    // console.log(userPassword);
     try {
       const loginResult = await postLogin(loginData);
       console.log('logIn', loginResult);

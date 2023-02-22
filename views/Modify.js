@@ -1,11 +1,5 @@
 import React, {useContext, useRef, useState} from 'react';
-import {
-  Card,
-  HelperText,
-  TextInput,
-  Button,
-  IconButton,
-} from 'react-native-paper';
+import {Card, HelperText, TextInput, Button} from 'react-native-paper';
 import {
   StyleSheet,
   KeyboardAvoidingView,
@@ -15,7 +9,6 @@ import {
   Keyboard,
   View,
   TouchableWithoutFeedback,
-  Text,
   Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -26,6 +19,7 @@ import {useHeaderHeight} from '@react-navigation/elements';
 import {useMedia} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MainContext} from '../contexts/MainContext';
+import CardTag from '../components/CardTag';
 
 const Modify = ({route, navigation}) => {
   const {
@@ -105,7 +99,7 @@ const Modify = ({route, navigation}) => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: '#121212'}}>
       <TouchableWithoutFeedback
         onPress={() => Keyboard.dismiss()}
         activeOpacity={1}
@@ -231,6 +225,7 @@ const Modify = ({route, navigation}) => {
                         label="Location Tag (separate with ,)"
                         mode="outlined"
                         textColor="#212121"
+                        multiline
                         onBlur={onBlur}
                         onChangeText={onChange}
                         value={locationTags.join(',')}
@@ -247,31 +242,11 @@ const Modify = ({route, navigation}) => {
                 />
 
                 <View style={styles.cardTagContainer}>
-                  {locationTags &&
-                    locationTags?.map((tag, index) => {
-                      const trimmedTag = tag.trim();
-                      return (
-                        <Card key={index} style={styles.cardTag}>
-                          <Text variant="titleSmall" style={styles.cardTagText}>
-                            {'#' +
-                              trimmedTag.charAt(0).toUpperCase() +
-                              trimmedTag.slice(1)}
-                          </Text>
-                          <IconButton
-                            icon="close-thick"
-                            size={8}
-                            style={{
-                              position: 'absolute',
-                              right: -29,
-                              top: -27,
-                            }}
-                            iconColor="white"
-                            containerColor="#bf2c2c"
-                            onPress={() => tagRemoveOnPress(tag)}
-                          />
-                        </Card>
-                      );
-                    })}
+                  <CardTag
+                    tags={locationTags}
+                    hasRemoveBtn={true}
+                    tagRemoveOnPress={tagRemoveOnPress}
+                  />
                 </View>
                 <Card.Content>
                   <Button

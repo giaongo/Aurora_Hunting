@@ -23,8 +23,7 @@ import {useNavigation} from '@react-navigation/native';
 import {Video} from 'expo-av';
 
 const Profile = () => {
-  const {setUser, setIsLoggedIn, user, update, setUpdate} =
-    useContext(MainContext);
+  const {setUser, setIsLoggedIn, user, update} = useContext(MainContext);
   const {getFilesByTag} = useTag();
   const {getMediaByUserId} = useMedia();
   const {getComments} = useComment();
@@ -44,7 +43,7 @@ const Profile = () => {
     try {
       const tag = 'avatar_' + user.user_id;
       const files = await getFilesByTag(tag);
-      setUserAvatar(files?.pop().filename);
+      setUserAvatar(files?.pop()?.filename);
     } catch (error) {
       console.error('loadAvatar: ', error);
     }
@@ -54,7 +53,7 @@ const Profile = () => {
     try {
       const tag = 'wallpaper_' + user.user_id;
       const files = await getFilesByTag(tag);
-      setUserWallPaper(files?.pop().filename);
+      setUserWallPaper(files?.pop()?.filename);
     } catch (error) {
       console.error('loadWallPaper: ', error);
     }
