@@ -1,44 +1,58 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {Card, Text} from 'react-native-paper';
+import {Text} from 'react-native-paper';
 import {StyleSheet, View} from 'react-native';
-import CardTag from '../components/CardTag';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTag} from '../hooks/ApiHooks';
+import {FlatList} from 'react-native';
+import LoadingIndicator from '../components/LoadingIndicator';
 
-const Tags = (navigation, route) => {
-  const {description, user_id: userId} = route.params;
-
-  const [setPostUser] = useState({});
-
-  const allData = JSON.parse(description);
-  const locationTagsData = allData.tags;
-
+const Tags = (data) => {
   const {getListOfTags} = useTag();
+  const [loading, setLoading] = useState(true);
+  const [tags, setTags] = useState([]);
+
   const getTags = async () => {
     try {
-      const userToken = await AsyncStorage.getItem('userToken');
-      const user = await getListOfTags(userId, userToken);
-      setPostUser(user);
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await getListOfTags(token);
+      console.log(response);
+      const tags = JSON.parse(response.description).tags;
+      console.log(tags);
+      setTags(tags);
+      setLoading(false);
     } catch (error) {
       console.error('getTagsError', error);
     }
   };
 
+  const tagsLocation = JSON.parse(data.description).tags;
+  console.log(tagsLocation);
+
   useEffect(() => {
     getTags();
   }, []);
 
+  const renderTag = ({item}) => {
+    return (
+      <View style={styles.tag}>
+        <Text>{item.tag}</Text>
+      </View>
+    );
+  };
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>#Location Tags</Text>
-
-      <Card>
-        <Text style={styles.title}>#Rovaniemi</Text>
-        <CardTag navigation={navigation} />
-
-        <CardTag tags={locationTagsData} />
-      </Card>
+      <FlatList
+        data={tags}
+        renderItem={renderTag}
+        keyExtractor={(item) => item.tag_id.toString()}
+      />
     </View>
   );
 };
@@ -55,6 +69,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     padding: 20,
+  },
+  tag: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#CCCCCC',
   },
 });
 

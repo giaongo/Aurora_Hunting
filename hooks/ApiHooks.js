@@ -250,7 +250,7 @@ const useTag = () => {
       throw new Error('getAllTagsByFileIdError: ' + error.message);
     }
   };
-  const getListOfTags = async (token, tag) => {
+  const getListOfTags = async (token) => {
     const options = {
       method: 'GET',
       headers: {
@@ -258,7 +258,10 @@ const useTag = () => {
       },
     };
     try {
-      return await doFetch(baseUrl + 'tags' + tag, options);
+      return await doFetch(
+        baseUrl + 'tags/' + 'aurora_hunting_2023_mediafile',
+        options
+      );
     } catch (error) {
       throw new Error('getTagError: ' + error.message);
     }
