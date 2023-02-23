@@ -13,6 +13,7 @@ import {MainContext} from '../contexts/MainContext';
 import Modify from '../views/Modify';
 import LocationMap from '../views/LocationMap';
 import EditProfile from '../views/EditProfile';
+import Search from '../views/Search';
 import Weather from '../views/Weather';
 
 const Tab = createBottomTabNavigator();
@@ -41,6 +42,20 @@ const TabScreen = () => {
             <Avatar.Icon
               size={35}
               icon="home"
+              color={color}
+              backgroundColor="transparent"
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarIcon: ({color}) => (
+            <Avatar.Icon
+              size={35}
+              icon="magnify"
               color={color}
               backgroundColor="transparent"
             />
@@ -127,6 +142,7 @@ const StackScreen = () => {
           <Stack.Screen name="LocationMap" component={LocationMap} />
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen name="Weather" component={Weather} />
+          <Stack.Screen name="Search" component={Search} />
         </>
       ) : (
         <Stack.Screen

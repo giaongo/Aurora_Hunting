@@ -95,7 +95,30 @@ const useMedia = () => {
     }
   };
 
-  return {mediaArray, postMedia, getMediaByUserId, modifyMedia, deleteMedia};
+  const searchMedia = async (fileData, token) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({title: fileData.title}),
+    };
+    try {
+      return await doFetch(baseUrl + 'media/search', options);
+    } catch (error) {
+      throw new Error('searchMediaError: ' + error.message);
+    }
+  };
+
+  return {
+    mediaArray,
+    postMedia,
+    getMediaByUserId,
+    modifyMedia,
+    deleteMedia,
+    searchMedia,
+  };
 };
 
 const useFavourite = () => {
