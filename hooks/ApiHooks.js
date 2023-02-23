@@ -51,7 +51,7 @@ const useMedia = () => {
     }
   };
 
-  const deleteMedia = async (token, id) => {
+  const deleteMedia = async (id, token) => {
     const options = {
       method: 'DELETE',
       headers: {
@@ -59,9 +59,9 @@ const useMedia = () => {
       },
     };
     try {
-      return await doFetch(baseUrl + 'comments/' + id, options);
+      return await doFetch(baseUrl + 'media/' + id, options);
     } catch (error) {
-      console.error('deleteMedia: ', error);
+      throw new Error('deleteMedia: ' + error.message);
     }
   };
 
@@ -75,7 +75,7 @@ const useMedia = () => {
     try {
       return await doFetch(baseUrl + 'media/user/' + userId, options);
     } catch (error) {
-      console.error('getMediaByUserId', error);
+      throw new Error('getMediaByUserId: ' + error.message);
     }
   };
 
@@ -137,7 +137,21 @@ const useFavourite = () => {
     }
   };
 
-  return {loadFavouritesByFileId, addFavourite, removeFavourite};
+  const getFavourite = async (token) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'favourites', options);
+    } catch (error) {
+      throw new Error('getFavourite: ' + error.message);
+    }
+  };
+
+  return {loadFavouritesByFileId, addFavourite, removeFavourite, getFavourite};
 };
 
 const useComment = () => {
@@ -178,7 +192,21 @@ const useComment = () => {
       console.error('deleteComments: ', error);
     }
   };
-  return {loadCommentsByFileId, postComments, deleteComments};
+
+  const getComments = async (token) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(baseUrl + 'comments', options);
+    } catch (error) {
+      console.error('getComments: ', error);
+    }
+  };
+  return {loadCommentsByFileId, postComments, deleteComments, getComments};
 };
 
 const useRating = () => {
@@ -323,6 +351,23 @@ const useUser = () => {
     }
   };
 
+  const putUser = async (token, data) => {
+    const options = {
+      method: 'PUT',
+      headers: {
+        'x-access-token': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    };
+    try {
+      const putResult = await doFetch(baseUrl + 'users', options);
+      return putResult;
+    } catch (error) {
+      throw new Error('putUser: ' + error.message);
+    }
+  };
+
   const checkUsername = async (username) => {
     try {
       const result = await doFetch(baseUrl + 'users/username/' + username);
@@ -342,7 +387,7 @@ const useUser = () => {
     }
   };
 
-  return {getUserByToken, postUser, checkUsername, getUserById};
+  return {getUserByToken, postUser, checkUsername, getUserById, putUser};
 };
 
 export {

@@ -7,7 +7,7 @@ import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CardIconButton = ({dataId, navigation}) => {
-  const {user, update} = useContext(MainContext);
+  const {user, update, setUpdate} = useContext(MainContext);
   const [favouriteArray, setFavouriteArray] = useState([]);
   const [isFavourite, setIsFavourite] = useState(false);
 
@@ -48,8 +48,10 @@ const CardIconButton = ({dataId, navigation}) => {
       const ratingOnlyArray = ratings.map((element) => element.rating);
       setAverageRating(
         ratingOnlyArray.length &&
-          ratingOnlyArray.reduce((prev, cur) => prev + cur, 0) /
+          (
+            ratingOnlyArray.reduce((prev, cur) => prev + cur, 0) /
             ratingOnlyArray.length
+          ).toFixed(1)
       );
     } catch (error) {
       console.error('getRatingsByFileIdError', error);
@@ -61,6 +63,7 @@ const CardIconButton = ({dataId, navigation}) => {
       const userToken = await AsyncStorage.getItem('userToken');
       const result = await addFavourite(dataId, userToken);
       console.log('result of adding favourite', result);
+      setUpdate(!update);
       getFavouritesByFileId();
     } catch (error) {
       console.error('likeFileError', error);
@@ -115,7 +118,6 @@ const CardIconButton = ({dataId, navigation}) => {
 
 const styles = StyleSheet.create({
   cardIconStatus: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   },

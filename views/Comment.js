@@ -1,49 +1,22 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  Avatar,
-  Button,
-  Card,
-  IconButton,
-  List,
-  Text,
-  TextInput,
-} from 'react-native-paper';
-import {
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  FlatList,
-  View,
-  Platform,
-} from 'react-native';
-import {useComment, useMedia, useTag, useUser} from '../hooks/ApiHooks';
+import React, {useEffect, useState} from 'react';
+import {Avatar, IconButton, TextInput} from 'react-native-paper';
+import {StyleSheet, FlatList, View, Platform} from 'react-native';
+import {useComment, useTag, useUser} from '../hooks/ApiHooks';
 import PropTypes from 'prop-types';
 import {uploadsUrl} from '../utils/variables';
-import {MainContext} from '../contexts/MainContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommentItem from '../components/CommentItem';
 import {KeyboardAvoidingView} from 'react-native';
-import {useForm} from 'react-hook-form';
-import {Alert} from 'react-native';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const Comment = ({route}) => {
   const fileId = route.params;
-  const {
-    control,
-    handleSubmit,
-    formState: {errors},
-    trigger,
-    setValue,
-  } = useForm({
-    defaultValues: {},
-  });
   const [commentArr, setCommentArr] = useState([]);
   const [comment, setComment] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [submitButtonState, setSubmitButtonState] = useState(true);
+  const [updateComment, setUpdateComment] = useState(false);
   const {loadCommentsByFileId, postComments} = useComment();
-
   const {getUserByToken} = useUser();
   const {getFilesByTag} = useTag();
 
@@ -56,13 +29,24 @@ const Comment = ({route}) => {
     }
   };
 
+  const showToast = (message1) => {
+    Toast.show({
+      type: 'info',
+      text1: message1,
+      position: 'top',
+      visibilityTime: '2000',
+    });
+  };
+
   const addComment = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
       result
-        ? Alert.alert('post comment successfully')
-        : Alert.alert('Please try again');
+        ? showToast('post comment successfully') &
+          setUpdateComment(!updateComment) &
+          setComment('')
+        : showToast('There seems to be a problem, try again later');
     } catch (error) {
       console.error('add Comment: ', error);
     }
@@ -81,7 +65,7 @@ const Comment = ({route}) => {
       const userInfo = await getUserByToken(token);
       const tag = 'avatar_' + userInfo.user_id;
       const files = await getFilesByTag(tag);
-      setUserAvatar(files?.pop().filename);
+      setUserAvatar(files?.pop()?.filename);
     } catch (error) {
       console.error('loadCommentAvatar: ', error);
     }
@@ -90,7 +74,7 @@ const Comment = ({route}) => {
   useEffect(() => {
     loadComments();
     loadCommentAvatar();
-  }, []);
+  }, [updateComment]);
 
   return (
     <View style={styles.container}>
@@ -103,6 +87,7 @@ const Comment = ({route}) => {
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={95}
       >
         <View style={styles.addContainer}>
           <Avatar.Image
@@ -127,9 +112,7 @@ const Comment = ({route}) => {
             iconColor={'white'}
             style={{marginHorizontal: 0}}
             disabled={submitButtonState}
-            onPress={async () => {
-              await addComment();
-            }}
+            onPress={addComment}
           />
         </View>
       </KeyboardAvoidingView>
