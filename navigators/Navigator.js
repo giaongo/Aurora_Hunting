@@ -15,6 +15,7 @@ import LocationMap from '../views/LocationMap';
 import EditProfile from '../views/EditProfile';
 import Search from '../views/Search';
 import Weather from '../views/Weather';
+import Tags from '../views/Tags';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -81,6 +82,20 @@ const TabScreen = () => {
               source={require('../assets/aurora_bottom.png')}
               backgroundColor="transparent"
               size={100}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Tags"
+        component={Tags}
+        options={{
+          tabBarIcon: ({color}) => (
+            <Avatar.Icon
+              size={35}
+              icon="tag-multiple"
+              color={color}
+              backgroundColor="transparent"
             />
           ),
         }}

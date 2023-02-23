@@ -301,11 +301,28 @@ const useTag = () => {
       throw new Error('getAllTagsByFileIdError: ' + error.message);
     }
   };
+  const getListOfTags = async (token) => {
+    const options = {
+      method: 'GET',
+      headers: {
+        'x-access-token': token,
+      },
+    };
+    try {
+      return await doFetch(
+        baseUrl + 'tags/' + 'aurora_hunting_2023_mediafile',
+        options
+      );
+    } catch (error) {
+      throw new Error('getTagError: ' + error.message);
+    }
+  };
 
   return {
     getFilesByTag,
     postTag,
     getAllTagsByFileId,
+    getListOfTags,
   };
 };
 
