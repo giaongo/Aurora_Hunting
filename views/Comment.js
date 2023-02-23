@@ -7,7 +7,7 @@ import {uploadsUrl} from '../utils/variables';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommentItem from '../components/CommentItem';
 import {KeyboardAvoidingView} from 'react-native';
-import {Alert} from 'react-native';
+import {Toast} from 'react-native-toast-message/lib/src/Toast';
 
 const Comment = ({route}) => {
   const fileId = route.params;
@@ -29,14 +29,24 @@ const Comment = ({route}) => {
     }
   };
 
+  const showToast = (message1) => {
+    Toast.show({
+      type: 'info',
+      text1: message1,
+      position: 'top',
+      visibilityTime: '2000',
+    });
+  };
+
   const addComment = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
       result
-        ? Alert.alert('post comment successfully') &
-          setUpdateComment(!updateComment)
-        : Alert.alert('Please try again');
+        ? showToast('post comment successfully') &
+          setUpdateComment(!updateComment) &
+          setComment('')
+        : showToast('There seems to be a problem, try again later');
     } catch (error) {
       console.error('add Comment: ', error);
     }
@@ -77,6 +87,7 @@ const Comment = ({route}) => {
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={95}
       >
         <View style={styles.addContainer}>
           <Avatar.Image
@@ -101,9 +112,7 @@ const Comment = ({route}) => {
             iconColor={'white'}
             style={{marginHorizontal: 0}}
             disabled={submitButtonState}
-            onPress={async () => {
-              await addComment();
-            }}
+            onPress={addComment}
           />
         </View>
       </KeyboardAvoidingView>
