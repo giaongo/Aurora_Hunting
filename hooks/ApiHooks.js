@@ -35,6 +35,17 @@ const useMedia = () => {
     loadMedia();
   }, [update]);
 
+  const getMediaByFileId = async (id) => {
+    const options = {
+      method: 'GET',
+    };
+    try {
+      return await doFetch(baseUrl + 'media/' + id, options);
+    } catch (error) {
+      throw new Error('getMediaById: ' + error.message);
+    }
+  };
+
   const postMedia = async (fileData, token) => {
     const options = {
       method: 'POST',
@@ -118,6 +129,7 @@ const useMedia = () => {
     modifyMedia,
     deleteMedia,
     searchMedia,
+    getMediaByFileId,
   };
 };
 
