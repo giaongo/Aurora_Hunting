@@ -18,7 +18,6 @@ const Search = () => {
   const navigation = useNavigation();
 
   const handleSearch = async () => {
-    console.log('searching for', searchQuery);
     try {
       const token = await AsyncStorage.getItem('userToken');
       const results = await searchMedia({title: searchQuery}, token);
@@ -26,7 +25,6 @@ const Search = () => {
         item.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setSearchResults(filteredResults.reverse());
-      console.log(searchResults);
 
       if (filteredResults.length === 0) {
         setSearchError('No results found');
