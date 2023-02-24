@@ -25,7 +25,6 @@ const Profile = () => {
 
   const [userAvatar, setUserAvatar] = useState('');
   const [userWallPaper, setUserWallPaper] = useState('');
-  const [userFiles, setUserFiles] = useState([]);
   const [username, setUsername] = useState(user.username);
   const [commentsByUser, setCommentsByUser] = useState([]);
   const [favouritesByUser, setFavouritesByUser] = useState([]);
@@ -66,7 +65,6 @@ const Profile = () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userAllFiles = await getMediaByUserId(token, user.user_id);
-      setUserFiles(userAllFiles);
       const userFilteredFiles = userAllFiles.map((item) => item.file_id);
       const media = await Promise.all(
         userFilteredFiles.map(async (item) => {
