@@ -29,7 +29,7 @@ import {useForm} from 'react-hook-form';
 import {ImageBackground} from 'react-native';
 
 const EditProfile = ({route}) => {
-  const {user, userPassword, update, setUpdate} = useContext(MainContext);
+  const {user, update, setUpdate} = useContext(MainContext);
   const {trigger} = useForm({mode: 'onBlur'});
   const {getFilesByTag, postTag} = useTag();
   const {putUser, checkUsername} = useUser();
@@ -45,10 +45,6 @@ const EditProfile = ({route}) => {
   const [userNewUsername, setUserNewUsername] = useState(user.username);
   const [userNewEmail, setUserNewEmail] = useState(user.email);
   const navigation = useNavigation();
-
-  const testPassword = () => {
-    console.log(userPassword);
-  };
 
   const loadAvatar = async () => {
     try {
@@ -200,7 +196,6 @@ const EditProfile = ({route}) => {
   useEffect(() => {
     loadAvatar();
     loadWallPaper();
-    testPassword();
   }, [update]);
 
   return (
@@ -280,6 +275,7 @@ const EditProfile = ({route}) => {
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={700}
         >
           <View style={styles.inputContainer}>
             <IconButton icon={'account'} size={50} />

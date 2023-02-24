@@ -99,6 +99,35 @@ const Profile = () => {
     }
   };
 
+  const PostItem = ({file}) => {
+    return (
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Single', file)}
+        key={file.file_id}
+      >
+        {file.mime_type === 'image/jpeg' ? (
+          <Image
+            key={file.file_id}
+            source={{
+              uri: uploadsUrl + file.filename || 'https://placedog.net/500',
+            }}
+            style={styles.image}
+          />
+        ) : (
+          <Video
+            ref={video}
+            source={{
+              uri: uploadsUrl + file.filename || 'https://placedog.net/500',
+            }}
+            resizeMode="contain"
+            style={styles.image}
+          />
+        )}
+      </TouchableOpacity>
+    );
+  };
+
   useEffect(() => {
     loadAvatar();
     loadWallPaper();
@@ -189,42 +218,14 @@ const Profile = () => {
           Log out
         </Button>
       </View>
+
       <View style={styles.gridContainer}>
         {userFiles.reverse().map((file) => {
           if (
             !file.title.includes('avatar') &&
             !file.title.includes('wallpaper')
           ) {
-            return (
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('Single', file)}
-                key={file.file_id}
-              >
-                {file.mime_type === 'image/jpeg' ? (
-                  <Image
-                    key={file.file_id}
-                    source={{
-                      uri:
-                        uploadsUrl + file.filename ||
-                        'https://placedog.net/500',
-                    }}
-                    style={styles.image}
-                  />
-                ) : (
-                  <Video
-                    ref={video}
-                    source={{
-                      uri:
-                        uploadsUrl + file.filename ||
-                        'https://placedog.net/500',
-                    }}
-                    resizeMode="contain"
-                    style={styles.image}
-                  />
-                )}
-              </TouchableOpacity>
-            );
+            return <PostItem file={file} key={file.file_id} />;
           }
         })}
       </View>
@@ -313,5 +314,6 @@ const styles = StyleSheet.create({
 
 Profile.propTypes = {
   navigation: PropTypes.object,
+  file: PropTypes.object,
 };
 export default Profile;
