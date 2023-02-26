@@ -32,3 +32,10 @@ The app caters to individuals who enjoy outdoor activities, without any age rest
 ## Technologies
 
 React Native
+
+## App Promote Trailer
+<div align="center">
+
+[![Aurora Hunting Trailer](http://img.youtube.com/vi/9Auc6Y50om0/1.jpg)](https://youtu.be/9Auc6Y50om0 "Aurora Hunting Trailer")
+
+</div>
