@@ -2,11 +2,11 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Button, Searchbar, Text} from 'react-native-paper';
 import PropTypes from 'prop-types';
-import {useMedia} from '../hooks/ApiHooks';
+import {useMedia, useTag} from '../hooks/ApiHooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Image} from 'react-native';
 import {FlatList} from 'react-native';
-import {uploadsUrl} from '../utils/variables';
+import {appId, uploadsUrl} from '../utils/variables';
 import {useNavigation} from '@react-navigation/native';
 import {useEffect} from 'react';
 
@@ -15,15 +15,27 @@ const Search = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchError, setSearchError] = useState(null);
   const {searchMedia} = useMedia();
+  const {getFilesByTag} = useTag();
   const navigation = useNavigation();
 
   const handleSearch = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const results = await searchMedia({title: searchQuery}, token);
-      const filteredResults = results.filter((item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase())
+      const trimmedQuery = searchQuery.trim();
+      const results = await searchMedia({title: trimmedQuery}, token);
+      console.log(results);
+      const filteredResults = await getFilesByTag(appId + '_mediafile').then(
+        (files) =>
+          files.filter((file) => {
+            const {title, description} = file;
+            const loweredQuery = trimmedQuery.toLowerCase();
+            return (
+              title.toLowerCase().includes(loweredQuery) ||
+              (description && description.toLowerCase().includes(loweredQuery))
+            );
+          })
       );
+      console.log(filteredResults);
       setSearchResults(filteredResults.reverse());
 
       if (filteredResults.length === 0) {
