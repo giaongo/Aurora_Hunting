@@ -1,12 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useContext, useEffect, useState} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Image,
-  ImageBackground,
-} from 'react-native';
+import {ScrollView, StyleSheet, View, ImageBackground} from 'react-native';
 import {Text, Button, Avatar} from 'react-native-paper';
 import {MainContext} from '../contexts/MainContext';
 import {
@@ -16,27 +10,25 @@ import {
   useTag,
   useUser,
 } from '../hooks/ApiHooks';
-import {uploadsUrl} from '../utils/variables';
+import {appId, uploadsUrl} from '../utils/variables';
 import PropTypes from 'prop-types';
-import {TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {Video} from 'expo-av';
+import PostItem from '../components/PostItem';
 
 const Profile = () => {
   const {setUser, setIsLoggedIn, user, update} = useContext(MainContext);
-  const {getFilesByTag} = useTag();
+  const {getFilesByTag, getAllTagsByFileId} = useTag();
   const {getMediaByUserId} = useMedia();
   const {getComments} = useComment();
   const {getFavourite} = useFavourite();
   const {getUserByToken} = useUser();
-  const video = React.useRef(null);
 
   const [userAvatar, setUserAvatar] = useState('');
   const [userWallPaper, setUserWallPaper] = useState('');
-  const [userFiles, setUserFiles] = useState([]);
   const [username, setUsername] = useState(user.username);
   const [commentsByUser, setCommentsByUser] = useState([]);
   const [favouritesByUser, setFavouritesByUser] = useState([]);
+  const [mediaArray, setMediaArray] = useState([]);
   const navigation = useNavigation();
 
   const loadAvatar = async () => {
@@ -72,8 +64,14 @@ const Profile = () => {
   const loadUserMediaFiles = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const userFiles = await getMediaByUserId(token, user.user_id);
-      setUserFiles(userFiles);
+      const userAllFiles = await getMediaByUserId(token, user.user_id);
+      const userFilteredFiles = userAllFiles.map((item) => item.file_id);
+      const media = await Promise.all(
+        userFilteredFiles.map(async (item) => {
+          return await getAllTagsByFileId(item);
+        })
+      );
+      setMediaArray(media);
     } catch (error) {
       console.error('loadUserMediaFiles: ', error);
     }
@@ -97,35 +95,6 @@ const Profile = () => {
     } catch (error) {
       console.error('loadCommentsPostedByUser: ', error);
     }
-  };
-
-  const PostItem = ({file}) => {
-    return (
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Single', file)}
-        key={file.file_id}
-      >
-        {file.mime_type === 'image/jpeg' ? (
-          <Image
-            key={file.file_id}
-            source={{
-              uri: uploadsUrl + file.filename || 'https://placedog.net/500',
-            }}
-            style={styles.image}
-          />
-        ) : (
-          <Video
-            ref={video}
-            source={{
-              uri: uploadsUrl + file.filename || 'https://placedog.net/500',
-            }}
-            resizeMode="contain"
-            style={styles.image}
-          />
-        )}
-      </TouchableOpacity>
-    );
   };
 
   useEffect(() => {
@@ -174,11 +143,11 @@ const Profile = () => {
         <View style={styles.statisticsColumn}>
           <Text style={styles.statisticsNumber}>
             {
-              userFiles.filter(
-                (file) =>
-                  !file.title.includes('avatar') &&
-                  !file.title.includes('wallpaper')
-              ).length
+              mediaArray.filter((item) => {
+                if (item[0]?.tag.includes(appId)) {
+                  return item;
+                }
+              }).length
             }
           </Text>
           <Text style={styles.statisticsContent}>Posts</Text>
@@ -220,12 +189,9 @@ const Profile = () => {
       </View>
 
       <View style={styles.gridContainer}>
-        {userFiles.reverse().map((file) => {
-          if (
-            !file.title.includes('avatar') &&
-            !file.title.includes('wallpaper')
-          ) {
-            return <PostItem file={file} key={file.file_id} />;
+        {mediaArray.reverse().map((file) => {
+          if (file[0]?.tag.includes(appId)) {
+            return <PostItem key={file[0].file_id} data={file[0]} />;
           }
         })}
       </View>
@@ -281,13 +247,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  button: {
-    width: '33.3%',
-  },
-  image: {
-    height: 100,
-    borderWidth: 1,
-  },
   statisticsContainer: {
     flex: 1,
     position: 'absolute',
@@ -314,6 +273,5 @@ const styles = StyleSheet.create({
 
 Profile.propTypes = {
   navigation: PropTypes.object,
-  file: PropTypes.object,
 };
 export default Profile;
