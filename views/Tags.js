@@ -18,8 +18,7 @@ const Tags = () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       const response = await getListOfTags(token);
-      console.log('json format', response);
-      setTags(response);
+      setTags(response.reverse());
       setLoading(false);
     } catch (error) {
       console.error('getTagsError', error);
@@ -53,7 +52,6 @@ const Tags = () => {
         data={tags}
         renderItem={renderTag}
         keyExtractor={(item) => item.tag_id.toString()}
-        numColumns={2}
         contentContainerStyle={styles.list}
       />
     </View>
@@ -65,18 +63,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#121212',
     alignContent: 'flex-start',
-    paddingTop: 25,
+    paddingHorizontal: 20,
+    paddingTop: 40,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     padding: 10,
+    marginBottom: 20,
   },
   text: {
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
-    margin: 10,
     fontWeight: 'bold',
     color: 'black',
   },
@@ -88,9 +87,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   list: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-evenly',
   },
 });
 
