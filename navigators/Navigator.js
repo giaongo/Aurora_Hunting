@@ -16,7 +16,6 @@ import EditProfile from '../views/EditProfile';
 import Search from '../views/Search';
 import Weather from '../views/Weather';
 import Tags from '../views/Tags';
-import CameraShow from '../views/CameraShow';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -159,7 +158,6 @@ const StackScreen = () => {
           <Stack.Screen name="EditProfile" component={EditProfile} />
           <Stack.Screen name="Weather" component={Weather} />
           <Stack.Screen name="Search" component={Search} />
-          <Stack.Screen name="CameraShow" component={CameraShow} />
         </>
       ) : (
         <Stack.Screen

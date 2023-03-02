@@ -105,6 +105,14 @@ const Upload = ({navigation, route = {}}) => {
     }
   };
 
+  const openCamera = async () => {
+    try {
+      return await ImagePicker.launchCameraAsync();
+    } catch (error) {
+      throw new Error('errorWithOpeningCamera', error);
+    }
+  };
+
   const pickFile = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -123,7 +131,7 @@ const Upload = ({navigation, route = {}}) => {
     }
   };
 
-  const checkCameraPermission = () => {
+  const checkCameraPermission = async () => {
     try {
       if (!permission) {
         return <View />;
@@ -142,7 +150,8 @@ const Upload = ({navigation, route = {}}) => {
           },
         ]);
       } else {
-        navigation.navigate('CameraShow');
+        const takenMedia = await openCamera();
+        setMediaFile(takenMedia.assets[0]);
       }
     } catch (error) {
       console.error('error checking camera', error);
