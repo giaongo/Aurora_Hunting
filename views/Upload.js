@@ -30,18 +30,18 @@ import Geocoder from 'react-native-geocoding';
 import {REACT_APP_GOOGLE_API} from '@env';
 import * as Location from 'expo-location';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
-import {Camera} from 'expo-camera';
 
 const Upload = ({navigation, route = {}}) => {
   const [mediaFile, setMediaFile] = useState(null);
   const {update, setUpdate} = useContext(MainContext);
   const [loading, setLoading] = useState(false);
+  const [currentLocationLoading, setCurrentLocationLoading] = useState(false);
   const [locationName, setLocationName] = useState('');
   const [errorMsg, setErrorMsg] = useState(null);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [permission, requestPermission] = ImagePicker.useCameraPermissions();
   const latitude = route?.params?.data.latitude || null;
   const longitude = route?.params?.data.longitude || null;
 
@@ -107,7 +107,8 @@ const Upload = ({navigation, route = {}}) => {
 
   const openCamera = async () => {
     try {
-      return await ImagePicker.launchCameraAsync();
+      const takenMedia = await ImagePicker.launchCameraAsync();
+      setMediaFile(takenMedia.assets[0]);
     } catch (error) {
       throw new Error('errorWithOpeningCamera', error);
     }
@@ -138,10 +139,15 @@ const Upload = ({navigation, route = {}}) => {
       }
 
       if (!permission.granted) {
-        Alert.alert('We need your permissions to show the camera', 'test', [
+        Alert.alert('We need your permission to show the camera', '', [
           {
             text: 'Grant Permission',
-            onPress: async () => requestPermission(),
+            onPress: async () => {
+              const resultRequestingPermission = await requestPermission();
+              if (resultRequestingPermission.granted) {
+                await openCamera();
+              }
+            },
           },
           {
             text: 'Cancel',
@@ -150,8 +156,7 @@ const Upload = ({navigation, route = {}}) => {
           },
         ]);
       } else {
-        const takenMedia = await openCamera();
-        setMediaFile(takenMedia.assets[0]);
+        await openCamera();
       }
     } catch (error) {
       console.error('error checking camera', error);
@@ -229,19 +234,6 @@ const Upload = ({navigation, route = {}}) => {
         >
           <Card mode="contained" style={{borderRadius: 0}}>
             <View style={styles.cardUploadContainer}>
-              {mediaFile && (
-                <View
-                  style={{position: 'absolute', right: 0, top: 0, zIndex: 10}}
-                >
-                  <IconButton
-                    icon="close-thick"
-                    size={15}
-                    iconColor="white"
-                    containerColor="#bf2c2c"
-                    onPress={() => setMediaFile(null)}
-                  />
-                </View>
-              )}
               {!mediaFile ? (
                 <View style={styles.cardUpload}>
                   <IconButton
@@ -263,25 +255,41 @@ const Upload = ({navigation, route = {}}) => {
                     Open Camera
                   </Button>
                 </View>
-              ) : mediaFile.type === 'image' ? (
-                <Image
-                  source={{
-                    uri: mediaFile?.uri || 'https://placekitten.com/200/300',
-                  }}
-                  style={{height: '100%'}}
-                />
               ) : (
-                <Video
-                  ref={video}
-                  style={{height: '100%'}}
-                  source={{uri: mediaFile?.uri}}
-                  useNativeControls
-                  resizeMode="contain"
-                  isLooping
-                  onError={(error) => {
-                    console.error('videoError', error);
-                  }}
-                />
+                <>
+                  <View
+                    style={{position: 'absolute', right: 0, top: 0, zIndex: 10}}
+                  >
+                    <IconButton
+                      icon="close-thick"
+                      size={15}
+                      iconColor="white"
+                      containerColor="#bf2c2c"
+                      onPress={() => setMediaFile(null)}
+                    />
+                  </View>
+                  {mediaFile.type === 'image' ? (
+                    <Image
+                      source={{
+                        uri:
+                          mediaFile?.uri || 'https://placekitten.com/200/300',
+                      }}
+                      style={{height: '100%'}}
+                    />
+                  ) : (
+                    <Video
+                      ref={video}
+                      style={{height: '100%'}}
+                      source={{uri: mediaFile?.uri}}
+                      useNativeControls
+                      resizeMode="contain"
+                      isLooping
+                      onError={(error) => {
+                        console.error('videoError', error);
+                      }}
+                    />
+                  )}
+                </>
               )}
             </View>
 
