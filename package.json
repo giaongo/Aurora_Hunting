@@ -42,7 +42,8 @@
     "react-native-shimmer-placeholder": "^2.0.9",
     "react-native-skeleton-placeholder": "^5.2.4",
     "react-native-switch-selector": "^2.3.0",
-    "react-native-toast-message": "^2.1.5"
+    "react-native-toast-message": "^2.1.5",
+    "expo-camera": "~13.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

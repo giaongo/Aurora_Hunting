@@ -30,6 +30,7 @@ import Geocoder from 'react-native-geocoding';
 import {REACT_APP_GOOGLE_API} from '@env';
 import * as Location from 'expo-location';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import {Camera} from 'expo-camera';
 
 const Upload = ({navigation, route = {}}) => {
   const [mediaFile, setMediaFile] = useState(null);
@@ -40,6 +41,7 @@ const Upload = ({navigation, route = {}}) => {
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
   const latitude = route?.params?.data.latitude || null;
   const longitude = route?.params?.data.longitude || null;
 
@@ -118,6 +120,32 @@ const Upload = ({navigation, route = {}}) => {
       }
     } catch (error) {
       console.error('Media Upload error', error);
+    }
+  };
+
+  const checkCameraPermission = () => {
+    try {
+      if (!permission) {
+        return <View />;
+      }
+
+      if (!permission.granted) {
+        Alert.alert('We need your permissions to show the camera', 'test', [
+          {
+            text: 'Grant Permission',
+            onPress: async () => requestPermission(),
+          },
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+        ]);
+      } else {
+        navigation.navigate('CameraShow');
+      }
+    } catch (error) {
+      console.error('error checking camera', error);
     }
   };
 
@@ -221,9 +249,9 @@ const Upload = ({navigation, route = {}}) => {
                     icon="camera"
                     mode="outlined"
                     style={{marginBottom: 20}}
-                    onPress={() => console.log('Press camera')}
+                    onPress={checkCameraPermission}
                   >
-                    Take pictures
+                    Open Camera
                   </Button>
                 </View>
               ) : mediaFile.type === 'image' ? (
