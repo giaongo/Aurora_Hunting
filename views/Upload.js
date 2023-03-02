@@ -112,6 +112,7 @@ const Upload = ({navigation, route = {}}) => {
         quality: 0.5,
       });
       if (!result.canceled) {
+        console.log('media file', result.assets[0]);
         setMediaFile(result.assets[0]);
         trigger();
       }
@@ -197,7 +198,7 @@ const Upload = ({navigation, route = {}}) => {
                 >
                   <IconButton
                     icon="close-thick"
-                    size={22}
+                    size={15}
                     iconColor="white"
                     containerColor="#bf2c2c"
                     onPress={() => setMediaFile(null)}
@@ -213,8 +214,17 @@ const Upload = ({navigation, route = {}}) => {
                     onPress={pickFile}
                   />
                   <Text style={{color: '#212121'}}>
-                    Drop image/video file here
+                    Drop image/video file here.
                   </Text>
+                  <Text style={styles.orText}>OR</Text>
+                  <Button
+                    icon="camera"
+                    mode="outlined"
+                    style={{marginBottom: 20}}
+                    onPress={() => console.log('Press camera')}
+                  >
+                    Take pictures
+                  </Button>
                 </View>
               ) : mediaFile.type === 'image' ? (
                 <Image
@@ -394,6 +404,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  orText: {
+    color: '#212121',
+    fontWeight: 'bold',
+    margin: 5,
   },
   input: {
     marginHorizontal: 16,
