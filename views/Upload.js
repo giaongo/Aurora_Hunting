@@ -35,7 +35,7 @@ const Upload = ({navigation, route = {}}) => {
   const [mediaFile, setMediaFile] = useState(null);
   const {update, setUpdate} = useContext(MainContext);
   const [loading, setLoading] = useState(false);
-  const [currentLocationLoading, setCurrentLocationLoading] = useState(false);
+  const [currentGpsLoading, setCurrentGpsLoading] = useState(false);
   const [locationName, setLocationName] = useState('');
   const [errorMsg, setErrorMsg] = useState(null);
   const {postMedia} = useMedia();
@@ -108,6 +108,9 @@ const Upload = ({navigation, route = {}}) => {
   const openCamera = async () => {
     try {
       const takenMedia = await ImagePicker.launchCameraAsync();
+      if (takenMedia.canceled) {
+        return;
+      }
       setMediaFile(takenMedia.assets[0]);
     } catch (error) {
       throw new Error('errorWithOpeningCamera', error);
@@ -363,17 +366,30 @@ const Upload = ({navigation, route = {}}) => {
               name="description"
             />
             <Card.Content style={styles.locationMapContainer}>
-              <Text style={styles.locationMapText}>
-                Drag and drop the marker on the map to pinpoint your aurora
-                location!
-              </Text>
-              <IconButton
+              <View style={styles.locationMapText}>
+                {currentGpsLoading ? (
+                  <Text style={{color: '#01579b', fontWeight: 'bold'}}>
+                    Retrieving the current GPS location. This process may take
+                    some time. Please kindly wait!
+                  </Text>
+                ) : (
+                  <Text style={{color: '#136b2c'}}>
+                    Drag and drop the marker on the map to pinpoint your aurora
+                    location!
+                  </Text>
+                )}
+              </View>
+
+              <Button
                 icon="map-marker-radius"
-                size={30}
-                iconColor="#136b2c"
+                textColor="#136b2c"
+                labelStyle={{fontSize: 30}}
+                loading={currentGpsLoading}
                 onPress={async () => {
+                  setCurrentGpsLoading(true);
                   const result = await getCurrentLocation();
                   if (result) {
+                    setCurrentGpsLoading(false);
                     navigation.navigate('LocationMap', {
                       latitude: result.coords.latitude,
                       longitude: result.coords.longitude,
@@ -472,9 +488,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationMapText: {
-    marginTop: 10,
     width: '80%',
-    color: '#136b2c',
+    marginVertical: 16,
   },
 });
 Upload.propTypes = {
