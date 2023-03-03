@@ -35,11 +35,13 @@ const Upload = ({navigation, route = {}}) => {
   const [mediaFile, setMediaFile] = useState(null);
   const {update, setUpdate} = useContext(MainContext);
   const [loading, setLoading] = useState(false);
+  const [currentGpsLoading, setCurrentGpsLoading] = useState(false);
   const [locationName, setLocationName] = useState('');
   const [errorMsg, setErrorMsg] = useState(null);
   const {postMedia} = useMedia();
   const {postTag} = useTag();
   const video = React.useRef(null);
+  const [permission, requestPermission] = ImagePicker.useCameraPermissions();
   const latitude = route?.params?.data.latitude || null;
   const longitude = route?.params?.data.longitude || null;
 
@@ -103,6 +105,18 @@ const Upload = ({navigation, route = {}}) => {
     }
   };
 
+  const openCamera = async () => {
+    try {
+      const takenMedia = await ImagePicker.launchCameraAsync();
+      if (takenMedia.canceled) {
+        return;
+      }
+      setMediaFile(takenMedia.assets[0]);
+    } catch (error) {
+      throw new Error('errorWithOpeningCamera', error);
+    }
+  };
+
   const pickFile = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -112,11 +126,43 @@ const Upload = ({navigation, route = {}}) => {
         quality: 0.5,
       });
       if (!result.canceled) {
+        console.log('media file', result.assets[0]);
         setMediaFile(result.assets[0]);
         trigger();
       }
     } catch (error) {
       console.error('Media Upload error', error);
+    }
+  };
+
+  const checkCameraPermission = async () => {
+    try {
+      if (!permission) {
+        return <View />;
+      }
+
+      if (!permission.granted) {
+        Alert.alert('We need your permission to show the camera', '', [
+          {
+            text: 'Grant Permission',
+            onPress: async () => {
+              const resultRequestingPermission = await requestPermission();
+              if (resultRequestingPermission.granted) {
+                await openCamera();
+              }
+            },
+          },
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+        ]);
+      } else {
+        await openCamera();
+      }
+    } catch (error) {
+      console.error('error checking camera', error);
     }
   };
 
@@ -191,19 +237,6 @@ const Upload = ({navigation, route = {}}) => {
         >
           <Card mode="contained" style={{borderRadius: 0}}>
             <View style={styles.cardUploadContainer}>
-              {mediaFile && (
-                <View
-                  style={{position: 'absolute', right: 0, top: 0, zIndex: 10}}
-                >
-                  <IconButton
-                    icon="close-thick"
-                    size={22}
-                    iconColor="white"
-                    containerColor="#bf2c2c"
-                    onPress={() => setMediaFile(null)}
-                  />
-                </View>
-              )}
               {!mediaFile ? (
                 <View style={styles.cardUpload}>
                   <IconButton
@@ -213,28 +246,53 @@ const Upload = ({navigation, route = {}}) => {
                     onPress={pickFile}
                   />
                   <Text style={{color: '#212121'}}>
-                    Drop image/video file here
+                    Drop image/video file here.
                   </Text>
+                  <Text style={styles.orText}>OR</Text>
+                  <Button
+                    icon="camera"
+                    mode="outlined"
+                    style={{marginBottom: 20}}
+                    onPress={checkCameraPermission}
+                  >
+                    Open Camera
+                  </Button>
                 </View>
-              ) : mediaFile.type === 'image' ? (
-                <Image
-                  source={{
-                    uri: mediaFile?.uri || 'https://placekitten.com/200/300',
-                  }}
-                  style={{height: '100%'}}
-                />
               ) : (
-                <Video
-                  ref={video}
-                  style={{height: '100%'}}
-                  source={{uri: mediaFile?.uri}}
-                  useNativeControls
-                  resizeMode="contain"
-                  isLooping
-                  onError={(error) => {
-                    console.error('videoError', error);
-                  }}
-                />
+                <>
+                  <View
+                    style={{position: 'absolute', right: 0, top: 0, zIndex: 10}}
+                  >
+                    <IconButton
+                      icon="close-thick"
+                      size={15}
+                      iconColor="white"
+                      containerColor="#bf2c2c"
+                      onPress={() => setMediaFile(null)}
+                    />
+                  </View>
+                  {mediaFile.type === 'image' ? (
+                    <Image
+                      source={{
+                        uri:
+                          mediaFile?.uri || 'https://placekitten.com/200/300',
+                      }}
+                      style={{height: '100%'}}
+                    />
+                  ) : (
+                    <Video
+                      ref={video}
+                      style={{height: '100%'}}
+                      source={{uri: mediaFile?.uri}}
+                      useNativeControls
+                      resizeMode="contain"
+                      isLooping
+                      onError={(error) => {
+                        console.error('videoError', error);
+                      }}
+                    />
+                  )}
+                </>
               )}
             </View>
 
@@ -308,17 +366,30 @@ const Upload = ({navigation, route = {}}) => {
               name="description"
             />
             <Card.Content style={styles.locationMapContainer}>
-              <Text style={styles.locationMapText}>
-                Drag and drop the marker on the map to pinpoint your aurora
-                location!
-              </Text>
-              <IconButton
+              <View style={styles.locationMapText}>
+                {currentGpsLoading ? (
+                  <Text style={{color: '#01579b', fontWeight: 'bold'}}>
+                    Retrieving the current GPS location. This process may take
+                    some time. Please kindly wait!
+                  </Text>
+                ) : (
+                  <Text style={{color: '#136b2c'}}>
+                    Drag and drop the marker on the map to pinpoint your aurora
+                    location!
+                  </Text>
+                )}
+              </View>
+
+              <Button
                 icon="map-marker-radius"
-                size={30}
-                iconColor="#136b2c"
+                textColor="#136b2c"
+                labelStyle={{fontSize: 30}}
+                loading={currentGpsLoading}
                 onPress={async () => {
+                  setCurrentGpsLoading(true);
                   const result = await getCurrentLocation();
                   if (result) {
+                    setCurrentGpsLoading(false);
                     navigation.navigate('LocationMap', {
                       latitude: result.coords.latitude,
                       longitude: result.coords.longitude,
@@ -395,6 +466,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  orText: {
+    color: '#212121',
+    fontWeight: 'bold',
+    margin: 5,
+  },
   input: {
     marginHorizontal: 16,
     marginTop: 8,
@@ -412,9 +488,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationMapText: {
-    marginTop: 10,
     width: '80%',
-    color: '#136b2c',
+    marginVertical: 16,
   },
 });
 Upload.propTypes = {
