@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {Button, Text} from 'react-native-paper';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTag} from '../hooks/ApiHooks';
-import {FlatList} from 'react-native';
 import LoadingIndicator from '../components/LoadingIndicator';
 import {useNavigation} from '@react-navigation/native';
 
@@ -33,7 +32,7 @@ const Tags = () => {
     const descriptionItem = JSON.parse(item.description);
     const tags = descriptionItem.tags;
     return (
-      <View style={styles.tag}>
+      <View key={item.tag_id} style={styles.tag}>
         <Button onPress={() => navigation.navigate('Single', item)}>
           <Text style={styles.text}>{'#' + tags.join(', ')}</Text>
         </Button>
@@ -48,12 +47,9 @@ const Tags = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>#Location Tags</Text>
-      <FlatList
-        data={tags}
-        renderItem={renderTag}
-        keyExtractor={(item) => item.tag_id.toString()}
-        contentContainerStyle={styles.list}
-      />
+      <ScrollView contentContainerStyle={styles.list}>
+        {tags.map((tag) => renderTag({item: tag}))}
+      </ScrollView>
     </View>
   );
 };
@@ -88,6 +84,8 @@ const styles = StyleSheet.create({
   },
   list: {
     alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 
