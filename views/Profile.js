@@ -187,7 +187,6 @@ const Profile = () => {
           Log out
         </Button>
       </View>
-
       <View style={styles.gridContainer}>
         {mediaArray.reverse().map((file) => {
           if (file[0]?.tag.includes(appId)) {

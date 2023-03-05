@@ -81,9 +81,6 @@ const CardIconButton = ({dataId, navigation}) => {
   useEffect(() => {
     getFavouritesByFileId();
     getCommentsByFileId();
-  }, []);
-
-  useEffect(() => {
     getRatingsByFileId();
   }, [update]);
 
