@@ -14,10 +14,14 @@ import {appId, uploadsUrl} from '../utils/variables';
 import PropTypes from 'prop-types';
 import {useNavigation} from '@react-navigation/native';
 import PostItem from '../components/PostItem';
+import {RefreshControl} from 'react-native';
+import {useCallback} from 'react';
 
 const Profile = () => {
-  const {setUser, setIsLoggedIn, user, update} = useContext(MainContext);
+  const {setUser, setIsLoggedIn, user, update, setUpdate} =
+    useContext(MainContext);
   const {getFilesByTag, getAllTagsByFileId} = useTag();
+  const [refreshing, setRefreshing] = useState(false);
   const {getMediaByUserId} = useMedia();
   const {getComments} = useComment();
   const {getFavourite} = useFavourite();
@@ -97,6 +101,14 @@ const Profile = () => {
     }
   };
 
+  const onRefresh = useCallback(() => {
+    setUpdate(!update);
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   useEffect(() => {
     loadAvatar();
     loadWallPaper();
@@ -107,7 +119,17 @@ const Profile = () => {
   }, [update]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={'azure'}
+          color={'azure'}
+        />
+      }
+    >
       <ImageBackground
         source={{
           uri: userWallPaper
