@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Avatar, IconButton, TextInput} from 'react-native-paper';
 import {StyleSheet, FlatList, View, Platform} from 'react-native';
 import {useComment, useTag, useUser} from '../hooks/ApiHooks';
@@ -8,14 +8,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CommentItem from '../components/CommentItem';
 import {KeyboardAvoidingView} from 'react-native';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import {MainContext} from '../contexts/MainContext';
 
 const Comment = ({route}) => {
   const fileId = route.params;
+  const {setUpdate, update} = useContext(MainContext);
   const [commentArr, setCommentArr] = useState([]);
   const [comment, setComment] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
   const [submitButtonState, setSubmitButtonState] = useState(true);
-  const [updateComment, setUpdateComment] = useState(false);
   const {loadCommentsByFileId, postComments} = useComment();
   const {getUserByToken} = useUser();
   const {getFilesByTag} = useTag();
@@ -43,9 +44,7 @@ const Comment = ({route}) => {
       const token = await AsyncStorage.getItem('userToken');
       const result = await postComments(token, fileId, comment);
       result
-        ? showToast('post comment successfully') &
-          setUpdateComment(!updateComment) &
-          setComment('')
+        ? setUpdate(!update) & setComment(null)
         : showToast('There seems to be a problem, try again later');
     } catch (error) {
       console.error('add Comment: ', error);
@@ -74,7 +73,7 @@ const Comment = ({route}) => {
   useEffect(() => {
     loadComments();
     loadCommentAvatar();
-  }, [updateComment]);
+  }, [update]);
 
   return (
     <View style={styles.container}>

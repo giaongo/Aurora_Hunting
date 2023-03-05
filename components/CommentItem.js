@@ -6,8 +6,11 @@ import {uploadsUrl} from '../utils/variables';
 import {Alert, StyleSheet, View, Text} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Toast} from 'react-native-toast-message/lib/src/Toast';
+import {useContext} from 'react';
+import {MainContext} from '../contexts/MainContext';
 
 const CommentItem = ({data}) => {
+  const {setUpdate, update} = useContext(MainContext);
   const [avatar, setAvatar] = useState('');
   const [username, setUsername] = useState('');
   const {getFilesByTag} = useTag();
@@ -62,10 +65,7 @@ const CommentItem = ({data}) => {
             const token = await AsyncStorage.getItem('userToken');
             const response = await deleteComments(token, data.comment_id);
             response
-              ? showToast(
-                  'Delete comment succesfully',
-                  'Please come back again to reload comments'
-                )
+              ? setUpdate(!update)
               : showToast('There seems to be a problem, try again later');
           },
         },
