@@ -28,10 +28,13 @@ The app caters to individuals who enjoy outdoor activities, without any age rest
 7. **Location map**: The app provides users with a map feature, which allows them to check the location of auroras by the location tags.
 8. **Weather**: Users can also check the weather of the location tag within the app.
 9. **Tags**: Users can check the tags within the app.
+10. **Extra featured applied based on teacher feedback**: 
+* Open In-phone camera app in Upload screen: Integrate the in-phone camera app with the Upload screen, allowing users to capture photos that are automatically attached to the screen for uploading.
+* Pull-to-refresh: Refresh the view by dragging the screen downwards
 
 ## Technologies
 
-React Native
+Develop a React Native application using the Expo CLI.
 
 ## App Promote Trailer
 
