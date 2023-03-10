@@ -56,3 +56,7 @@ Develop a React Native application using the Expo CLI.
     <img src="assets/profile.jpeg" alt="Profile" width="190" height="400">
     <img src="assets/edit.jpeg" alt="Edit" width="190" height="400">
 </div>
+
+## Full-feature-reviewed Video (click to play)
+
+[![Watch the video](https://img.youtube.com/vi/yw_c6qx8avE/0.jpg)](https://youtu.be/yw_c6qx8avE)
