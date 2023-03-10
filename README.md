@@ -43,14 +43,14 @@ Develop a React Native application using the Expo CLI.
 
 ## Screenshots
 
-![Login](/assets/login.jpeg)
-![Register](/assets/register.jpeg)
-![Home](/assets/home.jpeg)
-![Weather](/assets/weather.jpeg)
-![Single](/assets/single.jpeg)
-![Location](/assets/location.jpeg)
-![Search](/assets/search.jpeg)
-![Upload](/assets/upload.jpeg)
-![Tags](/assets/tags.jpeg)
-![Profile](/assets/profile.jpeg)
-![Edit](/assets/edit.jpeg)
+![Login](/assets/login.jpeg){ width=50% }
+![Register](/assets/register.jpeg){ width=50% }
+![Home](/assets/home.jpeg){ width=50% }
+![Weather](/assets/weather.jpeg){ width=50% }
+![Single](/assets/single.jpeg){ width=50% }
+![Location](/assets/location.jpeg){ width=50% }
+![Search](/assets/search.jpeg){ width=50% }
+![Upload](/assets/upload.jpeg){ width=50% }
+![Tags](/assets/tags.jpeg){ width=50% }
+![Profile](/assets/profile.jpeg){ width=50% }
+![Edit](/assets/edit.jpeg){ width=50% }
