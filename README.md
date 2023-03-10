@@ -41,16 +41,18 @@ Develop a React Native application using the Expo CLI.
 
 [![Aurora Hunting Trailer](http://img.youtube.com/vi/9Auc6Y50om0/1.jpg)](https://youtu.be/9Auc6Y50om0 'Aurora Hunting Trailer')
 
-## Screenshots
+## App UI Screenshots
 
-![Login](/assets/login.jpeg){ width=50% }
-![Register](/assets/register.jpeg){ width=50% }
-![Home](/assets/home.jpeg){ width=50% }
-![Weather](/assets/weather.jpeg){ width=50% }
-![Single](/assets/single.jpeg){ width=50% }
-![Location](/assets/location.jpeg){ width=50% }
-![Search](/assets/search.jpeg){ width=50% }
-![Upload](/assets/upload.jpeg){ width=50% }
-![Tags](/assets/tags.jpeg){ width=50% }
-![Profile](/assets/profile.jpeg){ width=50% }
-![Edit](/assets/edit.jpeg){ width=50% }
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+    <img src="assets/login.jpeg" alt="Login" width="190" height="400">
+    <img src="assets/register.jpeg" alt="Register" width="190" height="400">
+    <img src="assets/home.jpeg" alt="Home" width="190" height="400">
+    <img src="assets/weather.jpeg" alt="Weather" width="190" height="400">
+    <img src="assets/single.jpeg" alt="Single" width="190" height="400">
+    <img src="assets/location.jpeg" alt="Location" width="190" height="400">
+    <img src="assets/search.jpeg" alt="Search" width="190" height="400">
+    <img src="assets/upload.jpeg" alt="Upload" width="190" height="400">
+    <img src="assets/tags.jpeg" alt="Tags" width="190" height="400">
+    <img src="assets/profile.jpeg" alt="Profile" width="190" height="400">
+    <img src="assets/edit.jpeg" alt="Edit" width="190" height="400">
+</div>
